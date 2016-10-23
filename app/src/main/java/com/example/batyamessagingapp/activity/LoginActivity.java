@@ -1,9 +1,13 @@
-package com.example.batyamessagingapp;
+package com.example.batyamessagingapp.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.batyamessagingapp.R;
+
 public class LoginActivity extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

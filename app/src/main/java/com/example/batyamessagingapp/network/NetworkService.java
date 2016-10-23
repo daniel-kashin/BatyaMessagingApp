@@ -1,9 +1,12 @@
-package com.example.batyamessagingapp;
+package com.example.batyamessagingapp.network;
+
+import android.app.Service;
 
 import com.example.batyamessagingapp.util.Message;
 import com.example.batyamessagingapp.util.NamePassword;
 import com.example.batyamessagingapp.util.Token;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,13 +25,15 @@ import retrofit2.http.Path;
  * Created by Кашин on 23.10.2016.
  */
 
-public class NetworkHelper {
+//todo: extends Service
+    //http://startandroid.ru/ru/uroki/vse-uroki-spiskom/157-urok-92-service-prostoj-primer.html
+
+public class NetworkService {
 
 
     /* inner classes */
 
     public static class ServiceGenerator {
-        public static final String API_BASE_URL = "http://hui.com";
         private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         private static Retrofit.Builder builder =
                 new Retrofit.Builder()
@@ -57,7 +62,7 @@ public class NetworkHelper {
 
         //todo: изменить лист
         @GET ("/{token}/messages/{dialog_id}/unread")
-        Call<List<Message>> getMessages(@Path("token") Token token, @Path("offset") String offset);
+        Call<ArrayList<Message>> getMessages(@Path("token") Token token, @Path("dialog_id") String dialog_id);
     }
 
 
@@ -68,8 +73,11 @@ public class NetworkHelper {
     private static Token _token = null;
     private static boolean _isLoggedIn = false;
     private static boolean _isBuilt = false;
+    public static final String API_BASE_URL = "http://hui.com";
 
-
+    public static boolean isLoggedIn(){
+        return _isLoggedIn;
+    }
 
     /*methods*/
 
@@ -78,6 +86,7 @@ public class NetworkHelper {
     }
 
     static void Login(String name, String password){
+
         NamePassword namePassword = new NamePassword(name,password);
 
         Call<Token> call = _apiService.login(namePassword);
@@ -102,6 +111,7 @@ public class NetworkHelper {
     }
 
     static void Register(String name, String password){
+
         NamePassword namePassword = new NamePassword(name,password);
 
         Call<Token> call = _apiService.register(namePassword);
