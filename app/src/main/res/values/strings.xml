@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Batya Messaging App</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>

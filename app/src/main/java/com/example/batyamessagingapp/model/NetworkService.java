@@ -1,14 +1,13 @@
-package com.example.batyamessagingapp.network;
+package com.example.batyamessagingapp.model;
 
-import android.app.Service;
+import android.accounts.AccountManager;
 
 import com.example.batyamessagingapp.util.Message;
-import com.example.batyamessagingapp.util.NamePassword;
+import com.example.batyamessagingapp.util.LoginData;
 import com.example.batyamessagingapp.util.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -27,45 +26,12 @@ import retrofit2.http.Path;
 
 //todo: extends Service
     //http://startandroid.ru/ru/uroki/vse-uroki-spiskom/157-urok-92-service-prostoj-primer.html
+//todo: создать классы:
+//http://stackoverflow.com/questions/31112124/getting-simple-json-object-response-using-retrofit-library
+//http://stackoverflow.com/questions/32942661/how-can-retrofit-2-0-parse-nested-json-object
+
 
 public class NetworkService {
-
-
-    /* inner classes */
-
-    public static class ServiceGenerator {
-        private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        private static Retrofit.Builder builder =
-                new Retrofit.Builder()
-                        .baseUrl(API_BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create());
-        public static <S> S createService(Class<S> serviceClass) {
-            Retrofit retrofit = builder.client(httpClient.build()).build();
-            return retrofit.create(serviceClass);
-        }
-    }
-
-    public interface APIService {
-        @POST("/login")
-        Call<Token> login(@Body NamePassword body);
-
-        @POST("/register")
-        Call<Token> register(@Body NamePassword body);
-
-        //todo: создать классы:
-        //http://stackoverflow.com/questions/31112124/getting-simple-json-object-response-using-retrofit-library
-        //http://stackoverflow.com/questions/32942661/how-can-retrofit-2-0-parse-nested-json-object
-
-        //todo: изменить hashmap
-        @GET("GET /{token}/contacts/{offset}")
-        Call<HashMap<String,Message>> getUsers(@Path("token") Token token, @Path("offset") String offset);
-
-        //todo: изменить лист
-        @GET ("/{token}/messages/{dialog_id}/unread")
-        Call<ArrayList<Message>> getMessages(@Path("token") Token token, @Path("dialog_id") String dialog_id);
-    }
-
-
 
     /*static fields*/
 
@@ -74,6 +40,9 @@ public class NetworkService {
     private static boolean _isLoggedIn = false;
     private static boolean _isBuilt = false;
     public static final String API_BASE_URL = "http://hui.com";
+    private static AccountManager accountManager;
+
+    /*getters setters*/
 
     public static boolean isLoggedIn(){
         return _isLoggedIn;
@@ -83,13 +52,45 @@ public class NetworkService {
 
     static void Build(){
         _apiService = ServiceGenerator.createService(APIService.class);
+        _isBuilt = true;
     }
 
-    static void Login(String name, String password){
+    public static Token login(String name, String password){
+        if (!_isBuilt) Build();
 
-        NamePassword namePassword = new NamePassword(name,password);
+        LoginData loginData = new LoginData(name,password);
 
-        Call<Token> call = _apiService.login(namePassword);
+        Call<Token> call = _apiService.login(loginData);
+        call.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                if (response.isSuccessful()) {
+
+                    _token = response.body();
+                    _isLoggedIn = true;
+
+                } else {
+                    // error response, no access to resource?
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable t) {
+                // something went completely south (like no internet connection)
+            }
+        });
+
+        return _token;
+    }
+
+
+
+    static Token register(String name, String password){
+        if (!_isBuilt) Build();
+
+        LoginData loginData = new LoginData(name,password);
+
+        Call<Token> call = _apiService.register(loginData);
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
@@ -108,34 +109,11 @@ public class NetworkService {
                 // something went completely south (like no internet connection)
             }
         });
+
+        return _token;
     }
 
-    static void Register(String name, String password){
-
-        NamePassword namePassword = new NamePassword(name,password);
-
-        Call<Token> call = _apiService.register(namePassword);
-        call.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Call<Token> call, Response<Token> response) {
-                if (response.isSuccessful()) {
-
-                    _isLoggedIn = true;
-                    _token = response.body();
-
-                } else {
-                    // error response, no access to resource?
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Token> call, Throwable t) {
-                // something went completely south (like no internet connection)
-            }
-        });
-    }
-
-    static void GetUsers(){
+    static void getUsers(){
 
         int offset = 0;
 
@@ -165,5 +143,35 @@ public class NetworkService {
         _token = null;
     }
 
+
+    /* inner classes */
+
+    public static class ServiceGenerator {
+        private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        private static Retrofit.Builder builder =
+                new Retrofit.Builder()
+                        .baseUrl(API_BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create());
+        public static <S> S createService(Class<S> serviceClass) {
+            Retrofit retrofit = builder.client(httpClient.build()).build();
+            return retrofit.create(serviceClass);
+        }
+    }
+
+    public interface APIService {
+        @POST("/login")
+        Call<Token> login(@Body LoginData body);
+
+        @POST("/register")
+        Call<Token> register(@Body LoginData body);
+
+        //todo: изменить hashmap
+        @GET("GET /{token}/contacts/{offset}")
+        Call<HashMap<String,Message>> getUsers(@Path("token") Token token, @Path("offset") String offset);
+
+        //todo: изменить лист
+        @GET ("/{token}/messages/{dialog_id}/unread")
+        Call<ArrayList<Message>> getMessages(@Path("token") Token token, @Path("dialog_id") String dialog_id);
+    }
 }
 

@@ -1,14 +1,11 @@
 package com.example.batyamessagingapp.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.util.Message;
 
 import java.util.List;
@@ -31,27 +28,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.Holder> 
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
-        return new Holder(itemView);
+        return null;
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        final Task task = taskList.get(position);
-        holder.dateStartTextView.setText(task.getDateStart());
-        holder.dateEndTextView.setText(task.getDateEnd());
-        holder.messageTextView.setText(task.getMessage());
-
-
-        holder.checkBox.setOnCheckedChangeListener(null);
-        holder.checkBox.setChecked(task.getChecked());
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //set your object's last status
-                task.setChecked(isChecked);
-            }
-        });
 
     }
 
@@ -75,10 +56,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.Holder> 
 
         public Holder(View itemView) {
             super(itemView);
-            dateStartTextView = (TextView) itemView.findViewById(R.id.dateStartTextView);
-            dateEndTextView = (TextView) itemView.findViewById(R.id.dateEndTextView);
-            messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
-            checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
             checkBox.setChecked(false);
         }
 

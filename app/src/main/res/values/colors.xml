@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="mainBackground">#eef1f0</color>
+    <color name="lightGrey">#b4b4b4</color>
+    <color name="lightLightGrey">#f4f4f4</color>
+    <color name="grey">#3c3c3c</color>
+    <color name="white">#ffffff</color>
+    <color name="auth">#29b168</color>
+    <color name="deleteRed">#e40808</color>
+    <color name="black">#111111</color>
 </resources>

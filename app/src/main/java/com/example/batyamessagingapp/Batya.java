@@ -1,6 +1,7 @@
-package com.example.batyamessagingapp.activity;
+package com.example.batyamessagingapp;
 
 import android.app.Application;
+import android.os.Bundle;
 
 /**
  * Created by Кашин on 23.10.2016.
@@ -17,7 +18,9 @@ public class Batya extends Application {
     public void onCreate(){
         super.onCreate();
 
-        //if (NetworkService.isLoggedIn())
+
     }
+
+
 
 }

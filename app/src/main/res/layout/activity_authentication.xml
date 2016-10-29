@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    tools:context="com.example.afinal.activity.Authorization">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BATYA"
+                android:typeface="monospace"
+                android:textStyle="bold"
+                android:textSize="100dp"
+                android:gravity="center"
+                android:textColor="@color/lightGrey"
+                android:id="@+id/sc"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:paddingBottom="8dp"
+                android:text="Welcome to the BATYA"
+                android:textColor="@color/grey"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:layout_marginBottom="50dp"
+                android:text="Cross-platform instant messenger"
+                android:textColor="@color/grey"
+                android:gravity="center" />
+
+            <EditText
+                android:id="@+id/usernameEditText"
+                style="@style/AuthInput"
+                android:inputType="text"
+                android:hint="Логин"/>
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                style="@style/AuthInput"
+                android:inputType="textPassword"
+                android:hint="Пароль" />
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent" android:layout_height="40dp"
+                android:layout_below="@+id/TextView01">
+
+                <Button
+                    android:background="@color/auth"
+                    android:text="Log in"
+                    android:textColor="@color/white"
+                    android:id = "@+id/authButton"
+                    android:layout_width="0.0dip" android:layout_height="fill_parent"
+                    android:layout_weight="10"
+                    android:textSize="20dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <Button
+                    android:background="@color/auth"
+                    android:text="Sign up"
+                    android:textColor="@color/white"
+                    android:id = "@+id/registrationButton"
+                    android:layout_width="0.0dip" android:layout_height="fill_parent"
+                    android:layout_weight="10"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="10dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+            <TextView
+                android:layout_marginTop="75dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Batya inc. -- 2016"
+                android:textSize="14dp"
+                android:textColor="@color/grey"
+                android:gravity="center"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>
+
