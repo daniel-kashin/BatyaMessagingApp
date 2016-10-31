@@ -3,6 +3,7 @@ package com.example.batyamessagingapp.presenter;
 import android.content.Context;
 
 import com.example.batyamessagingapp.Batya;
+import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.view.ContactsView;
 
 /**
@@ -20,7 +21,7 @@ public class ContactsService implements ContactsPresenter {
     }
 
     public void onLogoutButtonClick(){
-        (((Batya)context.getApplicationContext()).networkService).logout();
+        NetworkService.deleteToken();
         view.openAuthenticationActivity();
     }
 

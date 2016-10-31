@@ -1,5 +1,7 @@
 package com.example.batyamessagingapp.view;
 
+import android.app.ProgressDialog;
+
 import com.example.batyamessagingapp.SecurePreferences;
 
 /**
@@ -13,4 +15,7 @@ public interface AuthenticationView {
     void openContactsActivity();
     boolean checkInputs();
     void setUsernameEditText(String username);
+    void startProgressDialog(String message);
+    void stopProgressDialog();
+    ProgressDialog getProgressDialog();
 }

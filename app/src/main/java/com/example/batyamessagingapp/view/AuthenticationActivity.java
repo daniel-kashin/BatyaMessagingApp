@@ -39,6 +39,10 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     private AuthenticationPresenter authenticationPresenter;
 
+    public ProgressDialog getProgressDialog(){
+        return progressDialog;
+    }
+
     private void initializeViews() {
         registrationButton = (Button) findViewById(R.id.registrationButton);
         authButton = (Button) findViewById(R.id.authButton);
@@ -49,6 +53,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         mainLayout = findViewById(R.id.mainLayout);
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("Please, wait");
     }
 
     private void setListeners() {
@@ -96,8 +102,15 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         registrationButton.setOnClickListener(onButtonClick);
     }
 
-    public void setUsernameEditText(String message){
-        usernameEditText.setText(message);
+    public void startProgressDialog(String message){
+        progressDialog.setMessage(message);
+        if (!progressDialog.isShowing())
+        progressDialog.show();
+    }
+
+    public void stopProgressDialog(){
+        if (progressDialog.isShowing())
+        progressDialog.dismiss();
     }
 
     @Override
@@ -147,9 +160,14 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    public void setUsernameEditText(String newText){
+        usernameEditText.setText(newText);
+    }
+
     @Override
     public void openContactsActivity() {
         Intent intent = new Intent(this, ContactsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

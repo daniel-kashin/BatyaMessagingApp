@@ -16,11 +16,9 @@ import com.example.batyamessagingapp.model.NetworkService;
 
 public class Batya extends Application {
 
-    public static NetworkService networkService;
-
     public void onCreate(){
         super.onCreate();
-        this.networkService = new NetworkService(this);
+        NetworkService.initializeSharedPreferences(this);
     }
 
 }

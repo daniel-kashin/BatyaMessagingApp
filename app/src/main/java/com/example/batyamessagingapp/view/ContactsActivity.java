@@ -46,7 +46,7 @@ public class ContactsActivity extends AppCompatActivity implements ContactsView 
         setOnClickListeners();
 
         contactsPresenter = new ContactsService((ContactsView)this, (Context) this);
-        textView.setText(Batya.networkService.getToken());
+        textView.setText(NetworkService.getTokenValue());
     }
 
     @Override

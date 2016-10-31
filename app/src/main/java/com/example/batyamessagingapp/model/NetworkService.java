@@ -1,12 +1,7 @@
 package com.example.batyamessagingapp.model;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Interpolator;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
 import com.example.batyamessagingapp.SecurePreferences;
 import com.example.batyamessagingapp.util.Message;
@@ -14,8 +9,6 @@ import com.example.batyamessagingapp.util.LoginData;
 import com.example.batyamessagingapp.util.Token;
 
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,146 +44,87 @@ import retrofit2.Response;
 
 public class NetworkService {
 
+    public static final String API_BASE_URL = "http://139.59.157.41:8080";
     private static final String APP_PREFERENCES = "auth";
     private static final String APP_PREFERENCES_USERNAME = "username";
-    private static final String APP_PREFERENCES_PASSWORD = "password";
+    private static final String APP_PREFERENCES_TOKEN = "token";
     private static final String KEY = "onetwothreefoutfivesixseveneightnineten";
-    private SecurePreferences sharedPreferences;
+    private static SecurePreferences _sharedPreferences;
 
-    private APIService _apiService = null;
-    private Token _token = null;
-    private boolean _isBuilt = false;
-    public static final String API_BASE_URL = "http://139.59.157.41:8080";
-    public String THIS_BASE_URL;
+    private static APIService _apiService = null;
 
-    public boolean tryToConnect() {
-        if (sharedPreferences.containsKey(APP_PREFERENCES_USERNAME) && sharedPreferences.containsKey(APP_PREFERENCES_PASSWORD)) {
-            final String username = sharedPreferences.getString(APP_PREFERENCES_USERNAME);
-            final String password = sharedPreferences.getString(APP_PREFERENCES_PASSWORD);
-            sharedPreferences.clear();
-
-            connectWithNewData(username, password);
-        }
-
-        return isLoggedIn();
+    static {
+        Build();
     }
 
-    public String getUsername(){
-        if (sharedPreferences.containsKey(APP_PREFERENCES_USERNAME))
-            return sharedPreferences.getString(APP_PREFERENCES_USERNAME);
-
-        return null;
+    public static boolean tryToConnect() {
+        return (_sharedPreferences.containsKey(APP_PREFERENCES_TOKEN) &&
+                (_sharedPreferences.getString(APP_PREFERENCES_TOKEN).length() == 32));
     }
 
-    public String getToken() {
-        return _token.getToken();
+    public static void initializeSharedPreferences(Context context) {
+        _sharedPreferences = new SecurePreferences(context, APP_PREFERENCES, KEY, true);
     }
 
-    private void saveActivityPreferences(String username, String password) {
-        sharedPreferences.put(APP_PREFERENCES_USERNAME, username);
-        sharedPreferences.put(APP_PREFERENCES_PASSWORD, password);
+    public static boolean preferencesInitialized() {
+        return _sharedPreferences != null;
     }
 
-    private void deletePreferences() {
-        sharedPreferences.clear();
+    public static String getUsername() {
+        if (_sharedPreferences.containsKey(APP_PREFERENCES_USERNAME))
+            return _sharedPreferences.getString(APP_PREFERENCES_USERNAME);
+
+        return "";
     }
 
-    public boolean connectWithNewData(String username, String password) {
-        login(username, password);
-        if (isLoggedIn()) saveActivityPreferences(username, password);
-        return isLoggedIn();
+    public static boolean isLoggedIn() {
+        return (_sharedPreferences != null && _sharedPreferences.containsKey(APP_PREFERENCES_TOKEN));
     }
 
-    public boolean registerWithNewData(String username, String password) {
-        register(username, password);
-        if (isLoggedIn()) saveActivityPreferences(username, password);
-        return isLoggedIn();
+    public static void cacheTokenAndUsername(Token token, String username){
+        if (isLoggedIn()) clearSharedPreferences();
+        _sharedPreferences.put(APP_PREFERENCES_TOKEN, token.getValue());
+        _sharedPreferences.put(APP_PREFERENCES_USERNAME, username);
     }
 
-    public NetworkService(Context context) {
-        this(API_BASE_URL, context);
+    //public static boolean connectWithNewData(String username, String password) {
+    //    login(username, password);
+    //    if (isLoggedIn()) saveActivityPreferences(username, password);
+    //    return isLoggedIn();
+    //}
+
+    //public boolean registerWithNewData(String username, String password) {
+    //    register(username, password);
+    //    if (isLoggedIn()) saveActivityPreferences(username, password);
+    //    return isLoggedIn();
+    //}
+
+    static void Build() {
+        _apiService = RetrofitGenerator.createService(APIService.class, API_BASE_URL);
     }
 
-    public NetworkService(String baseUrl, Context context) {
-        this.THIS_BASE_URL = baseUrl;
-        Build(baseUrl);
-        sharedPreferences = new SecurePreferences(context, APP_PREFERENCES, KEY, true);
+    public static Call<Token> getAuthCall(final String username, final String password) {
+        //Build();
+
+        LoginData loginData = new LoginData(username, password);
+        return _apiService.login(loginData);
     }
 
-    public boolean isLoggedIn() {
-        return _token != null;
-    }
+    public static Call<Token> getRegisterCall(final String username, final String password) {
+        //Build();
 
-
-    void Build(String baseUrl) {
-        _apiService = RetrofitGenerator.createService(APIService.class, baseUrl);
-        _isBuilt = true;
-    }
-
-    public Token login(final String name, final String password) {
-
-        class Login extends AsyncTask<Void,Void,Token> {
-            @Override
-            protected Token doInBackground(Void... voids) {
-
-                LoginData loginData = new LoginData(name, password);
-
-                Call<Token> call = _apiService.login(loginData);
-                try {
-                    Token token = call.execute().body();
-                    return token;
-                } catch (Exception e){
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            protected void onPostExecute(Token token){
-               // _token = token;
-            }
-        }
-
-        try {
-            Login login = new Login();
-            _token = login.execute().get();
-        }catch(Exception ex){
-        }
-        return _token;
+        LoginData loginData = new LoginData(username, password);
+        return _apiService.register(loginData);
     }
 
 
-    public Token register(final String name, final String password) {
 
-        class Register extends AsyncTask<Void,Void,Token> {
-            @Override
-            protected Token doInBackground(Void... voids) {
-                LoginData loginData = new LoginData(name, password);
-
-                Call<Token> call = _apiService.register(loginData);
-                try {
-                    Token token = call.execute().body();
-                    return token;
-                } catch (Exception e){
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            protected void onPostExecute(Token token){
-                // _token = token;
-            }
-        }
-
-        try {
-            Register register = new Register();
-            _token = register.execute().get();
-        }catch(Exception ex){
-        }
-        return _token;
+    private static void clearSharedPreferences(){
+        _sharedPreferences.clear();
     }
 
     public void getUsers() {
-
+/*
         int offset = 0;
 
         Call<HashMap<String, Message>> call = _apiService.getUsers(_token, ("offset/" + offset));
@@ -210,19 +144,25 @@ public class NetworkService {
                 // something went completely south (like no internet connection)
             }
         });
-
+*/
     }
 
     public void getMessages(Token token, String string) {
 
     }
 
-    private void deletePassword(){
-        sharedPreferences.removeValue(APP_PREFERENCES_PASSWORD);
+    public static String getTokenValue(){
+        if(isLoggedIn())
+            return _sharedPreferences.getString(APP_PREFERENCES_TOKEN);
+        else return "";
     }
 
-    public void logout() {
-        deletePassword();
-        _token = null;
+    public static void deleteToken() {
+        if (isLoggedIn())
+            _sharedPreferences.removeValue(APP_PREFERENCES_TOKEN);
+    }
+
+    public void onLogout() {
+        deleteToken();
     }
 }

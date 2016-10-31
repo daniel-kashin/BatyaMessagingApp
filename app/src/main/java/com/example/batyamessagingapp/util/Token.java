@@ -13,7 +13,7 @@ public class Token {
     @Expose
     private String token;
 
-    public String getToken() {
+    public String getValue() {
         return token;
     }
 }
