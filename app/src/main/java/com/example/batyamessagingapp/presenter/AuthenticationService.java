@@ -22,6 +22,7 @@ public class AuthenticationService implements AuthenticationPresenter {
     private static final String KEY = "onetwothreefoutfivesixseveneightnineten";
     private SecurePreferences sharedPreferences;
     private AuthenticationView view;
+    private boolean isConnected;
 
     public AuthenticationService(AuthenticationView view){
         this.view = view;
@@ -36,6 +37,8 @@ public class AuthenticationService implements AuthenticationPresenter {
         if(sharedPreferences.containsKey(APP_PREFERENCES_USERNAME) && sharedPreferences.containsKey(APP_PREFERENCES_PASSWORD)){
             login = sharedPreferences.getString(APP_PREFERENCES_USERNAME);
             password = sharedPreferences.getString(APP_PREFERENCES_PASSWORD);
+            isConnected = true;
+            view.openContactsActivity();
         }
     }
 
@@ -46,8 +49,8 @@ public class AuthenticationService implements AuthenticationPresenter {
 
 
         saveActivityPreferences(view.getUsername(),view.getPassword());
-
-
+        isConnected = true;
+        view.openContactsActivity();
     }
 
     @Override
@@ -55,14 +58,11 @@ public class AuthenticationService implements AuthenticationPresenter {
 
     }
 
-    protected void saveActivityPreferences(String username, String password) {
-        sharedPreferences.clear();
+    private void saveActivityPreferences(String username, String password) {
+
         sharedPreferences.put(APP_PREFERENCES_USERNAME, username);
         sharedPreferences.put(APP_PREFERENCES_PASSWORD, password);
     }
-
-
-
 
 
 }
