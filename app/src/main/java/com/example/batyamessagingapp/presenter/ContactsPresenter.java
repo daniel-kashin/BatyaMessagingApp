@@ -5,4 +5,6 @@ package com.example.batyamessagingapp.presenter;
  */
 
 public interface ContactsPresenter {
+    void onLogoutButtonClick();
+
 }

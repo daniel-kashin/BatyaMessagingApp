@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
-    tools:context="com.example.afinal.activity.Authorization">
+    tools:context="com.example.batyamessagingapp.view.AuthenticationActivity">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -15,6 +15,7 @@
         android:layout_alignParentStart="true">
 
         <LinearLayout
+            android:id="@+id/mainLayout"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:orientation="vertical"
@@ -26,7 +27,7 @@
                 android:layout_marginBottom="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="BATYA"
+                android:text="@string/startup_name"
                 android:typeface="monospace"
                 android:textStyle="bold"
                 android:textSize="100dp"
@@ -39,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18dp"
                 android:paddingBottom="8dp"
-                android:text="Welcome to the BATYA"
+                android:text="@string/greeting"
                 android:textColor="@color/grey"
                 android:gravity="center" />
 
@@ -48,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:layout_marginBottom="50dp"
-                android:text="Cross-platform instant messenger"
+                android:text="@string/description"
                 android:textColor="@color/grey"
                 android:gravity="center" />
 
@@ -56,14 +57,12 @@
                 android:id="@+id/usernameEditText"
                 style="@style/AuthInput"
                 android:inputType="text"
-                android:hint="Логин"/>
-
+                android:hint="@string/username"/>
             <EditText
                 android:id="@+id/passwordEditText"
                 style="@style/AuthInput"
                 android:inputType="textPassword"
-                android:hint="Пароль" />
-
+                android:hint="@string/password" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -101,7 +100,7 @@
                 android:layout_marginTop="75dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Batya inc. -- 2016"
+                android:text="@string/solid_startup_name"
                 android:textSize="14dp"
                 android:textColor="@color/grey"
                 android:gravity="center"
@@ -110,6 +109,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+</ScrollView>
 </RelativeLayout>
 

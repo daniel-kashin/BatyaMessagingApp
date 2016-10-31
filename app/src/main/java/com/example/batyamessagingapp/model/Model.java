@@ -5,6 +5,5 @@ package com.example.batyamessagingapp.model;
  */
 
 public interface Model {
-    boolean isLoggedIn();
-    boolean isBuilt();
+
 }

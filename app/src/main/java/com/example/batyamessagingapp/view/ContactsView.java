@@ -5,4 +5,5 @@ package com.example.batyamessagingapp.view;
  */
 
 public interface ContactsView {
+    void openAuthenticationActivity();
 }

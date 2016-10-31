@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.batyamessagingapp.Batya;
 import com.example.batyamessagingapp.SecurePreferences;
+import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.util.LoginData;
 import com.example.batyamessagingapp.view.AuthenticationView;
 
@@ -16,13 +18,7 @@ import com.example.batyamessagingapp.view.AuthenticationView;
  */
 
 public class AuthenticationService implements AuthenticationPresenter {
-    private static final String APP_PREFERENCES = "auth";
-    private static final String APP_PREFERENCES_USERNAME= "username";
-    private static final String APP_PREFERENCES_PASSWORD = "password";
-    private static final String KEY = "onetwothreefoutfivesixseveneightnineten";
-    private SecurePreferences sharedPreferences;
     private AuthenticationView view;
-    private boolean isConnected;
 
     public AuthenticationService(AuthenticationView view){
         this.view = view;
@@ -30,39 +26,24 @@ public class AuthenticationService implements AuthenticationPresenter {
 
     @Override
     public void tryToConnectWithPreviousData(){
-        sharedPreferences = new SecurePreferences((Context)view, APP_PREFERENCES, KEY, true);
-        String login;
-        String password;
-
-        if(sharedPreferences.containsKey(APP_PREFERENCES_USERNAME) && sharedPreferences.containsKey(APP_PREFERENCES_PASSWORD)){
-            login = sharedPreferences.getString(APP_PREFERENCES_USERNAME);
-            password = sharedPreferences.getString(APP_PREFERENCES_PASSWORD);
-            isConnected = true;
+        if (Batya.networkService.tryToConnect())
             view.openContactsActivity();
-        }
+        else if ((Batya.networkService).getUsername() != null)
+            view.setUsernameEditText((Batya.networkService).getUsername());
     }
 
     @Override
     public void onAuthButtonClick(){
         //TODO: add regular expressions
 
-
-
-        saveActivityPreferences(view.getUsername(),view.getPassword());
-        isConnected = true;
-        view.openContactsActivity();
+        if (view.checkInputs() && Batya.networkService.connectWithNewData(view.getUsername(),view.getPassword()))
+            view.openContactsActivity();
     }
 
     @Override
     public void onRegistrationButtonClick(){
-
+        if (view.checkInputs() && Batya.networkService.registerWithNewData(view.getUsername(),view.getPassword()))
+            view.openContactsActivity();
     }
-
-    private void saveActivityPreferences(String username, String password) {
-
-        sharedPreferences.put(APP_PREFERENCES_USERNAME, username);
-        sharedPreferences.put(APP_PREFERENCES_PASSWORD, password);
-    }
-
 
 }
