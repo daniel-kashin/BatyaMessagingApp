@@ -6,4 +6,5 @@
     <string name="description">Cross-platform instant messenger</string>
     <string name="username">username</string>
     <string name="password">password</string>
+    <string name="title_activity_splash">SplashActivity</string>
 </resources>

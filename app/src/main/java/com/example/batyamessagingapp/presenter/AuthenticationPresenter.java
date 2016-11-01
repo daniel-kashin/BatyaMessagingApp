@@ -5,7 +5,6 @@ package com.example.batyamessagingapp.presenter;
  */
 
 public interface AuthenticationPresenter {
-    void tryToConnectWithPreviousData();
     void onAuthButtonClick();
     void onRegistrationButtonClick();
 }

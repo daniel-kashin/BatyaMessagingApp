@@ -32,13 +32,6 @@ public class AuthenticationService implements AuthenticationPresenter {
         this.view = view;
     }
 
-    public void tryToConnectWithPreviousData() {
-        if (NetworkService.isLoggedIn())
-            view.openContactsActivity();
-        else
-            view.setUsernameEditText(NetworkService.getUsername());
-    }
-
     public void onAuthButtonClick() {
         if (view.checkInputs()) {
             try {
@@ -97,8 +90,8 @@ public class AuthenticationService implements AuthenticationPresenter {
             view.stopProgressDialog();
 
             if (token != null) {
-                view.openContactsActivity();
                 NetworkService.cacheTokenAndUsername(token, view.getUsername());
+                view.openContactsActivity();
             }
         }
     }
@@ -141,8 +134,8 @@ public class AuthenticationService implements AuthenticationPresenter {
             view.stopProgressDialog();
 
             if (token != null) {
-                view.openContactsActivity();
                 NetworkService.cacheTokenAndUsername(token, view.getUsername());
+                view.openContactsActivity();
             }
         }
     }

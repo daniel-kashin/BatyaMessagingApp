@@ -119,9 +119,9 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         setContentView(R.layout.activity_authentication);
         initializeViews();
         setListeners();
+        setUsernameEditText(NetworkService.getUsername());
 
         authenticationPresenter = new AuthenticationService(this);
-        authenticationPresenter.tryToConnectWithPreviousData();
     }
 
     @Override
@@ -169,6 +169,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         Intent intent = new Intent(this, ContactsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
 
 }

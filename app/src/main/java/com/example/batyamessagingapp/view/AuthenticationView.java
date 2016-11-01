@@ -14,7 +14,6 @@ public interface AuthenticationView {
     void showToast(String message);
     void openContactsActivity();
     boolean checkInputs();
-    void setUsernameEditText(String username);
     void startProgressDialog(String message);
     void stopProgressDialog();
     ProgressDialog getProgressDialog();
