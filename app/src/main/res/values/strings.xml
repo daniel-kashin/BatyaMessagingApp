@@ -4,7 +4,7 @@
     <string name="greeting">Welcome to the BATYA</string>
     <string name="solid_startup_name">BATYA inc. ® 2016</string>
     <string name="description">Cross-platform instant messenger</string>
-    <string name="username">username</string>
-    <string name="password">password</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
     <string name="title_activity_splash">SplashActivity</string>
 </resources>

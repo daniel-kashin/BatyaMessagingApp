@@ -3,6 +3,7 @@ package com.example.batyamessagingapp.view;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -34,8 +35,9 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     private EditText passwordEditText;
     private View activityRootView;
     private ScrollView scrollView;
-    private View mainLayout;
     private ProgressDialog progressDialog;
+    private TextInputLayout usernameTextInputLayout;
+    private TextInputLayout passwordTextInputLayout;
 
     private AuthenticationPresenter authenticationPresenter;
 
@@ -50,11 +52,12 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         activityRootView = findViewById(R.id.activityRoot);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
-        mainLayout = findViewById(R.id.mainLayout);
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle("Please, wait");
+        progressDialog.setTitle(null);
+        usernameTextInputLayout = (TextInputLayout)findViewById(R.id.usernameTextInputLayout);
+        passwordTextInputLayout = (TextInputLayout)findViewById(R.id.passwordTextInputLayout);
     }
 
     private void setListeners() {
@@ -140,8 +143,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         if (!p.matcher(username).matches())
             usernameError = "latin letters, numbers, _ and - are allowded";
 
-        usernameEditText.setError(usernameError);
-        passwordEditText.setError(passwordError);
+        usernameTextInputLayout.setError(usernameError);
+        passwordTextInputLayout.setError(passwordError);
         return usernameError == null && passwordError == null;
     }
 

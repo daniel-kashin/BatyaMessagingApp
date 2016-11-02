@@ -25,10 +25,10 @@
         </activity>
         <activity
             android:name=".view.AuthenticationActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".view.ContactsActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

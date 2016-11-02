@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_horizontal_margin">30dp</dimen>
+
+    <dimen name="logo_size">120dp</dimen>
+    <dimen name="logo_margin_top">130dp</dimen>
+
+    <dimen name="linear_layout_padding_bottom">30dp</dimen>
+
+    <dimen name="logo_margin_bottom">70dp</dimen>
+
+    <dimen name="auth_button_text_size">25dp</dimen>
+    <dimen name="auth_button_height">45dp</dimen>
+
+    <dimen name="auth_input_margin_bottom">20dp</dimen>
+    <dimen name="auth_input_height">50dp</dimen>
+
+    <dimen name="auth_input_text_size">30dp</dimen>
+    <dimen name="auth_input_top_text_size">25</dimen>
+    <dimen name="auth_input_bottom_text_size">18dp</dimen>
+</resources>
