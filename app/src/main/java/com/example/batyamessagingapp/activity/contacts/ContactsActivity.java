@@ -1,31 +1,41 @@
-package com.example.batyamessagingapp.view;
+package com.example.batyamessagingapp.activity.contacts;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.batyamessagingapp.Batya;
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.model.NetworkService;
-import com.example.batyamessagingapp.presenter.AuthenticationPresenter;
-import com.example.batyamessagingapp.presenter.AuthenticationService;
-import com.example.batyamessagingapp.presenter.ContactsPresenter;
-import com.example.batyamessagingapp.presenter.ContactsService;
+import com.example.batyamessagingapp.activity.authentication.AuthenticationActivity;
+import com.example.batyamessagingapp.model.PreferencesService;
 
 public class ContactsActivity extends AppCompatActivity implements ContactsView {
+    private ProgressDialog progressDialog;
     Button logoutButton;
+    Button fullLogoutButton;
     TextView textView;
 
     private ContactsPresenter contactsPresenter;
 
     private void initializeViews() {
         logoutButton = (Button)findViewById(R.id.logoutButton);
+        fullLogoutButton = (Button)findViewById(R.id.fullLogoutButton);
         textView = (TextView)findViewById(R.id.textView);
+    }
+
+    @Override
+    public void showAlert(String message, String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setCancelable(true);
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void setOnClickListeners(){
@@ -33,6 +43,12 @@ public class ContactsActivity extends AppCompatActivity implements ContactsView 
             @Override
             public void onClick(View view){
                 contactsPresenter.onLogoutButtonClick();
+            }
+        });
+        fullLogoutButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                contactsPresenter.onFullLogoutButtonClick();
             }
         });
     }
@@ -46,7 +62,7 @@ public class ContactsActivity extends AppCompatActivity implements ContactsView 
         setOnClickListeners();
 
         contactsPresenter = new ContactsService((ContactsView)this, (Context) this);
-        textView.setText(NetworkService.getTokenValue());
+        textView.setText(PreferencesService.getTokenValueFromPreferences());
     }
 
     @Override

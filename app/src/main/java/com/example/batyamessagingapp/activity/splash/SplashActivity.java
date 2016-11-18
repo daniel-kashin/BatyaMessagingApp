@@ -1,9 +1,12 @@
-package com.example.batyamessagingapp.view;
+package com.example.batyamessagingapp.activity.splash;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import com.example.batyamessagingapp.model.NetworkService;
+
+import com.example.batyamessagingapp.activity.authentication.AuthenticationActivity;
+import com.example.batyamessagingapp.activity.contacts.ContactsActivity;
+import com.example.batyamessagingapp.model.PreferencesService;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -14,10 +17,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startNextActivity(){
-        try { Thread.sleep(500); } catch (Throwable t){ }
-
         Intent intent;
-        if (NetworkService.isLoggedIn())
+        if (PreferencesService.isTokenAvailableInPreferences())
             intent = new Intent(this,ContactsActivity.class);
         else
             intent = new Intent(this,AuthenticationActivity.class);

@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.SplashActivity"
+            android:name=".activity.splash.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.AuthenticationActivity"
-            android:theme="@style/AppTheme"/>
+            android:name=".activity.authentication.AuthenticationActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name=".view.ContactsActivity"
-            android:theme="@style/AppTheme"/>
+            android:name=".activity.contacts.ContactsActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".activity.dialog.DialogActivity"></activity>
     </application>
 
 </manifest>

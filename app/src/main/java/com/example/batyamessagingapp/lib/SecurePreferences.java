@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp;
+package com.example.batyamessagingapp.lib;
 
 /**
  * Created by Кашин on 29.10.2016.

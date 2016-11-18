@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.util;
+package com.example.batyamessagingapp.model.pojo;
 
 /**
  * Created by Кашин on 23.10.2016.
@@ -32,6 +32,16 @@ public class Message {
     @SerializedName("content")
     @Expose
     private String content;
+
+    public Message(String type, String content){
+        this.type = type;
+        this.content = content;
+        this.dialogId = type;
+        this.sender = type;
+        this.guid = type;
+        timestamp = 0;
+    }
+
 
     public String getGuid() {
         return guid;

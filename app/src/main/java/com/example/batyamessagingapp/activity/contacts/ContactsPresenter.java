@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.presenter;
+package com.example.batyamessagingapp.activity.contacts;
 
 /**
  * Created by Кашин on 29.10.2016.
@@ -6,5 +6,5 @@ package com.example.batyamessagingapp.presenter;
 
 public interface ContactsPresenter {
     void onLogoutButtonClick();
-
+    void onFullLogoutButtonClick();
 }

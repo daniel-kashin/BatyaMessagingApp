@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Кашин on 29.10.2016.
  */
 
-public class RetrofitGenerator {
+public class APIGenerator {
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl) {

@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.util;
+package com.example.batyamessagingapp.model.pojo;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.annotations.Expose;

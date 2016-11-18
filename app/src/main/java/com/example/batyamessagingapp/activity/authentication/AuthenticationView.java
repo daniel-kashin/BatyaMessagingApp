@@ -1,8 +1,6 @@
-package com.example.batyamessagingapp.view;
+package com.example.batyamessagingapp.activity.authentication;
 
 import android.app.ProgressDialog;
-
-import com.example.batyamessagingapp.SecurePreferences;
 
 /**
  * Created by Кашин on 29.10.2016.
@@ -11,7 +9,7 @@ import com.example.batyamessagingapp.SecurePreferences;
 public interface AuthenticationView {
     String getUsername();
     String getPassword();
-    void showToast(String message);
+    void showAlert(String message, String title);
     void openContactsActivity();
     boolean checkInputs();
     void startProgressDialog(String message);

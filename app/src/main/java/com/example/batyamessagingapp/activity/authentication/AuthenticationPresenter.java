@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.presenter;
+package com.example.batyamessagingapp.activity.authentication;
 
 /**
  * Created by Кашин on 29.10.2016.

@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.adapter;
+package com.example.batyamessagingapp.activity.dialog.recycler_view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.example.batyamessagingapp.util.Message;
+import com.example.batyamessagingapp.model.pojo.Message;
 
 import java.util.List;
 
