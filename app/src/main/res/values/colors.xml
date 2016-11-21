@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="primary_semi_light">#5C6BC0</color>
-    <color name="primary_semi_light_dark">#000000</color>
-    <color name="primary_light">#C5CAE9</color>
+    <color name="indigo_700">#303F9F</color>
+    <color name="indigo_500">#3F51B5</color>
+    <color name="indigo_400">#5C6BC0</color>
+    <color name="indigo_100">#C5CAE9</color>
+    <color name="indigo_100_transparent">#7dc5cae9</color>
+    <color name="indigo_50">#E8EAF6</color>
     <color name="accent">#C5E1A5</color>
 
     <color name="primary_text">#de000000</color>
     <color name="secondary_text">#8a000000</color>
     <color name="hint_text">#61000000</color>
+
+    <color name="shadow_start">#0b000000</color>
+    <color name="shadow_end">#19000000</color>
 
     <color name="error">#EF9A9A</color>
 

@@ -29,7 +29,10 @@
         <activity
             android:name=".activity.contacts.ContactsActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.dialog.DialogActivity"></activity>
+        <activity
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+        android:name=".activity.dialog.DialogActivity"/>
     </application>
 
 </manifest>

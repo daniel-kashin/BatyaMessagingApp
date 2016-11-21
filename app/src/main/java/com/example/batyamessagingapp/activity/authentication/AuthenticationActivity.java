@@ -35,13 +35,23 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     private TextInputLayout usernameTextInputLayout;
     private TextInputLayout passwordTextInputLayout;
     private TextView mainIcon;
+
     private int mainIconPaddingTop;
     private int mainIconPaddingButtom;
 
     private AuthenticationPresenter presenter;
 
-    public ProgressDialog getProgressDialog(){
-        return progressDialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_authentication);
+
+        initializeViews();
+        setListeners();
+        setUsernameEditText(PreferencesService.getUsernameFromPreferences());
+
+        presenter = new AuthenticationService(this);
     }
 
     private void initializeViews() {
@@ -49,22 +59,23 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         authButton = (Button) findViewById(R.id.authButton);
         usernameEditText = (EditText) findViewById(R.id.usernameEditText);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        activityRootView = findViewById(R.id.activityRoot);
+        activityRootView = findViewById(R.id.activity_authentication);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
+        usernameTextInputLayout = (TextInputLayout)findViewById(R.id.usernameTextInputLayout);
+        passwordTextInputLayout = (TextInputLayout)findViewById(R.id.passwordTextInputLayout);
+        mainIcon = (TextView)findViewById(R.id.mainIcon);
+
+        mainIconPaddingTop = mainIcon.getPaddingTop();
+        mainIconPaddingButtom = mainIcon.getPaddingBottom();
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setTitle(null);
-        usernameTextInputLayout = (TextInputLayout)findViewById(R.id.usernameTextInputLayout);
-        passwordTextInputLayout = (TextInputLayout)findViewById(R.id.passwordTextInputLayout);
-        mainIcon = (TextView)findViewById(R.id.mainIcon);
-        mainIconPaddingTop = mainIcon.getPaddingTop();
-        mainIconPaddingButtom = mainIcon.getPaddingBottom();
     }
 
     private void setListeners() {
-
-
+        //resize the screen when keyboard appears
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -74,10 +85,9 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 final int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
                 if (heightDiff > dp200) { // if more than 200 dp, it's probably a keyboard...
                     mainIcon.setPadding(mainIcon.getPaddingLeft(), mainIconPaddingButtom/2 ,mainIcon.getPaddingRight(), mainIconPaddingButtom/2);
-
                     scrollView.post(new Runnable() {
                         public void run() {
-                            scrollView.scrollTo(0, 1000);
+                            scrollView.scrollTo(0, 1000000);
                         }
                     });
                 } else {
@@ -95,22 +105,16 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         View.OnClickListener onButtonClick = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case (R.id.authButton):
-                        presenter.onAuthButtonClick();
-                        break;
-                    case (R.id.registrationButton):
-                        presenter.onRegistrationButtonClick();
-                        break;
-                    default:
-                        break;
+                int id = view.getId();
+                if (id == R.id.authButton||id==R.id.registrationButton) {
+                        presenter.onButtonClick(id);
                 }
             }
         };
-
         authButton.setOnClickListener(onButtonClick);
         registrationButton.setOnClickListener(onButtonClick);
 
+        //call auth button onClick when user finished to write the password
         passwordEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -122,26 +126,21 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         });
     }
 
+    public void setUsernameEditText(String newText){
+        usernameEditText.setText(newText);
+    }
+
+    @Override
     public void startProgressDialog(String message){
         progressDialog.setMessage(message);
         if (!progressDialog.isShowing())
         progressDialog.show();
     }
 
+    @Override
     public void stopProgressDialog(){
         if (progressDialog.isShowing())
         progressDialog.dismiss();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
-        initializeViews();
-        setListeners();
-        setUsernameEditText(PreferencesService.getUsernameFromPreferences());
-
-        presenter = new AuthenticationService(this);
     }
 
     @Override
@@ -150,19 +149,28 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         String password = passwordEditText.getText().toString();
         String usernameError = null;
         String passwordError = null;
-
         Pattern p = Pattern.compile("[A-Za-z0-9_-]+");
-        if (password.length() < 10) passwordError = "at least 10 characters";
 
-        if (!p.matcher(username).matches())
+        if (password.length() < 10) {
+            passwordError = "at least 10 characters";
+        }
+
+        if (!p.matcher(username).matches()) {
             usernameError = "latin letters, numbers, _ and - are allowded";
-        if (username.length() < 2) usernameError = "at least 2 characters";
+        }
+
+        if (username.length() < 2) {
+            usernameError = "at least 2 characters";
+        }
 
         usernameTextInputLayout.setError(usernameError);
         passwordTextInputLayout.setError(passwordError);
 
-        if (username.isEmpty() || password.isEmpty()) return false;
-        return usernameError == null && passwordError == null;
+        if (username.isEmpty() || password.isEmpty()) {
+            return false;
+        } else {
+            return usernameError == null && passwordError == null;
+        }
     }
 
     @Override
@@ -185,10 +193,6 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         alert.show();
     }
 
-    public void setUsernameEditText(String newText){
-        usernameEditText.setText(newText);
-    }
-
     @Override
     public void openContactsActivity() {
         Intent intent = new Intent(this, DialogActivity.class);
@@ -197,4 +201,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         finish();
     }
 
+    @Override
+    public ProgressDialog getProgressDialog(){
+        return progressDialog;
+    }
 }

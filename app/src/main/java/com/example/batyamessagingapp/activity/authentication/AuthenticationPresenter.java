@@ -5,6 +5,5 @@ package com.example.batyamessagingapp.activity.authentication;
  */
 
 public interface AuthenticationPresenter {
-    void onAuthButtonClick();
-    void onRegistrationButtonClick();
+    void onButtonClick(int id);
 }

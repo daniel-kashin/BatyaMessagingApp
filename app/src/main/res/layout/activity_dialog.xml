@@ -1,53 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android.support.v7.widget.recyclerview="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.batyamessagingapp.activity.dialog.DialogActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/primary_semi_light"
-        android:id="@+id/rrr"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/messagesInput"
+        android:background="@color/indigo_50" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/layout_shadow"
+        android:layout_above="@id/messagesInput">
+    </View>
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:id="@+id/messagesInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
         <EditText
-            android:id="@+id/sendMessageEditText"
+            style="@style/MessageInput"
+            android:id="@+id/messageEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="150dp"
             android:minHeight="50dp"
             android:inputType="textMultiLine"
-            android:ems="10"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/sendMessageButtonLayout"
-            android:hint="@string/messageHint"
+            android:layout_toStartOf="@+id/messageButtonLayout"
             android:layout_marginStart="20dp" />
         <RelativeLayout
-            android:id="@+id/sendMessageButtonLayout"
+            android:id="@+id/messageButtonLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@id/sendMessageEditText">
+            android:layout_alignBottom="@+id/messageEditText">
         <Button
             android:visibility="invisible"
             android:alpha="0"
-            android:id="@+id/sendMessageButton"
+            android:id="@+id/messageButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="15dp"
-            android:src="@color/primary_dark"
+            android:src="@color/indigo_700"
             android:layout_margin="5dp"
             android:text="Button"
             android:layout_alignParentBottom="true"
             />
-        </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

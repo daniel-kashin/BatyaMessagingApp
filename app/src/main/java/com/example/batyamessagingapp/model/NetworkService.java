@@ -3,6 +3,7 @@ package com.example.batyamessagingapp.model;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.Message;
+import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Token;
 
 import okhttp3.ResponseBody;
@@ -16,7 +17,7 @@ import static com.example.batyamessagingapp.model.PreferencesService.getTokenVal
 
 public class NetworkService {
 
-    private static final String API_BASE_URL = "http://139.59.157.41:8080";
+    private static final String API_BASE_URL = "http://146.185.160.146:8080";
     private static APIService _apiService;
 
     static {
@@ -32,6 +33,10 @@ public class NetworkService {
         LoginData loginData = new LoginData(username, password);
         Call<Token> call = _apiService.login(loginData);
         return call;
+    }
+
+    public static Call<MessageArray> getGetMessageCall(String dialogId, int limit, int offset){
+        return _apiService.getMessages(getTokenValueFromPreferences(),dialogId,limit,offset);
     }
 
     public static Call<Token> getRegisterCall(final String username, final String password) {

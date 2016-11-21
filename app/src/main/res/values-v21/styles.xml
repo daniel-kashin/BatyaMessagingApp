@@ -8,19 +8,30 @@
         <item name="android:layout_height">@dimen/auth_input_height</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/primary_light</item>
-        <item name="android:textColorHighlight">@color/primary_semi_light</item>
-        <item name="android:textColorHighlightInverse">@color/primary_semi_light</item>
+        <item name="android:textColorHint">@color/indigo_100</item>
+        <item name="android:textColorHighlight">@color/indigo_400</item>
+        <item name="android:textColorHighlightInverse">@color/indigo_400</item>
         <item name="android:paddingRight">0dp</item>
         <item name="android:layout_marginBottom">@dimen/auth_input_margin_bottom</item>
-        <item name="colorControlNormal">@color/primary_light</item>
+        <item name="colorControlNormal">@color/indigo_100</item>
         <item name="colorControlActivated">@color/white</item>
         <item name="colorControlHighlight">@color/white</item>
     </style>
 
+    <style name="MessageInput" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name=""android:hint="@string/messageHint"
+        <item name="android:textColorHint">@color/hint_text</item>
+        <item name="android:textColorHighlight">@android:color/transparent</item>
+        <item name="android:textColorHighlightInverse">@android:color/transparent</item>
+        <item name="colorControlNormal">@color/primary_text</item>
+        <item name="colorControlActivated">@color/primary_text</item>
+        <item name="colorControlHighlight">@color/primary_text</item>
+    </style>
+
     <style name="AuthButton" parent="Base.Widget.AppCompat.Button">
         <item  name="android:background">@drawable/auth_button</item>
-        <item  name="android:textColor">@color/primary_light</item>
+        <item  name="android:textColor">@color/indigo_100</item>
         <item  name="android:layout_width">0dp</item>
         <item  name="android:layout_height">@dimen/auth_button_height</item>
         <item  name="android:layout_weight">1</item>
@@ -37,9 +48,9 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@drawable/background_splash</item>
         <item name="android:windowDisablePreview">true</item>
-        <item name="colorControlNormal">@color/primary_light</item>
+        <item name="colorControlNormal">@color/indigo_100</item>
         <item name="colorControlActivated">@color/white</item>
-        <item name="colorControlHighlight">@color/primary_semi_light</item>
+        <item name="colorControlHighlight">@color/indigo_400</item>
     </style>
 
     <style name="Widget.Design.TextInputLayout" parent="AppTheme">
@@ -47,7 +58,7 @@
         <item name="errorTextAppearance">@style/AppTheme.TextErrorAppearance</item>
         <item name="counterTextAppearance">@style/TextAppearance.Design.Counter</item>
         <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow</item>
-        <item name="android:textColorHint">@color/primary_light</item>
+        <item name="android:textColorHint">@color/indigo_100</item>
         <item name="android:textColorHighlight">@color/white</item>
         <item name="android:textColorHighlightInverse">@color/white</item>
         <item name="android:textSize">@dimen/auth_input_text_size</item>

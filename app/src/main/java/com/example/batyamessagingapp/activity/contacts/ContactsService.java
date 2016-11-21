@@ -2,6 +2,7 @@ package com.example.batyamessagingapp.activity.contacts;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.util.Pair;
 
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
@@ -20,11 +21,10 @@ import retrofit2.Response;
 public class ContactsService implements ContactsPresenter {
 
     private ContactsView view;
-    private DisconnectionAsyncTask disconnectionAsyncTask;
     private Context context;
-    private ErrorType errorType = ErrorType.NoError;
+    private DisconnectionAsyncTask disconnectionAsyncTask;
 
-    public ContactsService(ContactsView view, Context context) {
+    ContactsService(ContactsView view, Context context) {
         this.view = view;
         this.context = context;
     }
@@ -40,48 +40,43 @@ public class ContactsService implements ContactsPresenter {
     }
 
 
-    class DisconnectionAsyncTask extends AsyncTask<Void, Void, APIAnswer> {
+    class DisconnectionAsyncTask extends AsyncTask<Void, Void, Pair<APIAnswer, ErrorType>> {
+
         private final DisconnectionType disconnectionType;
 
         public DisconnectionAsyncTask(DisconnectionType disconnectionType) {
             this.disconnectionType = disconnectionType;
         }
 
-        protected APIAnswer doInBackground(Void... voids) {
+        protected Pair<APIAnswer, ErrorType> doInBackground(Void... voids) {
             try {
                 Response<APIAnswer> response;
                 if (disconnectionType == DisconnectionType.Full)
                     response = NetworkService.getFullLogoutCall().execute();
-                else
+                else //disconnectionType == DisconnectionType.Normal
                     response = NetworkService.getLogoutCall().execute();
 
                 APIAnswer apiAnswer = response.body();
 
-                if (apiAnswer == null)
-                    errorType = ErrorType.NoAccess;
-                else
-                    errorType = ErrorType.NoError;
-
-                return apiAnswer;
+                if (response.code() == 200 && apiAnswer != null) {
+                    return new Pair<>(apiAnswer, ErrorType.NoError);
+                } else {
+                    return new Pair<>(null, ErrorType.NoAccess);
+                }
             } catch (ConnectException e) {
-                errorType = ErrorType.NoInternetConnection;
-                return null;
+                return new Pair<>(null, ErrorType.NoInternetConnection);
             } catch (IOException e) {
-                errorType = ErrorType.NoAccess;
-                return null;
+                return new Pair<>(null, ErrorType.NoAccess);
             }
         }
 
-        protected void onPostExecute(APIAnswer apiAnswer) {
-            if (errorType == ErrorType.NoInternetConnection && disconnectionType == DisconnectionType.Full) {
+        protected void onPostExecute(Pair<APIAnswer, ErrorType> resultPair) {
+            if (resultPair.second == ErrorType.NoInternetConnection && disconnectionType == DisconnectionType.Full) {
                 view.showAlert("No internet connection. Unable to leave active sessions", "Log out error");
-                errorType = ErrorType.NoError;
             } else {
                 PreferencesService.deleteTokenFromPreferences();
                 view.openAuthenticationActivity();
             }
-
-
         }
     }
 
@@ -95,5 +90,4 @@ public class ContactsService implements ContactsPresenter {
         NoAccess,
         NoError
     }
-
 }

@@ -3,6 +3,7 @@ package com.example.batyamessagingapp.model;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.Message;
+import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Token;
 
 import java.util.ArrayList;
@@ -33,15 +34,15 @@ public interface APIService {
     Call<APIAnswer> fullLogout(@Path("token") String token);
 
     @POST ("/{token}/messages/send/{dialog_id}")
-    Call<ResponseBody> sendMessage(@Path("token") String token, @Path("dialog_id") String dialogId, @Body Message message);
+    Call<ResponseBody> sendMessage(@Path("token") String token,
+                                   @Path("dialog_id") String dialogId,
+                                   @Body Message message);
 
-    //todo: добавить несколько методов, разобраться с API
+    @GET("/{token}/messages/{dialog_id}/limit/{limit}/skip/{offset}")
+    Call<MessageArray> getMessages(@Path("token") String token,
+                                   @Path("dialog_id") String dialogId,
+                                   @Path("limit") int limit,
+                                   @Path("offset") int offset);
 
-    //todo: изменить hashmap
-    @GET("/{token}/contacts/{offset}")
-    Call<HashMap<String, Message>> getUsers(@Path("token") Token token, @Path("offset") String offset);
-
-    //todo: изменить лист
-    @GET("/{token}/messages/{dialog_id}/unread")
-    Call<ArrayList<Message>> getMessages(@Path("token") Token token, @Path("dialog_id") String dialogId);
+    //TODO add another
 }

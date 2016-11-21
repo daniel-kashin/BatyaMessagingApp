@@ -1,12 +1,19 @@
 package com.example.batyamessagingapp.activity.dialog;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.util.Pair;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
+import com.example.batyamessagingapp.activity.dialog.recycler_view.Message;
+import com.example.batyamessagingapp.activity.dialog.recycler_view.MessageAdapter;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -16,64 +23,70 @@ import retrofit2.Response;
  */
 
 public class DialogService implements DialogPresenter {
-    private DialogView view;
+
     private String dialogId = "danildanil";
-    private ErrorType errorType;
+    private DialogView view;
+    private Context context;
+    private MessageAdapter adapter;
     private SendMessageAsyncTask sendMessageAsyncTask;
+
+    DialogService(DialogView view) {
+        this.view = view;
+        this.context = (Context)view;
+    }
 
     @Override
     public void onSendMessageButtonClick() {
-        sendMessageAsyncTask = new SendMessageAsyncTask();
+        sendMessageAsyncTask = new SendMessageAsyncTask(view.getMessageString());
         sendMessageAsyncTask.execute();
     }
 
-    public DialogService(DialogView view) {
-        this.view = view;
-    }
 
-    private class SendMessageAsyncTask extends AsyncTask<Void, Void, ResponseBody> {
-        protected void onPreExecute() {
+    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<ResponseBody, ErrorType>> {
+
+        private final String message;
+
+        public SendMessageAsyncTask(String message) {
+            this.message = message;
         }
 
-        protected ResponseBody doInBackground(Void... voids) {
+        protected Pair<ResponseBody, ErrorType> doInBackground(Void... voids) {
             try {
-                Response<ResponseBody> response;
-                response = NetworkService.getSendMessageCall(dialogId, "text", view.getMessageString()).execute();
-
-                if (response.code() != 200) {
-                    throw new IOException();
-                }
+                Response<ResponseBody> response = NetworkService
+                        .getSendMessageCall(dialogId, "text", message)
+                        .execute();
 
                 ResponseBody answer = response.body();
-                errorType = ErrorType.NoError;
-                return answer;
+
+                if (response.code() == 200 && answer != null) {
+                    return new Pair<>(answer, ErrorType.NoError);
+                } else {
+                    return new Pair<>(null, ErrorType.NoAccess);
+                }
             } catch (ConnectException connectException) {
-                errorType = ErrorType.NoInternetConnection;
-                return null;
+                return new Pair<>(null, ErrorType.NoInternetConnection);
             } catch (IOException ioException) {
-                errorType = ErrorType.NoAccess;
-                return null;
+                return new Pair<>(null, ErrorType.NoAccess);
             }
         }
 
-        protected void onPostExecute(APIAnswer apiAnswer) {
-
-            if (errorType == ErrorType.NoError) {
-
-            } else if (errorType == ErrorType.NoInternetConnection) {
-                String message = "No internet connection";
-                view.showAlert(message, "Auth error");
+        protected void onPostExecute(Pair<ResponseBody, ErrorType> resultPair) {
+            if (resultPair.second == ErrorType.NoError) {
+                view.addMessageToAdapter(message, Message.Direction.Outcoming);
+            } else if (resultPair.second == ErrorType.NoInternetConnection) {
+                String message = "No internet connection. Unable to send message";
+                view.showToast(message);
+            } else {
+                //TODO
             }
-
-            errorType = ErrorType.NoError;
         }
-
     }
-
 
     private enum ErrorType {
         NoInternetConnection,
         NoAccess,
         NoError
     }
+
+
 }

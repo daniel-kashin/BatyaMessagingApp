@@ -51,9 +51,9 @@ public class PreferencesService {
     public static String getUsernameFromPreferences() {
         if (_sharedPreferences.containsKey(APP_PREFERENCES_USERNAME)) {
             return _sharedPreferences.getString(APP_PREFERENCES_USERNAME);
+        }else {
+            return "";
         }
-
-        return "";
     }
 
     public static boolean isTokenAvailableInPreferences() {
@@ -63,8 +63,7 @@ public class PreferencesService {
     //TODO: make private
     public static String getTokenValueFromPreferences() {
         if (isTokenAvailableInPreferences()) {
-            String token = _sharedPreferences.getString(APP_PREFERENCES_TOKEN);
-            return token;
+            return _sharedPreferences.getString(APP_PREFERENCES_TOKEN);
         } else {
             return "";
         }

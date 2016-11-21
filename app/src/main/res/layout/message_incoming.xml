@@ -13,6 +13,6 @@
         android:layout_marginStart="10dp"
         android:maxWidth="300dp"
         android:text="sss"
-        android:id="@id/messageText"/>
+        android:id="@+id/messageTextView"/>
 
 </RelativeLayout>

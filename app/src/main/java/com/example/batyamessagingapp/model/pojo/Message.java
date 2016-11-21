@@ -36,10 +36,6 @@ public class Message {
     public Message(String type, String content){
         this.type = type;
         this.content = content;
-        this.dialogId = type;
-        this.sender = type;
-        this.guid = type;
-        timestamp = 0;
     }
 
 
