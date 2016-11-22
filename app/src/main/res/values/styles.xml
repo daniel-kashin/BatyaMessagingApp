@@ -58,19 +58,19 @@
         <item name="android:textSize">15dp</item>
     </style>
     <style name="AppTheme.TextErrorAppearance" parent="TextAppearance.Design.Error">
-        <!-- Error message appearance here -->
+        <!-- Error pojoMessage appearance here -->
         <item name="android:textColor">@color/error</item>
         <item name="android:textSize">12dp</item>
     </style>
 
     <style name="MessageInput" parent="Base.Widget.AppCompat.EditText">
         <item name="android:textColor">@color/primary_text</item>
+        <item name="android:hint">@string/messageHint</item>
+        <item name="android:background">@color/white</item>
         <item name="android:textColorHint">@color/hint_text</item>
+        <item name="android:textCursorDrawable">@null</item>
         <item name="android:textColorHighlight">@android:color/transparent</item>
         <item name="android:textColorHighlightInverse">@android:color/transparent</item>
-        <item name="colorControlNormal">@color/primary_text</item>
-        <item name="colorControlActivated">@color/primary_text</item>
-        <item name="colorControlHighlight">@color/primary_text</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">

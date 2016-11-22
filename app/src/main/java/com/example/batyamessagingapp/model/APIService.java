@@ -1,13 +1,10 @@
 package com.example.batyamessagingapp.model;
 
-import com.example.batyamessagingapp.model.pojo.APIAnswer;
-import com.example.batyamessagingapp.model.pojo.LoginData;
-import com.example.batyamessagingapp.model.pojo.Message;
-import com.example.batyamessagingapp.model.pojo.MessageArray;
-import com.example.batyamessagingapp.model.pojo.Token;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.example.batyamessagingapp.model.pojo.PojoAPIAnswer;
+import com.example.batyamessagingapp.model.pojo.PojoLoginData;
+import com.example.batyamessagingapp.model.pojo.PojoMessage;
+import com.example.batyamessagingapp.model.pojo.PojoMessageArray;
+import com.example.batyamessagingapp.model.pojo.PojoToken;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -22,27 +19,27 @@ import retrofit2.http.Path;
 
 public interface APIService {
     @POST("/login")
-    Call<Token> login(@Body LoginData body);
+    Call<PojoToken> login(@Body PojoLoginData body);
 
     @POST("/register")
-    Call<Token> register(@Body LoginData body);
+    Call<PojoToken> register(@Body PojoLoginData body);
 
     @POST ("/{token}/logout")
-    Call<APIAnswer> logout(@Path("token") String token);
+    Call<PojoAPIAnswer> logout(@Path("token") String token);
 
     @POST ("/{token}/logoutall")
-    Call<APIAnswer> fullLogout(@Path("token") String token);
+    Call<PojoAPIAnswer> fullLogout(@Path("token") String token);
 
-    @POST ("/{token}/messages/send/{dialog_id}")
+    @POST ("/{token}/pojoMessages/send/{dialog_id}")
     Call<ResponseBody> sendMessage(@Path("token") String token,
                                    @Path("dialog_id") String dialogId,
-                                   @Body Message message);
+                                   @Body PojoMessage pojoMessage);
 
-    @GET("/{token}/messages/{dialog_id}/limit/{limit}/skip/{offset}")
-    Call<MessageArray> getMessages(@Path("token") String token,
-                                   @Path("dialog_id") String dialogId,
-                                   @Path("limit") int limit,
-                                   @Path("offset") int offset);
+    @GET("/{token}/pojoMessages/{dialog_id}/limit/{limit}/skip/{offset}")
+    Call<PojoMessageArray> getMessages(@Path("token") String token,
+                                       @Path("dialog_id") String dialogId,
+                                       @Path("limit") int limit,
+                                       @Path("offset") int offset);
 
     //TODO add another
 }

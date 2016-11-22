@@ -6,4 +6,5 @@ package com.example.batyamessagingapp.activity.dialog;
 
 public interface DialogPresenter {
     void onSendMessageButtonClick();
+    void onLoad();
 }

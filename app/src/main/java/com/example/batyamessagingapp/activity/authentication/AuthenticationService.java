@@ -9,7 +9,7 @@ import android.util.Pair;
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
-import com.example.batyamessagingapp.model.pojo.Token;
+import com.example.batyamessagingapp.model.pojo.PojoToken;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -64,7 +64,7 @@ public class AuthenticationService implements AuthenticationPresenter {
         }
     }
 
-    class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, ErrorType>> {
+    class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<PojoToken, ErrorType>> {
 
         private final ProgressDialog progressDialog;
         private final ConnectionType connectionType;
@@ -92,19 +92,19 @@ public class AuthenticationService implements AuthenticationPresenter {
             view.startProgressDialog("Loading...");
         }
 
-        protected Pair<Token, ErrorType> doInBackground(Void... voids) {
+        protected Pair<PojoToken, ErrorType> doInBackground(Void... voids) {
             try {
-                Response<Token> response;
+                Response<PojoToken> response;
                 if (connectionType == ConnectionType.Login) {
                     response = NetworkService.getAuthCall(username, password).execute();
                 } else {
                     response = NetworkService.getRegisterCall(username, password).execute();
                 }
 
-                Token token = response.body();
+                PojoToken pojoToken = response.body();
 
-                if (response.code() == 200 && token != null) {
-                    return new Pair<>(token, ErrorType.NoError);
+                if (response.code() == 200 && pojoToken != null) {
+                    return new Pair<>(pojoToken, ErrorType.NoError);
                 } else {
                     return new Pair<>(null, ErrorType.NoAccess);
                 }
@@ -115,11 +115,11 @@ public class AuthenticationService implements AuthenticationPresenter {
             }
         }
 
-        protected void onCancelled(Token token) {
+        protected void onCancelled(PojoToken pojoToken) {
             //do nothing
         }
 
-        protected void onPostExecute(Pair<Token, ErrorType> resultPair) {
+        protected void onPostExecute(Pair<PojoToken, ErrorType> resultPair) {
             view.stopProgressDialog();
 
             if (resultPair.second == ErrorType.NoError && resultPair.first != null) {

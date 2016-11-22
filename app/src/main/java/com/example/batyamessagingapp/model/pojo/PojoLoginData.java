@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Кашин on 23.10.2016.
  */
 
-public class LoginData {
+public class PojoLoginData {
 
     @SerializedName("username")
     @Expose
@@ -16,7 +16,7 @@ public class LoginData {
     @Expose
     private String password;
 
-    public LoginData(String username, String password){
+    public PojoLoginData(String username, String password){
         this.username = username;
         this.password = password;
     }

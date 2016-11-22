@@ -44,7 +44,7 @@ public class DialogActivity extends AppCompatActivity implements DialogView {
 
         presenter = new DialogService(this);
 
-
+        presenter.onLoad();
     }
 
     private void initializeViews() {

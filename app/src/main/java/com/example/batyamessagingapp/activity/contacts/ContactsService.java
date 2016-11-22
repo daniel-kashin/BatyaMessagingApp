@@ -6,7 +6,7 @@ import android.support.v4.util.Pair;
 
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
-import com.example.batyamessagingapp.model.pojo.APIAnswer;
+import com.example.batyamessagingapp.model.pojo.PojoAPIAnswer;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -40,7 +40,7 @@ public class ContactsService implements ContactsPresenter {
     }
 
 
-    class DisconnectionAsyncTask extends AsyncTask<Void, Void, Pair<APIAnswer, ErrorType>> {
+    class DisconnectionAsyncTask extends AsyncTask<Void, Void, Pair<PojoAPIAnswer, ErrorType>> {
 
         private final DisconnectionType disconnectionType;
 
@@ -48,18 +48,18 @@ public class ContactsService implements ContactsPresenter {
             this.disconnectionType = disconnectionType;
         }
 
-        protected Pair<APIAnswer, ErrorType> doInBackground(Void... voids) {
+        protected Pair<PojoAPIAnswer, ErrorType> doInBackground(Void... voids) {
             try {
-                Response<APIAnswer> response;
+                Response<PojoAPIAnswer> response;
                 if (disconnectionType == DisconnectionType.Full)
                     response = NetworkService.getFullLogoutCall().execute();
                 else //disconnectionType == DisconnectionType.Normal
                     response = NetworkService.getLogoutCall().execute();
 
-                APIAnswer apiAnswer = response.body();
+                PojoAPIAnswer pojoApiAnswer = response.body();
 
-                if (response.code() == 200 && apiAnswer != null) {
-                    return new Pair<>(apiAnswer, ErrorType.NoError);
+                if (response.code() == 200 && pojoApiAnswer != null) {
+                    return new Pair<>(pojoApiAnswer, ErrorType.NoError);
                 } else {
                     return new Pair<>(null, ErrorType.NoAccess);
                 }
@@ -70,7 +70,7 @@ public class ContactsService implements ContactsPresenter {
             }
         }
 
-        protected void onPostExecute(Pair<APIAnswer, ErrorType> resultPair) {
+        protected void onPostExecute(Pair<PojoAPIAnswer, ErrorType> resultPair) {
             if (resultPair.second == ErrorType.NoInternetConnection && disconnectionType == DisconnectionType.Full) {
                 view.showAlert("No internet connection. Unable to leave active sessions", "Log out error");
             } else {

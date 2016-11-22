@@ -2,14 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
     android:background="@drawable/bubble_incoming">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="7dp"
+        android:padding="9dp"
+        android:textSize="@dimen/auth_button_text_size"
+        android:textColor="@color/primary_text"
         android:layout_marginStart="10dp"
         android:maxWidth="300dp"
         android:text="sss"

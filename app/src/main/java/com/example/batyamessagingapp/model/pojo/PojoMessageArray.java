@@ -9,14 +9,18 @@ import java.util.ArrayList;
  * Created by Кашин on 21.11.2016.
  */
 
-public class MessageArray {
+public class PojoMessageArray {
 
     @SerializedName("timestamp")
     @Expose
-    public ArrayList<Message> messages;
+    public ArrayList<PojoMessage> pojoMessages;
 
-    public MessageArray(ArrayList<Message> messages){
-        this.messages = messages;
+    public PojoMessageArray(ArrayList<PojoMessage> pojoMessages){
+        this.pojoMessages = pojoMessages;
+    }
+
+    public ArrayList<PojoMessage> getPojoMessages(){
+        return pojoMessages;
     }
 
 

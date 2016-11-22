@@ -1,10 +1,10 @@
 package com.example.batyamessagingapp.model;
 
-import com.example.batyamessagingapp.model.pojo.APIAnswer;
-import com.example.batyamessagingapp.model.pojo.LoginData;
-import com.example.batyamessagingapp.model.pojo.Message;
-import com.example.batyamessagingapp.model.pojo.MessageArray;
-import com.example.batyamessagingapp.model.pojo.Token;
+import com.example.batyamessagingapp.model.pojo.PojoAPIAnswer;
+import com.example.batyamessagingapp.model.pojo.PojoLoginData;
+import com.example.batyamessagingapp.model.pojo.PojoMessage;
+import com.example.batyamessagingapp.model.pojo.PojoMessageArray;
+import com.example.batyamessagingapp.model.pojo.PojoToken;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -29,45 +29,45 @@ public class NetworkService {
         _apiService = APIGenerator.createService(APIService.class, API_BASE_URL);
     }
 
-    public static Call<Token> getAuthCall(final String username, final String password) {
-        LoginData loginData = new LoginData(username, password);
-        Call<Token> call = _apiService.login(loginData);
+    public static Call<PojoToken> getAuthCall(final String username, final String password) {
+        PojoLoginData pojoLoginData = new PojoLoginData(username, password);
+        Call<PojoToken> call = _apiService.login(pojoLoginData);
         return call;
     }
 
-    public static Call<MessageArray> getGetMessageCall(String dialogId, int limit, int offset){
+    public static Call<PojoMessageArray> getGetMessageCall(String dialogId, int limit, int offset){
         return _apiService.getMessages(getTokenValueFromPreferences(),dialogId,limit,offset);
     }
 
-    public static Call<Token> getRegisterCall(final String username, final String password) {
-        LoginData loginData = new LoginData(username, password);
-        Call<Token> call = _apiService.register(loginData);
+    public static Call<PojoToken> getRegisterCall(final String username, final String password) {
+        PojoLoginData pojoLoginData = new PojoLoginData(username, password);
+        Call<PojoToken> call = _apiService.register(pojoLoginData);
         return call;
     }
 
-    public static Call<APIAnswer> getLogoutCall() {
+    public static Call<PojoAPIAnswer> getLogoutCall() {
         return _apiService.logout(getTokenValueFromPreferences());
     }
 
-    public static Call<APIAnswer> getFullLogoutCall() {
+    public static Call<PojoAPIAnswer> getFullLogoutCall() {
         return _apiService.fullLogout(getTokenValueFromPreferences());
     }
 
     public static Call<ResponseBody> getSendMessageCall(
             String dialogId, String messageType, String messageData) {
 
-        Message message = new Message(messageType,messageData);
-        return _apiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
+        PojoMessage pojoMessage = new PojoMessage(messageType,messageData);
+        return _apiService.sendMessage(getTokenValueFromPreferences(), dialogId, pojoMessage);
     }
 
     public void getUsers() {
 /*
         int offset = 0;
 
-        Call<HashMap<String, Message>> call = _apiService.getUsers(_token, ("offset/" + offset));
-        call.enqueue(new Callback<HashMap<String, Message>>() {
+        Call<HashMap<String, PojoMessage>> call = _apiService.getUsers(_token, ("offset/" + offset));
+        call.enqueue(new Callback<HashMap<String, PojoMessage>>() {
             @Override
-            public void onResponse(Call<HashMap<String, Message>> call, Response<HashMap<String, Message>> response) {
+            public void onResponse(Call<HashMap<String, PojoMessage>> call, Response<HashMap<String, PojoMessage>> response) {
                 if (response.isSuccessful()) {
 
 
@@ -77,7 +77,7 @@ public class NetworkService {
             }
 
             @Override
-            public void onFailure(Call<HashMap<String, Message>> call, Throwable t) {
+            public void onFailure(Call<HashMap<String, PojoMessage>> call, Throwable t) {
                 // something went completely south (like no internet connection)
             }
         });

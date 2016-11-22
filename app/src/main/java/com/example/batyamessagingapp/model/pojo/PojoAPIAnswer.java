@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Кашин on 05.11.2016.
  */
 
-public class APIAnswer {
+public class PojoAPIAnswer {
     @SerializedName("message")
     @Expose
     private String message;

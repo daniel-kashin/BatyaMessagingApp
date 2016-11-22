@@ -3,7 +3,7 @@ package com.example.batyamessagingapp.model;
 import android.content.Context;
 
 import com.example.batyamessagingapp.lib.SecurePreferences;
-import com.example.batyamessagingapp.model.pojo.Token;
+import com.example.batyamessagingapp.model.pojo.PojoToken;
 
 /**
  * Created by Кашин on 23.10.2016.
@@ -75,12 +75,12 @@ public class PreferencesService {
         }
     }
 
-    public static void saveTokenAndUsernameToPreferences(Token token, String username) {
+    public static void saveTokenAndUsernameToPreferences(PojoToken pojoToken, String username) {
         if (isTokenAvailableInPreferences()) {
             clearSharedPreferences();
         }
 
-        _sharedPreferences.put(APP_PREFERENCES_TOKEN, token.getValue());
+        _sharedPreferences.put(APP_PREFERENCES_TOKEN, pojoToken.getValue());
         _sharedPreferences.put(APP_PREFERENCES_USERNAME, username);
     }
 
