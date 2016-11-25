@@ -7,7 +7,7 @@ import com.google.gson.annotations.Expose;
  * Created by Кашин on 23.10.2016.
  */
 
-public class PojoToken {
+public class Token {
 
     @SerializedName("token")
     @Expose

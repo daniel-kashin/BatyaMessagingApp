@@ -1,16 +1,14 @@
-package com.example.batyamessagingapp.activity.dialog.recycler_view;
-
-import com.example.batyamessagingapp.activity.dialog.DialogService;
+package com.example.batyamessagingapp.activity.chat.adapter;
 
 /**
  * Created by Кашин on 18.11.2016.
  */
 
-public class Message {
+public class ChatMessage {
     private String messageText;
     private Direction direction;
 
-    public Message(String messageText, Direction direction){
+    public ChatMessage(String messageText, Direction direction){
         this.messageText = messageText;
         this.direction = direction;
     }

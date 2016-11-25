@@ -5,26 +5,27 @@
     android:id="@+id/activity_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.batyamessagingapp.activity.dialog.DialogActivity">
+    tools:context="com.example.batyamessagingapp.activity.chat.ChatActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/messagesRecyclerView"
+        android:id="@+id/messageRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom = "7dp"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/messagesInput"
+        android:layout_above="@+id/messageInput"
         android:background="@color/indigo_50" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@drawable/layout_shadow"
-        android:layout_above="@id/messagesInput">
+        android:layout_above="@id/messageInput">
     </View>
 
     <RelativeLayout
         android:background="@color/white"
-        android:id="@+id/messagesInput"
+        android:id="@+id/messageInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
@@ -40,6 +41,7 @@
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/messageButtonLayout"
             android:layout_marginStart="20dp" />
+
         <RelativeLayout
             android:id="@+id/messageButtonLayout"
             android:layout_width="wrap_content"

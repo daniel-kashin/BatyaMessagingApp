@@ -7,15 +7,11 @@ package com.example.batyamessagingapp.model.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PojoMessage {
+public class Message {
 
     @SerializedName("guid")
     @Expose
     private String guid;
-
-    @SerializedName("dialog_id")
-    @Expose
-    private String dialogId;
 
     @SerializedName("sender")
     @Expose
@@ -33,18 +29,18 @@ public class PojoMessage {
     @Expose
     private String content;
 
-    public PojoMessage(String type, String content){
+    public Message(String type, String content){
         this.type = type;
         this.content = content;
+    }
+
+    public Message(){
+
     }
 
 
     public String getGuid() {
         return guid;
-    }
-
-    public String getDialogId() {
-        return dialogId;
     }
 
     public String getSender() {
@@ -62,6 +58,5 @@ public class PojoMessage {
     public String getContent() {
         return content;
     }
-
 }
 

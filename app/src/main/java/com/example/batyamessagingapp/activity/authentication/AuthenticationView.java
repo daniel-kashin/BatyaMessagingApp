@@ -10,7 +10,7 @@ public interface AuthenticationView {
     String getUsername();
     String getPassword();
     void showAlert(String message, String title);
-    void openContactsActivity();
+    void openDialogsActivity();
     boolean checkInputs();
     void startProgressDialog(String message);
     void stopProgressDialog();

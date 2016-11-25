@@ -1,5 +1,7 @@
 package com.example.batyamessagingapp.model;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -9,7 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class APIGenerator {
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+            .readTimeout(60,TimeUnit.SECONDS)
+            .connectTimeout(60,TimeUnit.SECONDS);
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl) {
         Retrofit.Builder builder =

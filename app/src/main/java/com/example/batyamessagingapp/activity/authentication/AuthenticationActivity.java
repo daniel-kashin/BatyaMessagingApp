@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -16,7 +17,8 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.batyamessagingapp.activity.dialog.DialogActivity;
+import com.example.batyamessagingapp.activity.chat.ChatActivity;
+import com.example.batyamessagingapp.activity.dialogs.DialogsActivity;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.R;
 
@@ -25,21 +27,21 @@ import java.util.regex.Pattern;
 
 public class AuthenticationActivity extends AppCompatActivity implements AuthenticationView {
 
-    private Button registrationButton;
-    private Button authButton;
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private View activityRootView;
-    private ScrollView scrollView;
-    private ProgressDialog progressDialog;
-    private TextInputLayout usernameTextInputLayout;
-    private TextInputLayout passwordTextInputLayout;
-    private TextView mainIcon;
+    private Button mRegistrationButton;
+    private Button mAuthButton;
+    private EditText mUsernameEditText;
+    private EditText mPasswordEditText;
+    private View mActivityRootView;
+    private ScrollView mScrollView;
+    private ProgressDialog mProgressDialog;
+    private TextInputLayout mUsernameTextInputLayout;
+    private TextInputLayout mPasswordTextInputLayout;
+    private TextView mMainIcon;
 
-    private int mainIconPaddingTop;
-    private int mainIconPaddingButtom;
+    private int mMainIconPaddingTop;
+    private int mMainIconPaddingButtom;
 
-    private AuthenticationPresenter presenter;
+    private AuthenticationPresenter mPresenter;
 
 
     @Override
@@ -51,51 +53,51 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         setListeners();
         setUsernameEditText(PreferencesService.getUsernameFromPreferences());
 
-        presenter = new AuthenticationService(this);
+        mPresenter = new AuthenticationService(this);
     }
 
     private void initializeViews() {
-        registrationButton = (Button) findViewById(R.id.registrationButton);
-        authButton = (Button) findViewById(R.id.authButton);
-        usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        activityRootView = findViewById(R.id.activity_authentication);
-        scrollView = (ScrollView) findViewById(R.id.scrollView);
-        usernameTextInputLayout = (TextInputLayout)findViewById(R.id.usernameTextInputLayout);
-        passwordTextInputLayout = (TextInputLayout)findViewById(R.id.passwordTextInputLayout);
-        mainIcon = (TextView)findViewById(R.id.mainIcon);
+        mRegistrationButton = (Button) findViewById(R.id.registrationButton);
+        mAuthButton = (Button) findViewById(R.id.authButton);
+        mUsernameEditText = (EditText) findViewById(R.id.usernameEditText);
+        mPasswordEditText = (EditText) findViewById(R.id.passwordEditText);
+        mActivityRootView = findViewById(R.id.activity_authentication);
+        mScrollView = (ScrollView) findViewById(R.id.scrollView);
+        mUsernameTextInputLayout = (TextInputLayout)findViewById(R.id.usernameTextInputLayout);
+        mPasswordTextInputLayout = (TextInputLayout)findViewById(R.id.passwordTextInputLayout);
+        mMainIcon = (TextView)findViewById(R.id.mainIcon);
 
-        mainIconPaddingTop = mainIcon.getPaddingTop();
-        mainIconPaddingButtom = mainIcon.getPaddingBottom();
+        mMainIconPaddingTop = mMainIcon.getPaddingTop();
+        mMainIconPaddingButtom = mMainIcon.getPaddingBottom();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle(null);
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setTitle(null);
     }
 
     private void setListeners() {
         //resize the screen when keyboard appears
-        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mActivityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 DisplayMetrics metrics = AuthenticationActivity.this.getResources().getDisplayMetrics();
                 final float dp200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
 
-                final int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                final int heightDiff = mActivityRootView.getRootView().getHeight() - mActivityRootView.getHeight();
                 if (heightDiff > dp200) { // if more than 200 dp, it's probably a keyboard...
-                    mainIcon.setPadding(mainIcon.getPaddingLeft(), mainIconPaddingButtom/2 ,mainIcon.getPaddingRight(), mainIconPaddingButtom/2);
-                    scrollView.post(new Runnable() {
+                    mMainIcon.setPadding(mMainIcon.getPaddingLeft(), mMainIconPaddingButtom /2 , mMainIcon.getPaddingRight(), mMainIconPaddingButtom /2);
+                    mScrollView.post(new Runnable() {
                         public void run() {
-                            scrollView.scrollTo(0, 1000000);
+                            mScrollView.scrollTo(0, 1000000);
                         }
                     });
                 } else {
-                    mainIcon.setPadding(mainIcon.getPaddingLeft(), mainIconPaddingTop, mainIcon.getPaddingRight(), mainIconPaddingButtom);
-                    scrollView.post(new Runnable() {
+                    mMainIcon.setPadding(mMainIcon.getPaddingLeft(), mMainIconPaddingTop, mMainIcon.getPaddingRight(), mMainIconPaddingButtom);
+                    mScrollView.post(new Runnable() {
                         public void run() {
-                            scrollView.scrollTo(0, 0);
-                            activityRootView.refreshDrawableState();
+                            mScrollView.scrollTo(0, 0);
+                            mActivityRootView.refreshDrawableState();
                         }
                     });
                 }
@@ -107,19 +109,19 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
             public void onClick(View view) {
                 int id = view.getId();
                 if (id == R.id.authButton||id==R.id.registrationButton) {
-                        presenter.onButtonClick(id);
+                        mPresenter.onButtonClick(id);
                 }
             }
         };
-        authButton.setOnClickListener(onButtonClick);
-        registrationButton.setOnClickListener(onButtonClick);
+        mAuthButton.setOnClickListener(onButtonClick);
+        mRegistrationButton.setOnClickListener(onButtonClick);
 
         //call auth button onClick when user finished to write the password
-        passwordEditText.setOnKeyListener(new View.OnKeyListener() {
+        mPasswordEditText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    authButton.callOnClick();
+                    mAuthButton.callOnClick();
                 }
                 return false;
             }
@@ -127,44 +129,44 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     }
 
     public void setUsernameEditText(String newText){
-        usernameEditText.setText(newText);
+        mUsernameEditText.setText(newText);
     }
 
     @Override
     public void startProgressDialog(String message){
-        progressDialog.setMessage(message);
-        if (!progressDialog.isShowing())
-        progressDialog.show();
+        mProgressDialog.setMessage(message);
+        if (!mProgressDialog.isShowing())
+        mProgressDialog.show();
     }
 
     @Override
     public void stopProgressDialog(){
-        if (progressDialog.isShowing())
-        progressDialog.dismiss();
+        if (mProgressDialog.isShowing())
+        mProgressDialog.dismiss();
     }
 
     @Override
     public boolean checkInputs() {
-        String username = usernameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        String username = mUsernameEditText.getText().toString();
+        String password = mPasswordEditText.getText().toString();
         String usernameError = null;
         String passwordError = null;
         Pattern p = Pattern.compile("[A-Za-z0-9_-]+");
 
-        if (password.length() < 10) {
-            passwordError = "at least 10 characters";
+        if (password.length() < 10 || username.length()>256) {
+            passwordError = "10..256 characters";
         }
 
         if (!p.matcher(username).matches()) {
-            usernameError = "latin letters, numbers, _ and - are allowded";
+            usernameError = "only letters, numbers and _-";
         }
 
-        if (username.length() < 2) {
-            usernameError = "at least 2 characters";
+        if (username.length() < 2 || username.length() > 256) {
+            usernameError = "2..256 characters";
         }
 
-        usernameTextInputLayout.setError(usernameError);
-        passwordTextInputLayout.setError(passwordError);
+        mUsernameTextInputLayout.setError(usernameError);
+        mPasswordTextInputLayout.setError(passwordError);
 
         if (username.isEmpty() || password.isEmpty()) {
             return false;
@@ -175,17 +177,18 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public String getUsername() {
-        return usernameEditText.getText().toString();
+        return mUsernameEditText.getText().toString();
     }
 
     @Override
     public String getPassword() {
-        return passwordEditText.getText().toString();
+        return mPasswordEditText.getText().toString();
     }
 
     @Override
     public void showAlert(String message, String title) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                new ContextThemeWrapper(this, android.R.style.Theme_Material_Light));
         builder.setTitle(title)
                 .setMessage(message)
                 .setCancelable(true);
@@ -194,15 +197,14 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     }
 
     @Override
-    public void openContactsActivity() {
-        Intent intent = new Intent(this, DialogActivity.class);
+    public void openDialogsActivity() {
+        Intent intent = new Intent(this, DialogsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
 
-    @Override
     public ProgressDialog getProgressDialog(){
-        return progressDialog;
+        return mProgressDialog;
     }
 }

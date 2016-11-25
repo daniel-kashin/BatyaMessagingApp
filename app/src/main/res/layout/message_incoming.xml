@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
@@ -13,8 +14,7 @@
         android:textSize="@dimen/auth_button_text_size"
         android:textColor="@color/primary_text"
         android:layout_marginStart="10dp"
-        android:maxWidth="300dp"
-        android:text="sss"
+        android:text=""
         android:id="@+id/messageTextView"/>
 
-</RelativeLayout>
+</LinearLayout>

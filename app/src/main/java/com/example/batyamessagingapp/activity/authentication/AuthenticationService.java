@@ -9,8 +9,9 @@ import android.util.Pair;
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
-import com.example.batyamessagingapp.model.pojo.PojoToken;
+import com.example.batyamessagingapp.model.pojo.Token;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -23,20 +24,23 @@ import retrofit2.Response;
 
 public class AuthenticationService implements AuthenticationPresenter {
 
-    private AuthenticationView view;
-    private Context context;
-    private ConnectionAsyncTask connectionAsyncTask;
+    private Context mContext;
+    private ConnectionAsyncTask mConnectionAsyncTask;
+
+    private AuthenticationView mView;
+
 
     public AuthenticationService(AuthenticationView view) {
-        this.view = view;
-        this.context = (Context)view;
+        mView = view;
+        this.mContext = (Context) view;
     }
 
     @Override
     public void onButtonClick(int id) {
+
         ConnectionType connectionType = null;
 
-        if (view.checkInputs()) {
+        if (mView.checkInputs()) {
             try {
                 if (id == R.id.authButton) {
                     connectionType = ConnectionType.Login;
@@ -46,25 +50,25 @@ public class AuthenticationService implements AuthenticationPresenter {
                     throw new NoSuchMethodException();
                 }
 
-                connectionAsyncTask = new ConnectionAsyncTask(
-                        view.getProgressDialog(),
+                mConnectionAsyncTask = new ConnectionAsyncTask(
+                        mView.getProgressDialog(),
                         connectionType,
-                        view.getUsername(),
-                        view.getPassword()
+                        mView.getUsername(),
+                        mView.getPassword()
                 );
-                connectionAsyncTask.execute();
+                mConnectionAsyncTask.execute();
 
             } catch (Exception e) {
                 if (connectionType == ConnectionType.Register) {
-                    view.showAlert("Chosen username is already exists", "Auth error");
-                } else if (connectionType == connectionType.Login){
-                    view.showAlert("Invalid message or password", "Auth error");
+                    mView.showAlert("Chosen username is already exists", "Auth error");
+                } else if (connectionType == connectionType.Login) {
+                    mView.showAlert("Invalid message or password", "Auth error");
                 }
             }
         }
     }
 
-    class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<PojoToken, ErrorType>> {
+    class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, ErrorType>> {
 
         private final ProgressDialog progressDialog;
         private final ConnectionType connectionType;
@@ -89,22 +93,22 @@ public class AuthenticationService implements AuthenticationPresenter {
         }
 
         protected void onPreExecute() {
-            view.startProgressDialog("Loading...");
+            mView.startProgressDialog("Loading...");
         }
 
-        protected Pair<PojoToken, ErrorType> doInBackground(Void... voids) {
+        protected Pair<Token, ErrorType> doInBackground(Void... voids) {
             try {
-                Response<PojoToken> response;
+                Response<Token> response;
                 if (connectionType == ConnectionType.Login) {
                     response = NetworkService.getAuthCall(username, password).execute();
                 } else {
                     response = NetworkService.getRegisterCall(username, password).execute();
                 }
 
-                PojoToken pojoToken = response.body();
+                Token token = response.body();
 
-                if (response.code() == 200 && pojoToken != null) {
-                    return new Pair<>(pojoToken, ErrorType.NoError);
+                if (response.code() == 200 && token != null) {
+                    return new Pair<>(token, ErrorType.NoError);
                 } else {
                     return new Pair<>(null, ErrorType.NoAccess);
                 }
@@ -115,16 +119,16 @@ public class AuthenticationService implements AuthenticationPresenter {
             }
         }
 
-        protected void onCancelled(PojoToken pojoToken) {
+        protected void onCancelled(Token token) {
             //do nothing
         }
 
-        protected void onPostExecute(Pair<PojoToken, ErrorType> resultPair) {
-            view.stopProgressDialog();
+        protected void onPostExecute(Pair<Token, ErrorType> resultPair) {
+            mView.stopProgressDialog();
 
             if (resultPair.second == ErrorType.NoError && resultPair.first != null) {
                 PreferencesService.saveTokenAndUsernameToPreferences(resultPair.first, username);
-                view.openContactsActivity();
+                mView.openDialogsActivity();
             } else { //error occured
                 String message = "";
 
@@ -138,7 +142,7 @@ public class AuthenticationService implements AuthenticationPresenter {
                     }
                 }
 
-                view.showAlert(message, "Auth error");
+                mView.showAlert(message, "Auth error");
             }
         }
     }
