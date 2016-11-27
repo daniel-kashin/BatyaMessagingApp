@@ -5,16 +5,23 @@ package com.example.batyamessagingapp.activity.chat.adapter;
  */
 
 public class ChatMessage {
+
     private String messageText;
+    private String timeText;
     private Direction direction;
 
-    public ChatMessage(String messageText, Direction direction){
+    public ChatMessage(String messageText, String timeText, Direction direction){
         this.messageText = messageText;
+        this.timeText = timeText;
         this.direction = direction;
     }
 
     public String getMessageText(){
         return messageText;
+    }
+
+    public String getTimeText() {
+        return timeText;
     }
 
     public Direction getDirection(){

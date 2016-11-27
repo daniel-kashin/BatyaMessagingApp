@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.authentication;
+package com.example.batyamessagingapp.activity.authentication.presenter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,11 +7,11 @@ import android.os.AsyncTask;
 import android.util.Pair;
 
 import com.example.batyamessagingapp.R;
+import com.example.batyamessagingapp.activity.authentication.view.AuthenticationView;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Token;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -41,15 +41,13 @@ public class AuthenticationService implements AuthenticationPresenter {
         ConnectionType connectionType = null;
 
         if (mView.checkInputs()) {
-            try {
-                if (id == R.id.authButton) {
-                    connectionType = ConnectionType.Login;
-                } else if (id == R.id.registrationButton) {
-                    connectionType = ConnectionType.Register;
-                } else {
-                    throw new NoSuchMethodException();
-                }
+            if (id == R.id.authButton) {
+                connectionType = ConnectionType.Login;
+            } else if (id == R.id.registrationButton) {
+                connectionType = ConnectionType.Register;
+            }
 
+            if (connectionType != null) {
                 mConnectionAsyncTask = new ConnectionAsyncTask(
                         mView.getProgressDialog(),
                         connectionType,
@@ -57,13 +55,6 @@ public class AuthenticationService implements AuthenticationPresenter {
                         mView.getPassword()
                 );
                 mConnectionAsyncTask.execute();
-
-            } catch (Exception e) {
-                if (connectionType == ConnectionType.Register) {
-                    mView.showAlert("Chosen username is already exists", "Auth error");
-                } else if (connectionType == connectionType.Login) {
-                    mView.showAlert("Invalid message or password", "Auth error");
-                }
             }
         }
     }

@@ -10,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
+import com.example.batyamessagingapp.lib.TimestampHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +24,15 @@ import java.util.List;
  * Created by Кашин on 23.10.2016.
  */
 
-public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> {
+public class ChatMessageAdapter
+        extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements MessagesDataModel{
 
     private ArrayList<ChatMessage> mChatMessageList;
     private final Context mContext;
 
     private OnMessageLongClickListener onMessageLongClickListener;
     private OnMessageClickListener onMessageClickListener;
+
 
     public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList) {
         mChatMessageList = chatMessageList;
@@ -39,16 +43,23 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         this(context,new ArrayList<ChatMessage>());
     }
 
+    @Override
     public void addMessage(ChatMessage chatMessage) {
         mChatMessageList.add(chatMessage);
         notifyItemInserted(mChatMessageList.size() - 1);
     }
 
+    @Override
     public void addMessages(List<ChatMessage> messages){
         for (ChatMessage message : messages){
             mChatMessageList.add(message);
         }
         notifyDataSetChanged();
+    }
+
+    @Override
+    public int getSize(){
+        return getItemCount();
     }
 
     @Override
@@ -83,16 +94,19 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         //set text
         if (viewHolder.getDirection() == mChatMessageList.get(position).getDirection()) {
             viewHolder.setMessage(chatMessage.getMessageText());
+            viewHolder.setTime(chatMessage.getTimeText());
         }
 
         //create alert dialog
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                new ContextThemeWrapper(mContext, android.R.style.Theme_DeviceDefault_Light));
-        alertDialog.setTitle("ChatMessage");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                mContext, android.R.layout.select_dialog_item);
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(new ContextThemeWrapper(mContext,
+                        android.R.style.Theme_DeviceDefault_Light_Dialog));
+        builder.setTitle("ChatMessage");
+
+        final ArrayAdapter<String> arrayAdapter =
+                new ArrayAdapter<>(mContext, android.R.layout.select_dialog_item);
         arrayAdapter.add("Copy");
-        alertDialog.setAdapter(
+        builder.setAdapter(
                 arrayAdapter,
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -107,11 +121,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     }
                 });
 
+        final AlertDialog alert= builder.create();
+        alert.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         //show alertDialog on click
         viewHolder.setMessageTextViewOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.show();
+                alert.show();
             }
         });
     }
@@ -121,22 +138,29 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         return mChatMessageList.size();
     }
 
+
     class ViewHolder extends RecyclerView.ViewHolder {
+
         private TextView messageTextView;
+        private TextView timeTextView;
+
         private ChatMessage.Direction direction;
-        private String message;
 
         private ViewHolder(View view, ChatMessage.Direction direction) {
             super(view);
-            messageTextView = (TextView) view.findViewById(R.id.messageTextView);
+
             this.direction = direction;
+
+            messageTextView = (TextView) view.findViewById(R.id.messageTextView);
+            timeTextView = (TextView) view.findViewById(R.id.timeTextView);
         }
 
         public void setMessage(String message) {
-            this.message = message;
+            if (messageTextView != null) messageTextView.setText(message);
+        }
 
-            if (messageTextView == null) return;
-            messageTextView.setText(message);
+        public void setTime(String time){
+            if (timeTextView != null) timeTextView.setText(time);
         }
 
         private void setMessageTextViewOnClickListener(View.OnClickListener listener){

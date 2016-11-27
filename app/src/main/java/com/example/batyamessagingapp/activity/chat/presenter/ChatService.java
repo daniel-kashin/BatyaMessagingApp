@@ -1,11 +1,14 @@
-package com.example.batyamessagingapp.activity.chat;
+package com.example.batyamessagingapp.activity.chat.presenter;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.util.Pair;
 
+import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
+import com.example.batyamessagingapp.activity.chat.view.ChatView;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
+import com.example.batyamessagingapp.lib.TimestampHelper;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Message;
@@ -33,12 +36,14 @@ public class ChatService implements ChatPresenter {
     private GetMessagesAsyncTask mGetMessagesAsyncTask;
 
     private ChatView mView;
+    private MessagesDataModel mDataModel;
 
 
-    ChatService(ChatView view, String dialogId) {
+    public ChatService(ChatView view, String dialogId, MessagesDataModel dataModel) {
         mView = view;
-        mContext = (Context)view;
+        mContext = (Context) view;
         mDialogId = dialogId;
+        mDataModel = dataModel;
     }
 
     @Override
@@ -48,18 +53,18 @@ public class ChatService implements ChatPresenter {
     }
 
     @Override
-    public void onLoad(){
-        mGetMessagesAsyncTask = new GetMessagesAsyncTask(100,0);
+    public void onLoad() {
+        mGetMessagesAsyncTask = new GetMessagesAsyncTask(100, 0);
         mGetMessagesAsyncTask.execute();
     }
 
     private class GetMessagesAsyncTask
-            extends AsyncTask<Void, Void, Pair<MessageArray,ErrorType>>{
+            extends AsyncTask<Void, Void, Pair<MessageArray, ErrorType>> {
 
         private final int limit;
         private final int offset;
 
-        public GetMessagesAsyncTask(int limit, int offset){
+        public GetMessagesAsyncTask(int limit, int offset) {
             this.limit = limit;
             this.offset = offset;
         }
@@ -91,26 +96,31 @@ public class ChatService implements ChatPresenter {
 
             ArrayList<ChatMessage> chatMessageList = new ArrayList<>();
 
-            for (int i = 0; i < pairList.size(); ++i){
+            for (int i = 0; i < pairList.size(); ++i) {
                 PairMessageDialogId pair = pairList.get(i);
                 Message message = pair.getMessage();
                 String dialogId = pair.getDialogId();
 
-                ChatMessage chatMessage = null;
-                if (dialogId.equals(PreferencesService.getUsernameFromPreferences())){
-                    chatMessage = new ChatMessage(message.getContent(),
-                            ChatMessage.Direction.Outcoming);
+                ChatMessage.Direction direction = null;
+                if (dialogId.equals(PreferencesService.getUsernameFromPreferences())) {
+                    direction = ChatMessage.Direction.Outcoming;
+                } else {
+                    direction = ChatMessage.Direction.Incoming;
                 }
-                else {
-                    chatMessage = new ChatMessage(message.getContent(),
-                            ChatMessage.Direction.Incoming);
-                }
+
+                ChatMessage chatMessage = new ChatMessage(
+                        message.getContent(),
+                        TimestampHelper.formatTimestampWithoutDate(message.getTimestamp()),
+                        direction
+                );
 
                 chatMessageList.add(chatMessage);
             }
 
-            if (chatMessageList.size() > 0){
-                mView.addMessagesToAdapter(chatMessageList);
+            if (chatMessageList.size() > 0) {
+                mDataModel.addMessages(chatMessageList);
+
+                if (mDataModel.getSize() != 0) mView.scrollRecyclerViewToLast();
             }
 
         }
@@ -146,9 +156,16 @@ public class ChatService implements ChatPresenter {
 
         protected void onPostExecute(Pair<ResponseBody, ErrorType> resultPair) {
             if (resultPair.second == ErrorType.NoError) {
-                ChatMessage chatMessage = new ChatMessage(messageText, ChatMessage.Direction.Outcoming);
-                mView.addMessageToAdapter(chatMessage);
+                String time = TimestampHelper
+                        .formatTimestampWithoutDate(System.currentTimeMillis()/1000);
+
+                mDataModel.addMessage(
+                        new ChatMessage(messageText, time, ChatMessage.Direction.Outcoming)
+                );
+
                 mView.clearMessageEditText();
+
+                if (mDataModel.getSize()!=0) mView.scrollRecyclerViewToLast();
             } else if (resultPair.second == ErrorType.NoInternetConnection) {
                 String message = "No internet connection. Unable to send messageText";
                 mView.showToast(message);

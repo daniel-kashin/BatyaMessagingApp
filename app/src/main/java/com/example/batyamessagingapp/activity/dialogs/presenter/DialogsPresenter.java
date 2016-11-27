@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.dialogs;
+package com.example.batyamessagingapp.activity.dialogs.presenter;
 
 /**
  * Created by Кашин on 29.10.2016.
@@ -7,5 +7,4 @@ package com.example.batyamessagingapp.activity.dialogs;
 public interface DialogsPresenter {
     void onLogoutButtonClick();
     void onFullLogoutButtonClick();
-    void onLoad();
 }

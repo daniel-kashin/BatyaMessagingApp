@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.chat;
+package com.example.batyamessagingapp.activity.chat.view;
 
 
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
@@ -13,6 +13,6 @@ public interface ChatView {
     String getMessageString();
     void clearMessageEditText();
     void showToast(String text);
-    void addMessageToAdapter(ChatMessage message);
-    void addMessagesToAdapter(List<ChatMessage> messages);
+    void scrollRecyclerViewToLast();
+    void scrollRecyclerViewToFirst();
 }

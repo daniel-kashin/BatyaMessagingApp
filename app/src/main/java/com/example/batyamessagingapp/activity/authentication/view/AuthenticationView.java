@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.authentication;
+package com.example.batyamessagingapp.activity.authentication.view;
 
 import android.app.ProgressDialog;
 

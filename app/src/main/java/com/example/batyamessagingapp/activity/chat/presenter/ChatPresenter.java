@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.chat;
+package com.example.batyamessagingapp.activity.chat.presenter;
 
 /**
  * Created by Кашин on 15.11.2016.

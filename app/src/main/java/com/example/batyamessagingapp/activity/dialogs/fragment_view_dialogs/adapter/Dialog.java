@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.dialogs.adapter;
+package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter;
 
 import android.graphics.Bitmap;
 
@@ -10,13 +10,13 @@ public class Dialog {
     private Bitmap bitmap;
     private String id;
     private String message;
-    private String time;
+    private long timestamp;
 
-    public Dialog(Bitmap bitmap, String id, String message, String time){
+    public Dialog(Bitmap bitmap, String id, String message, long timestamp){
         this.bitmap = bitmap;
         this.id = id;
         this.message = message;
-        this.time = time;
+        this.timestamp = timestamp;
     }
 
     public Bitmap getBitmap(){
@@ -31,16 +31,16 @@ public class Dialog {
         return message;
     }
 
-    public String getTime(){
-        return time;
+    public long getTimestamp(){
+        return timestamp;
     }
 
     public void setMessage(String message){
         this.message = message;
     }
 
-    public void setTime(String time){
-        this.time = time;
+    public void setTimestamp(long timestamp){
+        this.timestamp = timestamp;
     }
 
 }

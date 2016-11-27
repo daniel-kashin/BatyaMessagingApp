@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.batyamessagingapp.activity.authentication.AuthenticationActivity;
-import com.example.batyamessagingapp.activity.dialogs.DialogsActivity;
+import com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity;
+import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
 import com.example.batyamessagingapp.model.PreferencesService;
 
 public class SplashActivity extends AppCompatActivity {

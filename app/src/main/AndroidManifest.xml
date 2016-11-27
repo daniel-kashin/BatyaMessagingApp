@@ -20,20 +20,19 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.authentication.AuthenticationActivity"
+            android:name=".activity.dialogs.view.DialogsActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activity.dialogs.DialogsActivity"
+            android:name=".activity.authentication.view.AuthenticationActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize"
-        android:name=".activity.chat.ChatActivity"/>
+            android:name=".activity.chat.view.ChatActivity"/>
     </application>
 
 </manifest>

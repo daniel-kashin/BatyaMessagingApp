@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.dialogs.adapter;
+package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter;
 
 import android.support.v7.widget.RecyclerView;
 

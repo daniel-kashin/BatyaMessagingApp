@@ -4,13 +4,19 @@
     android:id="@+id/activity_contacts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.batyamessagingapp.activity.dialogs.DialogsActivity"
+    tools:context="com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity"
     android:gravity="center_horizontal">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/dialogRecyclerView"
+    <include
+        android:id="@+id/dialogsToolbar"
+        layout="@layout/default_toolbar"/>
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/dialogsToolbar">
+    </FrameLayout>
 
     <Button
         android:text="full log out"

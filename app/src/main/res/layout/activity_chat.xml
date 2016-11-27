@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android.support.v7.widget.recyclerview="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.batyamessagingapp.activity.chat.ChatActivity">
+    tools:context="com.example.batyamessagingapp.activity.chat.view.ChatActivity">
+
+    <include
+        android:id="@+id/chatToolbar"
+        layout="@layout/default_toolbar"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messageRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom = "7dp"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/messageInput"
-        android:background="@color/indigo_50" />
+        android:background="@color/indigo_50"
+        android:layout_below="@+id/chatToolbar" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/layout_shadow"
+        android:layout_height="2dp"
+        android:background="@drawable/layout_shadow_inversed"
         android:layout_above="@id/messageInput">
     </View>
 
@@ -62,4 +64,6 @@
             />
         </RelativeLayout>
     </RelativeLayout>
+
+
 </RelativeLayout>

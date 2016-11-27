@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.authentication;
+package com.example.batyamessagingapp.activity.authentication.view;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,13 +12,15 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.batyamessagingapp.activity.chat.ChatActivity;
-import com.example.batyamessagingapp.activity.dialogs.DialogsActivity;
+import com.example.batyamessagingapp.activity.authentication.presenter.AuthenticationPresenter;
+import com.example.batyamessagingapp.activity.authentication.presenter.AuthenticationService;
+import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.R;
 
@@ -187,12 +189,14 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public void showAlert(String message, String title) {
+        //BUG?
         AlertDialog.Builder builder = new AlertDialog.Builder(
-                new ContextThemeWrapper(this, android.R.style.Theme_Material_Light));
+                new ContextThemeWrapper(this, android.R.style.Theme_DeviceDefault_Light_Dialog));
         builder.setTitle(title)
                 .setMessage(message)
                 .setCancelable(true);
         AlertDialog alert = builder.create();
+        alert.requestWindowFeature(Window.FEATURE_NO_TITLE);
         alert.show();
     }
 

@@ -1,4 +1,4 @@
-package com.example.batyamessagingapp.activity.dialogs.adapter;
+package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
+import com.example.batyamessagingapp.lib.TimestampHelper;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,10 @@ import java.util.List;
  * Created by Кашин on 25.11.2016.
  */
 
-public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder> {
+//TODO: add separator
+
+public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder>
+        implements DialogsDataModel {
 
     private ArrayList<Dialog> mDialogList;
     private final Context mContext;
@@ -57,11 +62,19 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void setDialogMessageAndTime(int position, String message, String time) {
+    public void refresh(){
+        notifyDataSetChanged();
+    }
+
+    public int getSize(){
+        return getItemCount();
+    }
+
+    public void setDialogMessageAndTimestamp(int position, String message, long timestamp) {
         if (position < mDialogList.size() - 1 && position >=0) {
             Dialog dialog = mDialogList.get(position);
             dialog.setMessage(message);
-            dialog.setTime(time);
+            dialog.setTimestamp(timestamp);
         }
     }
 
@@ -75,18 +88,21 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(DialogAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final DialogAdapter.ViewHolder viewHolder, final int position) {
         Dialog dialog = mDialogList.get(position);
 
         viewHolder.setImage(dialog.getBitmap());
         viewHolder.setMessage(dialog.getMessage());
-        viewHolder.setTime(dialog.getTime());
+        viewHolder.setTime(TimestampHelper.formatTimestamp(dialog.getTimestamp()));
         viewHolder.setId(dialog.getId());
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mOnDialogClickListener.onItemClick(DialogAdapter.this, position);
+                mOnDialogClickListener.onItemClick(
+                        DialogAdapter.this,
+                        viewHolder.getAdapterPosition()
+                );
             }
         });
     }

@@ -1,14 +1,16 @@
-package com.example.batyamessagingapp.activity.chat;
+package com.example.batyamessagingapp.activity.chat.view;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
@@ -19,15 +21,20 @@ import android.widget.Toast;
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
+import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
+import com.example.batyamessagingapp.activity.chat.presenter.ChatPresenter;
+import com.example.batyamessagingapp.activity.chat.presenter.ChatService;
 
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity implements ChatView {
 
+    private String dialogId;
     private EditText mSendMessageEditText;
     private Button mSendMessageButton;
     private RecyclerView mRecyclerView;
     private View mActivityRootView;
+    private Toolbar mChatToolbar;
 
     private ChatPresenter mPresenter;
 
@@ -37,27 +44,49 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        dialogId = getIntent().getStringExtra("dialog_id");
+
         initializeViews();
         setListeners();
 
-        mPresenter = new ChatService(this, getIntent().getStringExtra("dialog_id"));
+        mPresenter = new ChatService(this, dialogId, (MessagesDataModel)mRecyclerView.getAdapter());
         mPresenter.onLoad();
     }
 
     private void initializeViews() {
-        mSendMessageEditText = (EditText) findViewById(R.id.messageEditText);
-        mSendMessageButton = (Button) findViewById(R.id.messageButton);
-        mActivityRootView = findViewById(R.id.activity_dialog);
+        //toolbar
+        mChatToolbar = (Toolbar) findViewById(R.id.chatToolbar);
+        setSupportActionBar(mChatToolbar);
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setTitle(dialogId);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
+        //recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
         LinearLayoutManager manager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         manager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(new ChatMessageAdapter(this));
+
+        //other views
+        mSendMessageEditText = (EditText) findViewById(R.id.messageEditText);
+        mSendMessageButton = (Button) findViewById(R.id.messageButton);
+        mActivityRootView = findViewById(R.id.activity_dialog);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setListeners() {
-
         //hide/show send button when text changed
         mSendMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -126,15 +155,17 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     }
 
     @Override
-    public void addMessageToAdapter(ChatMessage message){
-        ((ChatMessageAdapter) mRecyclerView.getAdapter()).addMessage(message);
-        mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount()-1);
+    public void scrollRecyclerViewToLast() {
+        if (mRecyclerView.getAdapter().getItemCount() != 0) {
+            mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+        }
     }
 
     @Override
-    public void addMessagesToAdapter(List<ChatMessage> messages){
-        ((ChatMessageAdapter) mRecyclerView.getAdapter()).addMessages(messages);
-        mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount()-1);
+    public void scrollRecyclerViewToFirst() {
+        if (mRecyclerView.getAdapter().getItemCount() != 0) {
+            mRecyclerView.scrollToPosition(0);
+        }
     }
 
     @Override
