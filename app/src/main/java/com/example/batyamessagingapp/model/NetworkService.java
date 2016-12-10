@@ -5,7 +5,10 @@ import com.example.batyamessagingapp.model.pojo.DialogArray;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
+import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
+
+import java.sql.Time;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -63,7 +66,8 @@ public class NetworkService {
             String dialogId, String messageType, String messageData) {
 
         Message message = new Message(messageType,messageData);
-        return sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
+        Call<ResponseBody> call = sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
+        return call;
     }
 
     public void getUsers() {

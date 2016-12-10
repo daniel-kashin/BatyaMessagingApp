@@ -5,7 +5,6 @@
     </style>
 
 
-
     <style name="AuthInput" parent="Base.V7.Widget.AppCompat.EditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/auth_input_height</item>
@@ -19,7 +18,6 @@
     </style>
 
 
-
     <style name="AuthButton" parent="Base.Widget.AppCompat.Button">
         <item name="android:background">@drawable/auth_button</item>
         <item name="android:textColor">@color/indigo_100</item>
@@ -30,33 +28,30 @@
     </style>
 
 
-
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
-
-
-
-
-
 
 
     <style name="Widget.Design.TextInputLayout" parent="AppTheme">
         <item name="hintTextAppearance">@style/AppTheme.TextFloatLabelAppearance</item>
         <item name="errorTextAppearance">@style/AppTheme.TextErrorAppearance</item>
         <item name="counterTextAppearance">@style/TextAppearance.Design.Counter</item>
-        <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow</item>
+        <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow
+        </item>
         <item name="android:textColorHint">@color/indigo_100</item>
         <item name="android:textColorHighlight">@color/indigo_100</item>
         <item name="android:textColorHighlightInverse">@color/white</item>
         <item name="android:textSize">@dimen/auth_input_text_size</item>
         <item name="android:layout_marginBottom">@dimen/auth_input_margin_bottom</item>
     </style>
+
     <style name="AppTheme.TextFloatLabelAppearance" parent="TextAppearance.Design.Hint">
         <!-- Floating label appearance here -->
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">15dp</item>
     </style>
+
     <style name="AppTheme.TextErrorAppearance" parent="TextAppearance.Design.Error">
         <!-- Error chatMessage appearance here -->
         <item name="android:textColor">@color/error</item>
@@ -65,7 +60,7 @@
 
     <style name="MessageInput" parent="Base.Widget.AppCompat.EditText">
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:hint">@string/messageHint</item>
+        <item name="android:hint">@string/message_hint</item>
         <item name="android:background">@color/white</item>
         <item name="android:textColorHint">@color/hint_text</item>
         <item name="android:textCursorDrawable">@null</item>
@@ -79,9 +74,24 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
         <item name="android:windowDisablePreview">true</item>
 
+        <item name="searchViewStyle">@style/MySearchViewStyle</item>
+
         <item name="colorControlNormal">@color/indigo_100</item>
         <item name="colorControlActivated">@color/white</item>
         <item name="colorControlHighlight">@color/white</item>
+    </style>
+
+
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="goIcon">@mipmap/vector_forward</item>
+        <item name="commitIcon">@mipmap/vector_forward</item>
+        <item name="android:iconifiedByDefault">false</item>
+        <item name="closeIcon">@mipmap/ic_launcher</item>
+        <item name="searchIcon">@null</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="android:hint">Username</item>
+        <item name="android:queryHint">Username</item>
+        <item name="android:textColorHint">@color/white</item>
     </style>
 
     <style name="ThemeOverlay.AppTheme.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">

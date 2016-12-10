@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="6dp"
     android:layout_marginTop="6dp">
 
     <TextView
-        android:id="@+id/messageTextView"
+        android:id="@+id/message_message_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/bubble_outcoming"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/bubble_incoming"
         android:maxWidth="300dp"
         android:paddingBottom="9dp"
-        android:paddingEnd="19dp"
-        android:paddingStart="9dp"
+        android:paddingEnd="9dp"
+        android:paddingStart="19dp"
         android:paddingTop="9dp"
         android:textColor="@color/primary_text"
-        android:textSize="@dimen/auth_button_text_size"
-        android:text="Loren Loren insum amore impun Loren Loren insum amore impun Loren Loren insum amore impunLoren Loren insum amore impun"/>
+        android:textSize="@dimen/auth_button_text_size"/>
 
     <TextView
-        android:id="@+id/timeTextView"
+        android:id="@+id/message_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="22:15"
         android:paddingTop="2dp"
-        android:paddingRight="8dp"
+        android:paddingLeft="8dp"
         android:textSize="@dimen/auth_input_bottom_text_size"
         android:textColor="@color/hint_text"
-        android:layout_toStartOf="@id/messageTextView"/>
+        android:layout_toEndOf="@id/message_message_text_view"/>
 
 </RelativeLayout>

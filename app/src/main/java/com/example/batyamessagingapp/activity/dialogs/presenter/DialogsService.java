@@ -12,6 +12,7 @@ import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 
@@ -21,7 +22,7 @@ import retrofit2.Response;
 
 public class DialogsService implements DialogsPresenter  {
 
-    private DisconnectionAsyncTask mDisconnectionAsyncTask;
+    private CheckUserExistenceAsyncTask mCheckUserExistenceAsyncTask;
     private DialogsView mView;
     private Context mContext;
 
@@ -30,61 +31,30 @@ public class DialogsService implements DialogsPresenter  {
         mContext = (Context)dialogsView;
     }
 
-    public void onLogoutButtonClick() {
-        mDisconnectionAsyncTask = new DisconnectionAsyncTask(DisconnectionType.Normal);
-        mDisconnectionAsyncTask.execute();
+    @Override
+    public void onForwardIconButtonClick(final String username) {
+        mCheckUserExistenceAsyncTask = new CheckUserExistenceAsyncTask(username);
+        mCheckUserExistenceAsyncTask.execute();
     }
 
-    public void onFullLogoutButtonClick() {
-        mDisconnectionAsyncTask = new DisconnectionAsyncTask(DisconnectionType.Full);
-        mDisconnectionAsyncTask.execute();
-    }
 
-    class DisconnectionAsyncTask
-            extends AsyncTask<Void, Void, Pair<APIAnswer, DialogsService.ErrorType>> {
+    private class CheckUserExistenceAsyncTask extends AsyncTask<Void, Void, ResponseBody>{
+        private final String username;
 
-        private final DisconnectionType disconnectionType;
-
-        public DisconnectionAsyncTask(DisconnectionType disconnectionType) {
-            this.disconnectionType = disconnectionType;
+        CheckUserExistenceAsyncTask(String username){
+            this.username = username;
         }
 
-        protected Pair<APIAnswer, DialogsService.ErrorType> doInBackground(Void... voids) {
-            try {
-                Response<APIAnswer> response;
-                if (disconnectionType == DisconnectionType.Full)
-                    response = NetworkService.getFullLogoutCall().execute();
-                else //disconnectionType == DisconnectionType.Normal
-                    response = NetworkService.getLogoutCall().execute();
-
-                APIAnswer apiAnswer = response.body();
-
-                if (response.code() == 200 && apiAnswer != null) {
-                    return new Pair<>(apiAnswer, DialogsService.ErrorType.NoError);
-                } else {
-                    return new Pair<>(null, DialogsService.ErrorType.NoAccess);
-                }
-            } catch (ConnectException e) {
-                return new Pair<>(null, DialogsService.ErrorType.NoInternetConnection);
-            } catch (IOException e) {
-                return new Pair<>(null, DialogsService.ErrorType.NoAccess);
-            }
+        @Override
+        protected ResponseBody doInBackground(Void... params) {
+            return null;
         }
 
-        protected void onPostExecute(Pair<APIAnswer, DialogsService.ErrorType> resultPair) {
-            if (resultPair.second == DialogsService.ErrorType.NoInternetConnection && disconnectionType == DisconnectionType.Full) {
-                mView.showAlert("No internet connection. Unable to leave active sessions", "Log out error");
-            } else {
-                PreferencesService.deleteTokenFromPreferences();
-                mView.openAuthenticationActivity();
-            }
+        protected void onPostExecute(ResponseBody responseBody) {
+            mView.openChatActivity(username);
         }
     }
 
-    private enum DisconnectionType {
-        Normal,
-        Full
-    }
 
     private enum ErrorType {
         NoInternetConnection,

@@ -1,6 +1,7 @@
 package com.example.batyamessagingapp.activity.chat.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,25 +17,28 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
+import com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
 import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatPresenter;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatService;
 
-import java.util.List;
-
 public class ChatActivity extends AppCompatActivity implements ChatView {
 
-    private String dialogId;
+    private String mDialogId;
     private EditText mSendMessageEditText;
     private Button mSendMessageButton;
     private RecyclerView mRecyclerView;
     private View mActivityRootView;
-    private Toolbar mChatToolbar;
+    private Toolbar mToolbar;
+    private TextView mToolbarLabel;
+    private TextView mNoMessagesTextView;
+    private ImageView mToolbarRefreshIcon;
 
     private ChatPresenter mPresenter;
 
@@ -44,46 +48,78 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        dialogId = getIntent().getStringExtra("dialog_id");
+        mDialogId = getIntent().getStringExtra("dialog_id");
 
         initializeViews();
         setListeners();
 
-        mPresenter = new ChatService(this, dialogId, (MessagesDataModel)mRecyclerView.getAdapter());
+        mPresenter = new ChatService(this, mDialogId, (MessagesDataModel)mRecyclerView.getAdapter());
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mPresenter.stopGetMessagesWithInterval();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
         mPresenter.onLoad();
     }
 
     private void initializeViews() {
         //toolbar
-        mChatToolbar = (Toolbar) findViewById(R.id.chatToolbar);
-        setSupportActionBar(mChatToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
+        mToolbarLabel = (TextView) findViewById(R.id.chat_toolbar_label);
+        mToolbarLabel.setText(mDialogId);
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar()!=null) {
-            getSupportActionBar().setTitle(dialogId);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        mToolbarRefreshIcon = (ImageView)findViewById(R.id.chat_toolbar_refresh_icon);
 
         //recycler view
-        mRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.chat_message_recycler_view);
         LinearLayoutManager manager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         manager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(new ChatMessageAdapter(this));
 
         //other views
-        mSendMessageEditText = (EditText) findViewById(R.id.messageEditText);
-        mSendMessageButton = (Button) findViewById(R.id.messageButton);
-        mActivityRootView = findViewById(R.id.activity_dialog);
+        mSendMessageEditText = (EditText) findViewById(R.id.chat_message_edit_text);
+        mSendMessageButton = (Button) findViewById(R.id.chat_message_button);
+        mActivityRootView = findViewById(R.id.activity_chat);
+        mNoMessagesTextView = (TextView) findViewById(R.id.chat_no_messages_text_view);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
-            finish(); // close this activity and return to preview activity (if there is any)
+            finish();
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void hideNoMessagesTextView() {
+        mNoMessagesTextView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void setToolbarLabelText(String text) {
+        mToolbarLabel.setText(text);
+    }
+
+    @Override
+    public void showRefreshButton() {
+        mToolbarRefreshIcon.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideRefreshButton() {
+        mToolbarRefreshIcon.setVisibility(View.INVISIBLE);
     }
 
     private void setListeners() {
@@ -131,6 +167,13 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
             }
         });
 
+        mToolbarLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollRecyclerViewToFirst();
+            }
+        });
+
         //scroll when keyboard appears
         mActivityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -139,12 +182,15 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
                 final float dp200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
                 final int heightDiff = mActivityRootView.getRootView().getHeight() - mActivityRootView.getHeight();
                 if (heightDiff > dp200) {
-                    mRecyclerView.post(new Runnable() {
-                        public void run() {
-                            mRecyclerView.scrollBy(0, heightDiff);
-                        }
-                    });
+                        scrollRecyclerViewToLast();
                 }
+            }
+        });
+
+        mToolbarRefreshIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onRefreshIconClick();
             }
         });
     }
@@ -159,6 +205,13 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         if (mRecyclerView.getAdapter().getItemCount() != 0) {
             mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
         }
+    }
+
+    @Override
+    public void openAuthenticationActivity() {
+        Intent intent = new Intent(this, AuthenticationActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

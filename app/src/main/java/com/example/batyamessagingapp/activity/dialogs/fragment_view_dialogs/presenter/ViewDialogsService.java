@@ -46,16 +46,16 @@ public class ViewDialogsService implements ViewDialogsPresenter {
     }
 
     //added this method to enable recursion
-    public void startGetDialogsAsyncTask(int offset) {
+    private void startGetDialogsAsyncTask(int offset) {
         mGetDialogsAsyncTask = new GetDialogsAsyncTask(offset);
         mGetDialogsAsyncTask.execute();
     }
 
-    class GetDialogsAsyncTask extends AsyncTask<Void, Void, Pair<DialogArray, ErrorType>> {
+    private class GetDialogsAsyncTask extends AsyncTask<Void, Void, Pair<DialogArray, ErrorType>> {
 
         private final int offset;
 
-        public GetDialogsAsyncTask(int offset) {
+        GetDialogsAsyncTask(int offset) {
             this.offset = offset;
         }
 
@@ -85,9 +85,11 @@ public class ViewDialogsService implements ViewDialogsPresenter {
             if (resultPair.second == ErrorType.NoError && resultPair.first != null) {
                 addDialogArrayToAdapter(resultPair.first);
             }
-
             //TODO
 
+            if (mDataModel.getSize()!=0){
+                mView.hideNoDialogsTextView();
+            }
         }
 
     }
@@ -114,7 +116,7 @@ public class ViewDialogsService implements ViewDialogsPresenter {
                 Dialog dialog = new Dialog(bitmap, dialogId, message.getContent(), message.getTimestamp());
 
                 mDataModel.addDialog(dialog);
-            } else { //dialog exists
+            } else { //item_dialog exists
                 mDataModel.setDialogMessageAndTimestamp(
                         dialogPosition, message.getContent(), message.getTimestamp());
             }

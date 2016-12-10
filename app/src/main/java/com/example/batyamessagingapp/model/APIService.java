@@ -5,6 +5,7 @@ import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
+import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
 
 import okhttp3.ResponseBody;
@@ -34,8 +35,8 @@ public interface APIService {
 
     @POST ("/{token}/messages/send/{dialog_id}")
     Call<ResponseBody> sendMessage(@Path("token") String token,
-                                   @Path("dialog_id") String dialogId,
-                                   @Body Message message);
+                                @Path("dialog_id") String dialogId,
+                                @Body Message message);
 
     @GET("/{token}/messages/{dialog_id}/limit/{limit}/skip/{offset}")
     Call<MessageArray> getMessages(@Path("token") String token,

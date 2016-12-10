@@ -2,20 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity"
     android:id="@+id/activity_authentication"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/indigo_500"
-    android:orientation="vertical"
-    tools:context="com.example.batyamessagingapp.activity.authentication.AuthenticationActivity">
+    android:orientation="vertical">
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/authenctication_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,7 +25,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:id="@+id/mainIcon"
+                android:id="@+id/authenctication_main_icon"
                 style="@style/MainIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,14 +38,14 @@
                 android:typeface="monospace" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/usernameTextInputLayout"
+                android:id="@+id/authentication_username_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
                 app:errorTextAppearance="@style/AppTheme.TextErrorAppearance">
 
                 <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/usernameEditText"
+                    android:id="@+id/authentication_username_edit_text"
                     style="@style/AuthInput"
                     android:hint="@string/username"
                     android:inputType="textNoSuggestions|textVisiblePassword"
@@ -55,7 +54,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/passwordTextInputLayout"
+                android:id="@+id/authentication_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
@@ -63,7 +62,7 @@
                 app:passwordToggleEnabled="false">
 
                 <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/passwordEditText"
+                    android:id="@+id/authentication_password_edit_text"
                     style="@style/AuthInput"
                     android:hint="@string/password"
                     android:inputType="textPassword"
@@ -78,15 +77,15 @@
                 android:paddingBottom="@dimen/linear_layout_padding_bottom">
 
                 <Button
-                    android:id="@+id/authButton"
+                    android:id="@+id/authentication_auth_button"
                     style="@style/AuthButton"
-                    android:layout_marginRight="6dp"
+                    android:layout_marginEnd="6dp"
                     android:text="Log in" />
 
                 <Button
-                    android:id="@+id/registrationButton"
+                    android:id="@+id/authentication_registration_button"
                     style="@style/AuthButton"
-                    android:layout_marginLeft="6dp"
+                    android:layout_marginStart="6dp"
                     android:text="Sign up" />
 
             </LinearLayout>

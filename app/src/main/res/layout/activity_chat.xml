@@ -1,65 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_dialog"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_chat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.batyamessagingapp.activity.chat.view.ChatActivity">
 
-    <include
-        android:id="@+id/chatToolbar"
-        layout="@layout/default_toolbar"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/chat_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:titleTextColor="@color/white"
+        android:background="@color/indigo_400"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:id="@+id/chat_toolbar_label"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:visibility="invisible"
+                android:id="@+id/chat_toolbar_refresh_icon"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="15dp"
+                android:background="@mipmap/vector_refresh"/>
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/messageRecyclerView"
+        android:id="@+id/chat_message_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/messageInput"
+        android:layout_above="@+id/chat_message_input"
         android:background="@color/indigo_50"
-        android:layout_below="@+id/chatToolbar" />
+        android:layout_below="@+id/chat_toolbar" />
+
+    <TextView
+        style="@style/Widget.AppCompat.TextView.SpinnerItem"
+        android:id="@+id/chat_no_messages_text_view"
+        android:text="@string/no_messages_title"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@drawable/layout_shadow_inversed"
-        android:layout_above="@id/messageInput">
+        android:layout_above="@id/chat_message_input">
     </View>
 
     <RelativeLayout
         android:background="@color/white"
-        android:id="@+id/messageInput"
+        android:id="@+id/chat_message_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
         <EditText
             style="@style/MessageInput"
-            android:id="@+id/messageEditText"
+            android:id="@+id/chat_message_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="150dp"
-            android:minHeight="50dp"
+            android:minHeight="40dp"
             android:inputType="textMultiLine"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/messageButtonLayout"
+            android:layout_toStartOf="@+id/chat_message_button_layout"
             android:layout_marginStart="20dp" />
 
         <RelativeLayout
-            android:id="@+id/messageButtonLayout"
+            android:id="@+id/chat_message_button_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/messageEditText">
+            android:layout_alignBottom="@+id/chat_message_edit_text">
         <Button
             android:visibility="invisible"
             android:alpha="0"
-            android:id="@+id/messageButton"
+            android:id="@+id/chat_message_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginBottom="15dp"
-            android:src="@color/indigo_700"
+            android:background="@drawable/vector_send"
             android:layout_margin="5dp"
-            android:text="Button"
+            android:tint="@color/indigo_100"
             android:layout_alignParentBottom="true"
             />
         </RelativeLayout>

@@ -7,5 +7,13 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="title_activity_splash">SplashActivity</string>
-    <string name="messageHint">Message</string>
+    <string name="message_hint">Message</string>
+    <string name="no_messages_title">No messages here yet.</string>
+    <string name="no_dialogs_title">No dialogs here yet.</string>
+    <string name="fragment_messages_title">Messages</string>
+    <string name="log_out">Log out</string>
+    <string name="full_log_out">Log out from all devices</string>
+    <string name="fragment_settings_title">Settings</string>
+    <string name="loading">Loading...</string>
+    <string name="no_internet_connection">No internet connection</string>
 </resources>

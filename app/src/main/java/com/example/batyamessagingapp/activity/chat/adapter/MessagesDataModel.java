@@ -10,4 +10,5 @@ public interface MessagesDataModel {
     void addMessage(ChatMessage message);
     void addMessages(List<ChatMessage> messages);
     int getSize();
+    boolean hasItemWithId(String guid);
 }

@@ -14,13 +14,13 @@ public class MessageArray {
 
     @SerializedName("messages")
     @Expose
-    public ArrayList<PairMessageDialogId> messages;
+    public ArrayList<Message> messages;
 
-    public MessageArray(ArrayList<PairMessageDialogId> messages){
+    public MessageArray(ArrayList<Message> messages){
         this.messages = messages;
     }
 
-    public ArrayList<PairMessageDialogId> getMessages(){
+    public ArrayList<Message> getMessages(){
         return messages;
     }
 }

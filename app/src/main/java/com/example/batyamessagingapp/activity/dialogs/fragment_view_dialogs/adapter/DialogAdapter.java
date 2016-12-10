@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.lib.TimestampHelper;
 
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +81,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     public DialogAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.dialog, parent, false);
+                .inflate(R.layout.item_dialog, parent, false);
 
         return new ViewHolder(view);
     }
@@ -131,10 +130,10 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
         ViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.dialogImageView);
-            messageTextView = (TextView) itemView.findViewById(R.id.dialogMessageTextView);
+            imageView = (ImageView) itemView.findViewById(R.id.dialog_image_view);
+            messageTextView = (TextView) itemView.findViewById(R.id.dialog_message_text_view);
             idTextView = (TextView) itemView.findViewById(R.id.dialogIdTextView);
-            timeTextView = (TextView) itemView.findViewById(R.id.dialogTimeTextView);
+            timeTextView = (TextView) itemView.findViewById(R.id.dialog_time_text_view);
         }
 
         void setImage(Bitmap bitmap) {

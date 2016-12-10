@@ -19,7 +19,7 @@ public class TimestampHelper {
         SimpleDateFormat simpleDateFormat;
 
         if (timestamp / secondsInDay == System.currentTimeMillis() / 1000 / secondsInDay) {
-            simpleDateFormat = new SimpleDateFormat("hh:mm");
+            simpleDateFormat = new SimpleDateFormat("hh:mm", new Locale("ru-RU"));
         } else {
             simpleDateFormat = new SimpleDateFormat("MMM dd", new Locale("en-US"));
         }
@@ -29,7 +29,7 @@ public class TimestampHelper {
     }
 
     public static String formatTimestampWithoutDate(long timestamp) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm", new Locale("ru-RU"));
         simpleDateFormat.setTimeZone(Calendar.getInstance().getTimeZone());
         return simpleDateFormat.format(timestamp * 1000);
     }

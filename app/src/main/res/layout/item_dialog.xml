@@ -6,7 +6,7 @@
     android:layout_marginBottom="10dp">
 
     <ImageView
-        android:id="@+id/dialogImageView"
+        android:id="@+id/dialog_image_view"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginLeft="10dp"
@@ -24,7 +24,7 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/dialogTimeTextView"
+                android:id="@+id/dialog_time_text_view"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"/>
@@ -34,12 +34,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/dialogTimeTextView"/>
+                android:layout_toStartOf="@id/dialog_time_text_view"/>
 
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/dialogMessageTextView"
+            android:id="@+id/dialog_message_text_view"
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="2"/>

@@ -1,16 +1,14 @@
-package com.example.batyamessagingapp.activity.dialogs.view;
+package com.example.batyamessagingapp.activity.dialogs.fragment_settings.view;
 
 import android.app.ProgressDialog;
 
 /**
- * Created by Кашин on 29.10.2016.
+ * Created by Кашин on 10.12.2016.
  */
 
-public interface DialogsView {
+public interface SettingsView {
     void openAuthenticationActivity();
     void showAlert(String message, String title);
-    void openChatActivity(String dialogId);
-    void setToolbarLabel(String newLabel);
     void startProgressDialog(String message);
     void stopProgressDialog();
     ProgressDialog getProgressDialog();

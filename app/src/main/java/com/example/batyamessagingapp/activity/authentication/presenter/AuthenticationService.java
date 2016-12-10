@@ -41,9 +41,9 @@ public class AuthenticationService implements AuthenticationPresenter {
         ConnectionType connectionType = null;
 
         if (mView.checkInputs()) {
-            if (id == R.id.authButton) {
+            if (id == R.id.authentication_auth_button) {
                 connectionType = ConnectionType.Login;
-            } else if (id == R.id.registrationButton) {
+            } else if (id == R.id.authentication_registration_button) {
                 connectionType = ConnectionType.Register;
             }
 
@@ -83,10 +83,12 @@ public class AuthenticationService implements AuthenticationPresenter {
             });
         }
 
+        @Override
         protected void onPreExecute() {
-            mView.startProgressDialog("Loading...");
+            mView.startProgressDialog(mContext.getString(R.string.loading));
         }
 
+        @Override
         protected Pair<Token, ErrorType> doInBackground(Void... voids) {
             try {
                 Response<Token> response;

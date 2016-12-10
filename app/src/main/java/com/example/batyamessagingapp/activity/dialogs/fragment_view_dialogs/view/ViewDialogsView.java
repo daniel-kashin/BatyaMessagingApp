@@ -5,4 +5,5 @@ package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.vie
  */
 
 public interface ViewDialogsView {
+    void hideNoDialogsTextView();
 }

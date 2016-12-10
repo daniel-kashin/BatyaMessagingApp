@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.lib.TimestampHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,10 +66,10 @@ public class ChatMessageAdapter
         int layout = -1;
         ChatMessage.Direction direction;
         if (viewType == ChatMessage.Direction.Incoming.getIntValue()) {
-            layout = R.layout.message_incoming;
+            layout = R.layout.item_message_incoming;
             direction = ChatMessage.Direction.Incoming;
         } else {
-            layout = R.layout.message_outcoming;
+            layout = R.layout.item_message_outcoming;
             direction = ChatMessage.Direction.Outcoming;
         }
 
@@ -87,6 +86,15 @@ public class ChatMessageAdapter
     }
 
     @Override
+    public boolean hasItemWithId(String guid) {
+        for (int i = mChatMessageList.size() - 1; i >= 0; --i){
+            if (mChatMessageList.get(i).getGuid().equals(guid)) return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         //get chatMessage
         final ChatMessage chatMessage = mChatMessageList.get(position);
@@ -97,7 +105,8 @@ public class ChatMessageAdapter
             viewHolder.setTime(chatMessage.getTimeText());
         }
 
-        //create alert dialog
+
+        //create alert item_dialog
         final AlertDialog.Builder builder =
                 new AlertDialog.Builder(new ContextThemeWrapper(mContext,
                         android.R.style.Theme_DeviceDefault_Light_Dialog));
@@ -151,8 +160,8 @@ public class ChatMessageAdapter
 
             this.direction = direction;
 
-            messageTextView = (TextView) view.findViewById(R.id.messageTextView);
-            timeTextView = (TextView) view.findViewById(R.id.timeTextView);
+            messageTextView = (TextView) view.findViewById(R.id.message_message_text_view);
+            timeTextView = (TextView) view.findViewById(R.id.message_time_text_view);
         }
 
         public void setMessage(String message) {

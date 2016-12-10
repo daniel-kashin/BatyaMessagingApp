@@ -15,4 +15,9 @@ public interface ChatView {
     void showToast(String text);
     void scrollRecyclerViewToLast();
     void scrollRecyclerViewToFirst();
+    void hideNoMessagesTextView();
+    void setToolbarLabelText(String text);
+    void showRefreshButton();
+    void hideRefreshButton();
+    void openAuthenticationActivity();
 }

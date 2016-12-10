@@ -9,11 +9,13 @@ public class ChatMessage {
     private String messageText;
     private String timeText;
     private Direction direction;
+    private String guid;
 
-    public ChatMessage(String messageText, String timeText, Direction direction){
+    public ChatMessage(String messageText, String timeText, Direction direction, String guid){
         this.messageText = messageText;
         this.timeText = timeText;
         this.direction = direction;
+        this.guid = guid;
     }
 
     public String getMessageText(){
@@ -28,6 +30,9 @@ public class ChatMessage {
         return direction;
     }
 
+    public String getGuid(){
+        return guid;
+    }
 
     public enum Direction {
         Incoming(0),

@@ -1,31 +1,59 @@
 package com.example.batyamessagingapp.activity.dialogs.view;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity;
 import com.example.batyamessagingapp.activity.chat.view.ChatActivity;
+import com.example.batyamessagingapp.activity.dialogs.fragment_settings.view.SettingsFragment;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.view.ViewDialogsFragment;
 import com.example.batyamessagingapp.activity.dialogs.presenter.DialogsPresenter;
 import com.example.batyamessagingapp.activity.dialogs.presenter.DialogsService;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DialogsActivity extends AppCompatActivity implements DialogsView {
 
     private ProgressDialog mProgressDialog;
-    private Button mLogoutButton;
-    private Button mFullLogoutButton;
-    private Toolbar mDialogsToolbar;
+    private Toolbar mToolbar;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private TextView mToolbarLabel;
+    private EditText mToolbarEditText;
+    private ImageView mToolbarForwardIcon;
 
-    private DialogsPresenter mDialogsPresenter;
+    private FragmentTransaction mFragmentTransaction;
+    private SettingsFragment settingsFragment = new SettingsFragment();
+    private ViewDialogsFragment viewDialogsFragment = new ViewDialogsFragment();
+
+    private DialogsPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +61,44 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         setContentView(R.layout.activity_dialogs);
 
         initializeViews();
-        setOnClickListeners();
+        setListeners();
 
-        mDialogsPresenter = new DialogsService(this);
+        mPresenter = new DialogsService(this);
+        applyFragment(viewDialogsFragment);
+    }
 
-        //TODO: remove bydlokod
-        Fragment viewDialogsFragment = new ViewDialogsFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragmentContainer, viewDialogsFragment);
-        transaction.commit();
+    private void applyFragment(Fragment fragment) {
+        FragmentManager manager = getFragmentManager();
+        String addingFragmentName = fragment.getClass().getName();
+
+        boolean addFragment = manager.getBackStackEntryCount() == 0
+                || !manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1).getName()
+                .equals(addingFragmentName);
+
+        if (addFragment) {
+            boolean fragmentPopped = manager.popBackStackImmediate(addingFragmentName, 0);
+            if (!fragmentPopped && manager.findFragmentByTag(addingFragmentName) == null) {
+                mFragmentTransaction = manager.beginTransaction();
+                mFragmentTransaction.add(R.id.fragment_container, fragment);
+                mFragmentTransaction.addToBackStack(addingFragmentName);
+                mFragmentTransaction.commit();
+            }
+        }
+    }
+
+    @Override
+    public void startProgressDialog(String message) {
+        mProgressDialog.setMessage(message);
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    @Override
+    public void stopProgressDialog() {
+        if (mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
@@ -57,7 +114,7 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     }
 
     @Override
-    public void openAuthenticationActivity(){
+    public void openAuthenticationActivity() {
         Intent intent = new Intent(this, AuthenticationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -66,37 +123,198 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     }
 
     @Override
-    public void openChatActivity(String dialogId){
+    public void openChatActivity(String dialogId) {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("dialog_id", dialogId);
         startActivity(intent);
     }
 
-    private void setOnClickListeners(){
-        mLogoutButton.setOnClickListener(new View.OnClickListener(){
+    private void setListeners() {
+        mToolbarForwardIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                mDialogsPresenter.onLogoutButtonClick();
+            public void onClick(View v) {
+                mPresenter.onForwardIconButtonClick(
+                        mToolbarEditText.getText().toString());
             }
         });
 
-        mFullLogoutButton.setOnClickListener(new View.OnClickListener(){
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                mToolbar, R.string.app_name, R.string.app_name) {
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        String[] actions = {"New Group", "New Chat", "Messages", "Settings"};
+        int[] icons = {R.drawable.vector_new_group, R.drawable.vector_new_contact,
+                R.drawable.vector_messages, R.drawable.vector_settings};
+        RecyclerView drawerRecyclerView = (RecyclerView) findViewById(R.id.dialogs_drawer_recycler_view);
+        drawerRecyclerView.setAdapter(new DrawerAdapter(actions, icons));
+        drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mToolbarEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view){
-                mDialogsPresenter.onFullLogoutButtonClick();
+            public void afterTextChanged(Editable s) {
+                if (s.length() != 0) {
+                    mToolbarForwardIcon.animate().alpha(1).setDuration(200);
+                    mToolbarForwardIcon.setVisibility(View.VISIBLE);
+                } else if (s.length() == 0) {
+                    mToolbarForwardIcon.animate().alpha(0).setDuration(200);
+                    mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
     private void initializeViews() {
         //toolbar
-        mDialogsToolbar= (Toolbar) findViewById(R.id.dialogsToolbar);
-        setSupportActionBar(mDialogsToolbar);
-        if (getSupportActionBar()!=null) {
-            getSupportActionBar().setTitle("Messages");
+        mToolbar = (Toolbar) findViewById(R.id.dialogs_toolbar);
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        mLogoutButton = (Button)findViewById(R.id.logoutButton);
-        mFullLogoutButton = (Button)findViewById(R.id.fullLogoutButton);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.dialogs_drawer_layout);
+        mToolbarForwardIcon = (ImageView) findViewById(R.id.dialogs_toolbar_forward_icon);
+        mToolbarEditText = (EditText) findViewById(R.id.dialogs_toolbar_edit_text);
+        mToolbarLabel = (TextView) findViewById(R.id.dialogs_toolbar_label);
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setTitle(null);
+        mProgressDialog.setCancelable(true);
+    }
+
+    @Override
+    public void setToolbarLabel(String newLabel){
+        mToolbarLabel.setText(newLabel);
+    }
+
+    @Override
+    public ProgressDialog getProgressDialog(){
+        return mProgressDialog;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideSearch();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
+                && mToolbarEditText.getVisibility() == View.VISIBLE) {
+            hideSearch();
+        } else {
+            finish();
+        }
+        return true;
+    }
+
+    private void showSearch() {
+        mToolbarLabel.setVisibility(View.INVISIBLE);
+        mToolbarForwardIcon.setVisibility(View.VISIBLE);
+        mToolbarEditText.setVisibility(View.VISIBLE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void hideSearch() {
+        mToolbarLabel.setVisibility(View.VISIBLE);
+        mToolbarEditText.setVisibility(View.INVISIBLE);
+        mToolbarEditText.setVisibility(View.INVISIBLE);
+    }
+
+    private class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
+        private String mTitles[];
+        private int mIcons[];
+
+        DrawerAdapter(String titles[], int icons[]) {
+            mTitles = titles;
+            mIcons = icons;
+        }
+
+        @Override
+        public DrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View item = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_drawer, parent, false);
+            return new ViewHolder(item);
+        }
+
+        @Override
+        public void onBindViewHolder(final DrawerAdapter.ViewHolder holder, int position) {
+            holder.textView.setText(mTitles[position]); // Setting the Text with the array of our Titles
+            holder.imageView.setImageResource(mIcons[position]);// Settimg the image with array of our icons
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (holder.getAdapterPosition() == 0) {
+
+                    } else if (holder.getAdapterPosition() == 1) {
+                        showSearch();
+                    } else if (holder.getAdapterPosition() == 2) {
+                        applyFragment(viewDialogsFragment);
+                    } else {
+                        applyFragment(settingsFragment);
+                    }
+                    mDrawerLayout.closeDrawers();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mTitles.length; // the number of items in the list will be +1 the titles including the header view.
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView textView;
+            ImageView imageView;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                textView = (TextView) itemView.findViewById(R.id.drawer_item_text);
+                imageView = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
+            }
+        }
+
     }
 }
