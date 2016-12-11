@@ -70,7 +70,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     public void setDialogMessageAndTimestamp(int position, String message, long timestamp) {
-        if (position < mDialogList.size() - 1 && position >=0) {
+        if (position < mDialogList.size() && position >=0) {
             Dialog dialog = mDialogList.get(position);
             dialog.setMessage(message);
             dialog.setTimestamp(timestamp);
@@ -132,7 +132,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.dialog_image_view);
             messageTextView = (TextView) itemView.findViewById(R.id.dialog_message_text_view);
-            idTextView = (TextView) itemView.findViewById(R.id.dialogIdTextView);
+            idTextView = (TextView) itemView.findViewById(R.id.dialog_username_text_view);
             timeTextView = (TextView) itemView.findViewById(R.id.dialog_time_text_view);
         }
 

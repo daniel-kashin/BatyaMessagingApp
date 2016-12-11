@@ -29,7 +29,6 @@ public class AuthenticationService implements AuthenticationPresenter {
 
     private AuthenticationView mView;
 
-
     public AuthenticationService(AuthenticationView view) {
         mView = view;
         this.mContext = (Context) view;
@@ -59,14 +58,14 @@ public class AuthenticationService implements AuthenticationPresenter {
         }
     }
 
-    class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, ErrorType>> {
+    private class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, ErrorType>> {
 
         private final ProgressDialog progressDialog;
         private final ConnectionType connectionType;
         private final String username;
         private final String password;
 
-        public ConnectionAsyncTask(ProgressDialog progressDialog, ConnectionType connectionType,
+        ConnectionAsyncTask(ProgressDialog progressDialog, ConnectionType connectionType,
                                    String username, String password) {
 
             this.progressDialog = progressDialog;
@@ -81,6 +80,11 @@ public class AuthenticationService implements AuthenticationPresenter {
                     cancel(true);
                 }
             });
+        }
+
+        @Override
+        protected void onCancelled() {
+            //do nothing
         }
 
         @Override
@@ -112,10 +116,7 @@ public class AuthenticationService implements AuthenticationPresenter {
             }
         }
 
-        protected void onCancelled(Token token) {
-            //do nothing
-        }
-
+        @Override
         protected void onPostExecute(Pair<Token, ErrorType> resultPair) {
             mView.stopProgressDialog();
 
@@ -138,7 +139,7 @@ public class AuthenticationService implements AuthenticationPresenter {
                 mView.showAlert(message, "Auth error");
             }
         }
-    }
+    } // Connection async task
 
     private enum ConnectionType {
         Register,

@@ -19,4 +19,10 @@
     <dimen name="auth_input_bottom_text_size">12dp</dimen>
 
     <dimen name="drawer_list_view_width">240dp</dimen>
+
+
+    <dimen name="dialog_username_text_size">20sp</dimen>
+    <dimen name="dialog_message_text_size">17sp</dimen>
+    <dimen name="dialog_time_text_size">15sp</dimen>
+
 </resources>

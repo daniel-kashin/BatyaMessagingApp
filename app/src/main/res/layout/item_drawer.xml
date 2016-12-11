@@ -2,17 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/item_drawer"
     android:padding="10dp">
 
     <ImageView
-        android:tint="@color/indigo_100"
+        android:tint="@color/shadow_end"
         android:layout_margin="5dp"
         android:id="@+id/drawer_item_icon"
         android:layout_width="24dp"
         android:layout_height="24dp" />
 
     <TextView
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
+        style="@style/Base.Widget.AppCompat.DrawerArrowToggle"
         android:layout_marginStart="15dp"
         android:layout_gravity="center_vertical"
         android:id="@+id/drawer_item_text"

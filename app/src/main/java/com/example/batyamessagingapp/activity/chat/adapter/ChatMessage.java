@@ -39,13 +39,12 @@ public class ChatMessage {
         Outcoming(1);
 
         private int intValue;
-        private Direction(int value) {
+        Direction(int value) {
             intValue = value;
         }
 
         public int getIntValue(){
             return intValue;
         }
-
     }
 }

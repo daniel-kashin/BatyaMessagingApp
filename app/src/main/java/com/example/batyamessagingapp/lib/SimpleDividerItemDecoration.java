@@ -1,10 +1,12 @@
 package com.example.batyamessagingapp.lib;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.example.batyamessagingapp.R;
@@ -22,7 +24,10 @@ public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int left = parent.getPaddingLeft();
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        int leftPadding = (int)(70 * (metrics.densityDpi / 160f));
+
+        int left = parent.getPaddingLeft() + leftPadding;
         int right = parent.getWidth() - parent.getPaddingRight();
 
         int childCount = parent.getChildCount();

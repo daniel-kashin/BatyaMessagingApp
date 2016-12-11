@@ -52,6 +52,7 @@ public class DialogsService implements DialogsPresenter  {
 
         protected void onPostExecute(ResponseBody responseBody) {
             mView.openChatActivity(username);
+            mView.hideSearch();
         }
     }
 

@@ -7,7 +7,8 @@ package com.example.batyamessagingapp.activity.chat.presenter;
 public interface ChatPresenter {
     void onSendMessageButtonClick();
     void onLoad();
-    void startGetMessagesWithInterval();
-    void stopGetMessagesWithInterval();
+    void onPause();
     void onRefreshIconClick();
+    boolean initialized();
 }
+

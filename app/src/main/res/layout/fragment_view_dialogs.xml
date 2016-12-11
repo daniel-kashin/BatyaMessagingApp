@@ -12,6 +12,7 @@
         style="@style/Widget.AppCompat.TextView.SpinnerItem"
         android:id="@+id/dialogs_no_dialogs_text_view"
         android:text="@string/no_dialogs_title"
+        android:textColor="@color/hint_text"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"

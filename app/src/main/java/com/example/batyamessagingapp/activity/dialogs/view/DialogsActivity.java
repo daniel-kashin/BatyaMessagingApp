@@ -32,12 +32,9 @@ import com.example.batyamessagingapp.activity.authentication.view.Authentication
 import com.example.batyamessagingapp.activity.chat.view.ChatActivity;
 import com.example.batyamessagingapp.activity.dialogs.fragment_settings.view.SettingsFragment;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.view.ViewDialogsFragment;
+import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.view.ViewDialogsView;
 import com.example.batyamessagingapp.activity.dialogs.presenter.DialogsPresenter;
 import com.example.batyamessagingapp.activity.dialogs.presenter.DialogsService;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DialogsActivity extends AppCompatActivity implements DialogsView {
 
@@ -48,10 +45,11 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     private TextView mToolbarLabel;
     private EditText mToolbarEditText;
     private ImageView mToolbarForwardIcon;
+    private ImageView mToolbarRefreshIcon;
 
     private FragmentTransaction mFragmentTransaction;
-    private SettingsFragment settingsFragment = new SettingsFragment();
-    private ViewDialogsFragment viewDialogsFragment = new ViewDialogsFragment();
+    private SettingsFragment mSettingsFragment = new SettingsFragment();
+    private ViewDialogsFragment mViewDialogsFragment = new ViewDialogsFragment();
 
     private DialogsPresenter mPresenter;
 
@@ -64,7 +62,7 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         setListeners();
 
         mPresenter = new DialogsService(this);
-        applyFragment(viewDialogsFragment);
+        applyFragment(mViewDialogsFragment);
     }
 
     private void applyFragment(Fragment fragment) {
@@ -129,6 +127,18 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         startActivity(intent);
     }
 
+    @Override
+    public void refreshToolbarLabelText() {
+        FragmentManager manager = getFragmentManager();
+        String topName = manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1).getName();
+
+        if (topName.equals(mViewDialogsFragment.getClass().getName())){
+            setToolbarLabelText(getString(R.string.fragment_messages_title));
+        } else if (topName.equals(mSettingsFragment.getClass().getName())){
+            setToolbarLabelText(getString(R.string.fragment_settings_title));
+        }
+    }
+
     private void setListeners() {
         mToolbarForwardIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,14 +147,23 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
                         mToolbarEditText.getText().toString());
             }
         });
+        mToolbarRefreshIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideRefreshIcon();
+                ((ViewDialogsView)mViewDialogsFragment).onRefreshIconClick();
+            }
+        });
+
+
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
             }
-
             public void onDrawerOpened(View drawerView) {
+                hideSearch();
                 super.onDrawerOpened(drawerView);
             }
         };
@@ -161,11 +180,9 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         mToolbarEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() != 0) {
-                    mToolbarForwardIcon.animate().alpha(1).setDuration(200);
+                if (s.length() != 0 && mToolbarEditText.getVisibility() == View.VISIBLE) {
                     mToolbarForwardIcon.setVisibility(View.VISIBLE);
-                } else if (s.length() == 0) {
-                    mToolbarForwardIcon.animate().alpha(0).setDuration(200);
+                } else {
                     mToolbarForwardIcon.setVisibility(View.INVISIBLE);
                 }
             }
@@ -203,6 +220,7 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.dialogs_drawer_layout);
         mToolbarForwardIcon = (ImageView) findViewById(R.id.dialogs_toolbar_forward_icon);
+        mToolbarRefreshIcon = (ImageView) findViewById(R.id.dialogs_toolbar_refresh_icon);
         mToolbarEditText = (EditText) findViewById(R.id.dialogs_toolbar_edit_text);
         mToolbarLabel = (TextView) findViewById(R.id.dialogs_toolbar_label);
 
@@ -210,11 +228,11 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgressDialog.setTitle(null);
-        mProgressDialog.setCancelable(true);
+        mProgressDialog.setCancelable(false);
     }
 
     @Override
-    public void setToolbarLabel(String newLabel){
+    public void setToolbarLabelText(String newLabel){
         mToolbarLabel.setText(newLabel);
     }
 
@@ -249,18 +267,38 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         return true;
     }
 
-    private void showSearch() {
+    @Override
+    public void showSearch() {
         mToolbarLabel.setVisibility(View.INVISIBLE);
         mToolbarForwardIcon.setVisibility(View.VISIBLE);
         mToolbarEditText.setVisibility(View.VISIBLE);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
+        mToolbarEditText.post(new Runnable() {
+            @Override
+            public void run() {
+                mToolbarEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
     }
 
-    private void hideSearch() {
+    @Override
+    public void showRefreshIcon(){
+        mToolbarRefreshIcon.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideRefreshIcon(){
+        mToolbarRefreshIcon.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideSearch() {
+
         mToolbarLabel.setVisibility(View.VISIBLE);
         mToolbarEditText.setVisibility(View.INVISIBLE);
-        mToolbarEditText.setVisibility(View.INVISIBLE);
+        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+        mToolbarEditText.setText("");
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
@@ -287,13 +325,16 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
                 @Override
                 public void onClick(View v) {
                     if (holder.getAdapterPosition() == 0) {
+                        refreshToolbarLabelText();
 
                     } else if (holder.getAdapterPosition() == 1) {
                         showSearch();
                     } else if (holder.getAdapterPosition() == 2) {
-                        applyFragment(viewDialogsFragment);
+                        refreshToolbarLabelText();
+                        applyFragment(mViewDialogsFragment);
                     } else {
-                        applyFragment(settingsFragment);
+                        refreshToolbarLabelText();
+                        applyFragment(mSettingsFragment);
                     }
                     mDrawerLayout.closeDrawers();
                 }

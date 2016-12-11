@@ -10,14 +10,12 @@ import java.util.List;
  */
 
 public interface ChatView {
-    String getMessageString();
+    String getMessage();
     void clearMessageEditText();
-    void showToast(String text);
     void scrollRecyclerViewToLast();
     void scrollRecyclerViewToFirst();
     void hideNoMessagesTextView();
     void setToolbarLabelText(String text);
-    void showRefreshButton();
-    void hideRefreshButton();
+    void showRefreshIcon();
     void openAuthenticationActivity();
 }

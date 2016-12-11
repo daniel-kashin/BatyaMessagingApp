@@ -27,11 +27,7 @@ public class ChatMessageAdapter
         extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements MessagesDataModel{
 
     private ArrayList<ChatMessage> mChatMessageList;
-    private final Context mContext;
-
-    private OnMessageLongClickListener onMessageLongClickListener;
-    private OnMessageClickListener onMessageClickListener;
-
+    private Context mContext;
 
     public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList) {
         mChatMessageList = chatMessageList;
@@ -62,6 +58,15 @@ public class ChatMessageAdapter
     }
 
     @Override
+    public boolean hasItemWithId(String guid) {
+        for (int i = mChatMessageList.size() - 1; i >= 0; --i){
+            if (mChatMessageList.get(i).getGuid().equals(guid)) return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout = -1;
         ChatMessage.Direction direction;
@@ -86,15 +91,6 @@ public class ChatMessageAdapter
     }
 
     @Override
-    public boolean hasItemWithId(String guid) {
-        for (int i = mChatMessageList.size() - 1; i >= 0; --i){
-            if (mChatMessageList.get(i).getGuid().equals(guid)) return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         //get chatMessage
         final ChatMessage chatMessage = mChatMessageList.get(position);
@@ -105,31 +101,26 @@ public class ChatMessageAdapter
             viewHolder.setTime(chatMessage.getTimeText());
         }
 
-
         //create alert item_dialog
-        final AlertDialog.Builder builder =
-                new AlertDialog.Builder(new ContextThemeWrapper(mContext,
-                        android.R.style.Theme_DeviceDefault_Light_Dialog));
-        builder.setTitle("ChatMessage");
-
+        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                new ContextThemeWrapper(mContext, android.R.style.Theme_DeviceDefault_Light_Dialog));
+        builder.setTitle("Message");
         final ArrayAdapter<String> arrayAdapter =
                 new ArrayAdapter<>(mContext, android.R.layout.select_dialog_item);
         arrayAdapter.add("Copy");
         builder.setAdapter(
-                arrayAdapter,
-                new DialogInterface.OnClickListener() {
+                arrayAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = arrayAdapter.getItem(which);
-                        if (name.equals("Copy")){
-                            ClipboardManager clipboardManager = (ClipboardManager) mContext
-                                    .getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (name != null && name.equals("Copy")){
+                            ClipboardManager clipboardManager = (ClipboardManager)
+                                    mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                             ClipData clip = ClipData.newPlainText("chatMessage", chatMessage.getMessageText());
                             clipboardManager.setPrimaryClip(clip);
                         }
                     }
                 });
-
         final AlertDialog alert= builder.create();
         alert.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -149,26 +140,22 @@ public class ChatMessageAdapter
 
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
         private TextView messageTextView;
         private TextView timeTextView;
-
         private ChatMessage.Direction direction;
 
         private ViewHolder(View view, ChatMessage.Direction direction) {
             super(view);
-
             this.direction = direction;
-
             messageTextView = (TextView) view.findViewById(R.id.message_message_text_view);
             timeTextView = (TextView) view.findViewById(R.id.message_time_text_view);
         }
 
-        public void setMessage(String message) {
+        private void setMessage(String message) {
             if (messageTextView != null) messageTextView.setText(message);
         }
 
-        public void setTime(String time){
+        private void setTime(String time){
             if (timeTextView != null) timeTextView.setText(time);
         }
 

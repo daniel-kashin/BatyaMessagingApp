@@ -77,13 +77,13 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         String password = mPasswordEditText.getText().toString();
         String usernameError = null;
         String passwordError = null;
-        Pattern p = Pattern.compile("[A-Za-z0-9_-]+");
+        Pattern usernamePattern = Pattern.compile("[A-Za-z0-9_-]+");
 
         if (password.length() < 10 || username.length() > 256) {
             passwordError = "10..256 characters";
         }
 
-        if (!p.matcher(username).matches()) {
+        if (!usernamePattern.matcher(username).matches()) {
             usernameError = "only letters, numbers and _-";
         }
 
@@ -113,7 +113,6 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public void showAlert(String message, String title) {
-        //BUG?
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 new ContextThemeWrapper(this, android.R.style.Theme_DeviceDefault_Light_Dialog));
         builder.setTitle(title)
@@ -167,7 +166,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
                 final float dp200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
                 final int heightDiff = mActivityRootView.getRootView().getHeight() - mActivityRootView.getHeight();
 
-                if (heightDiff > dp200) { // if more than 200 dp, it's probably a keyboard...
+                if (heightDiff > dp200) {
                     mMainIcon.setPadding(
                             mMainIcon.getPaddingLeft(),
                             mMainIconPaddingButtom / 2,

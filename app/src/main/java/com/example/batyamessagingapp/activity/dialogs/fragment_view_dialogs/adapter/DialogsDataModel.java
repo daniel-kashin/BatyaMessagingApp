@@ -9,5 +9,6 @@ public interface DialogsDataModel {
     void addDialog(Dialog dialog);
     int findDialogPositionById(String id);
     void setDialogMessageAndTimestamp(int position, String message, long timestamp);
+    void setOnDialogClickListener(OnDialogClickListener onDialogClickListener);
     void refresh();
 }

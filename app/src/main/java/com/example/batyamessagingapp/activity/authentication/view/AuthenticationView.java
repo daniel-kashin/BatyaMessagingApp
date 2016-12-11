@@ -9,10 +9,12 @@ import android.app.ProgressDialog;
 public interface AuthenticationView {
     String getUsername();
     String getPassword();
-    void showAlert(String message, String title);
-    void openDialogsActivity();
-    boolean checkInputs();
+
     void startProgressDialog(String message);
     void stopProgressDialog();
     ProgressDialog getProgressDialog();
+
+    void showAlert(String message, String title);
+    boolean checkInputs();
+    void openDialogsActivity();
 }

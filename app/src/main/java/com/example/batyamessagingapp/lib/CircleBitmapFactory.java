@@ -67,7 +67,7 @@ public class CircleBitmapFactory {
             final Paint paintT = new Paint();
             paintT.setColor(textColor);
             paintT.setAntiAlias(true);
-            paintT.setTextSize(radiusPixels * 1.5f);
+            paintT.setTextSize(radiusPixels * 1.0f);
 
             Typeface typeFace = Typeface.createFromAsset(context.getAssets(),"Roboto-Thin.ttf");
             paintT.setTypeface(typeFace);

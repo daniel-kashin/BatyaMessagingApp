@@ -8,8 +8,6 @@ import android.app.ProgressDialog;
 
 public interface SettingsView {
     void openAuthenticationActivity();
-    void showAlert(String message, String title);
     void startProgressDialog(String message);
     void stopProgressDialog();
-    ProgressDialog getProgressDialog();
 }

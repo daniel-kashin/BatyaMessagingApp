@@ -7,6 +7,5 @@ import android.app.Fragment;
  */
 
 public interface DialogsPresenter {
-
     void onForwardIconButtonClick(String username);
 }

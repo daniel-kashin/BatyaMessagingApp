@@ -6,4 +6,5 @@ package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.pre
 
 public interface ViewDialogsPresenter {
     void onLoad();
+    void onPause();
 }

@@ -8,10 +8,15 @@ import android.app.ProgressDialog;
 
 public interface DialogsView {
     void openAuthenticationActivity();
-    void showAlert(String message, String title);
     void openChatActivity(String dialogId);
-    void setToolbarLabel(String newLabel);
+    void setToolbarLabelText(String newLabel);
+    void showAlert(String message, String title);
     void startProgressDialog(String message);
     void stopProgressDialog();
     ProgressDialog getProgressDialog();
+    void hideSearch();
+    void showSearch();
+    void showRefreshIcon();
+    void hideRefreshIcon();
+    void refreshToolbarLabelText();
 }

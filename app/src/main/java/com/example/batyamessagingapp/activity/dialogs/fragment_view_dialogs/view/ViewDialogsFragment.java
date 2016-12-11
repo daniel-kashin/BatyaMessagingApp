@@ -1,5 +1,6 @@
 package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.view;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,11 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
+import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.DialogsDataModel;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.presenter.ViewDialogsPresenter;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.presenter.ViewDialogsService;
-import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.DialogAdapter;
-import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.OnDialogClickListener;
 import com.example.batyamessagingapp.activity.dialogs.view.DialogsView;
 import com.example.batyamessagingapp.lib.SimpleDividerItemDecoration;
 
@@ -25,8 +25,10 @@ import com.example.batyamessagingapp.lib.SimpleDividerItemDecoration;
 public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
 
     private RecyclerView mRecyclerView;
-    private ViewDialogsPresenter mPresenter;
     private TextView mNoDialogsTextView;
+
+    private ViewDialogsPresenter mPresenter;
+    private DialogsView mActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,10 +43,37 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
         initializeViews(rootView);
         initializeRecyclerView(rootView);
 
-        mPresenter = new ViewDialogsService(this, getActivity(), (DialogAdapter)mRecyclerView.getAdapter());
+        mActivity = (DialogsView)getActivity();
+        mPresenter = new ViewDialogsService(this, getActivity(), (DialogsDataModel)mRecyclerView.getAdapter());
         mPresenter.onLoad();
 
         return rootView;
+    }
+
+    @Override
+    public void openAuthenticationActivity() {
+        mActivity.openAuthenticationActivity();
+    }
+
+    @Override
+    public void showNoInternetConnection() {
+        mActivity.showRefreshIcon();
+        mActivity.setToolbarLabelText(getString(R.string.no_internet_connection));
+    }
+
+    @Override
+    public void onRefreshIconClick() {
+        mPresenter.onLoad();
+    }
+
+    @Override
+    public void refreshToolbarLabelText(){
+        mActivity.refreshToolbarLabelText();
+    }
+
+    @Override
+    public Activity getParentActivity(){
+        return getActivity();
     }
 
     private void initializeViews(View rootView){
@@ -54,7 +83,7 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
     @Override
     public void onResume(){
         super.onResume();
-        ((DialogsView)getActivity()).setToolbarLabel(getString(R.string.fragment_messages_title));
+        refreshToolbarLabelText();
     }
 
     @Override
@@ -70,13 +99,6 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
         mRecyclerView.setLayoutManager(manager);
 
         DialogAdapter adapter = new DialogAdapter(getActivity());
-        adapter.setOnDialogClickListener(new OnDialogClickListener() {
-            @Override
-            public void onItemClick(RecyclerView.Adapter adapter, int position) {
-                String dialogId = ((DialogAdapter)adapter).getDialogIdByPosition(position);
-                ((DialogsActivity)getActivity()).openChatActivity(dialogId);
-            }
-        });
         mRecyclerView.setAdapter(adapter);
 
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));

@@ -3,11 +3,17 @@ package com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.pre
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.RecyclerView;
 
+import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.Dialog;
+import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.DialogAdapter;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.DialogsDataModel;
+import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.adapter.OnDialogClickListener;
 import com.example.batyamessagingapp.activity.dialogs.fragment_view_dialogs.view.ViewDialogsView;
+import com.example.batyamessagingapp.activity.dialogs.view.DialogsView;
 import com.example.batyamessagingapp.lib.CircleBitmapFactory;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
@@ -28,35 +34,81 @@ import retrofit2.Response;
 
 public class ViewDialogsService implements ViewDialogsPresenter {
 
+    private int GET_DIALOGS_INTERVAL = 3000;
+    private boolean mInitialized;
+    private boolean mRunning;
     private Context mContext;
     private GetDialogsAsyncTask mGetDialogsAsyncTask;
+    private Handler mHandler;
+    private Runnable mGetDialogsWithInterval;
 
-    private DialogsDataModel mDataModel;
     private ViewDialogsView mView;
-
+    private DialogsDataModel mDataModel;
 
     public ViewDialogsService(ViewDialogsView view, Context context, DialogsDataModel dataModel) {
         mView = view;
         mContext = context;
         mDataModel = dataModel;
+
+        mDataModel.setOnDialogClickListener(new OnDialogClickListener() {
+            @Override
+            public void onItemClick(RecyclerView.Adapter adapter, int position) {
+                String dialogId = ((DialogAdapter)adapter).getDialogIdByPosition(position);
+                ((DialogsView)mView.getParentActivity()).openChatActivity(dialogId);
+            }
+        });
+
+        mHandler = new Handler();
+        mGetDialogsWithInterval = new Runnable() {
+            @Override
+            public void run() {
+                mGetDialogsAsyncTask = new GetDialogsAsyncTask(0, false);
+                mGetDialogsAsyncTask.execute();
+                mHandler.postDelayed(mGetDialogsWithInterval, GET_DIALOGS_INTERVAL);
+            }
+        };
     }
 
+    private void startGetDialogsWithInterval() {
+        if (!mRunning) {
+            mRunning = true;
+            mGetDialogsWithInterval.run();
+        }
+    }
+
+    private void stopGetDialogsWithInterval() {
+        mRunning = false;
+        mHandler.removeCallbacks(mGetDialogsWithInterval);
+    }
+
+    @Override
     public void onLoad() {
-        startGetDialogsAsyncTask(0);
+        if (!mInitialized) {
+            startGetDialogsAsyncTask(0, true);
+        } else {
+            startGetDialogsWithInterval();
+        }
+    }
+
+    @Override
+    public void onPause(){
+        stopGetDialogsWithInterval();
     }
 
     //added this method to enable recursion
-    private void startGetDialogsAsyncTask(int offset) {
-        mGetDialogsAsyncTask = new GetDialogsAsyncTask(offset);
+    private void startGetDialogsAsyncTask(int currentOffset, boolean initCall) {
+        mGetDialogsAsyncTask = new GetDialogsAsyncTask(currentOffset, initCall);
         mGetDialogsAsyncTask.execute();
     }
 
     private class GetDialogsAsyncTask extends AsyncTask<Void, Void, Pair<DialogArray, ErrorType>> {
 
         private final int offset;
+        private final boolean initCall;
 
-        GetDialogsAsyncTask(int offset) {
+        GetDialogsAsyncTask(int offset, boolean initCall) {
             this.offset = offset;
+            this.initCall = initCall;
         }
 
         @Override
@@ -84,12 +136,25 @@ public class ViewDialogsService implements ViewDialogsPresenter {
         protected void onPostExecute(Pair<DialogArray, ErrorType> resultPair) {
             if (resultPair.second == ErrorType.NoError && resultPair.first != null) {
                 addDialogArrayToAdapter(resultPair.first);
-            }
-            //TODO
 
-            if (mDataModel.getSize()!=0){
-                mView.hideNoDialogsTextView();
+                if (initCall){
+                    mInitialized = true;
+                    startGetDialogsWithInterval();
+                }
+                if (mDataModel.getSize()!=0){
+                    mView.hideNoDialogsTextView();
+                }
+
+                mView.refreshToolbarLabelText();
+            } else if (resultPair.second == ErrorType.NoInternetConnection) {
+                stopGetDialogsWithInterval();
+                mView.showNoInternetConnection();
+            } else {
+                stopGetDialogsWithInterval();
+                mView.openAuthenticationActivity();
             }
+
+
         }
 
     }
@@ -107,7 +172,6 @@ public class ViewDialogsService implements ViewDialogsPresenter {
                     .findDialogPositionById(dialogId);
 
             if (dialogPosition == -1) {
-                //TODO: add sizes of the squares
                 int color = CircleBitmapFactory.getMaterialColor(dialogId.hashCode());
                 String firstLetter = CircleBitmapFactory.getFirstLetter(dialogId);
                 Bitmap bitmap = CircleBitmapFactory
