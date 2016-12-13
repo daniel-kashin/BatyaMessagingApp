@@ -1,9 +1,11 @@
 package com.example.batyamessagingapp.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
-import com.example.batyamessagingapp.lib.SecurePreferences;
 import com.example.batyamessagingapp.model.pojo.Token;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Кашин on 23.10.2016.
@@ -28,7 +30,7 @@ import com.example.batyamessagingapp.model.pojo.Token;
 
 public class PreferencesService {
 
-    private static SecurePreferences sSharedPreferences;
+    private static SharedPreferences sSharedPreferences;
 
     private static final String APP_PREFERENCES = "auth";
     private static final String APP_PREFERENCES_USERNAME = "username";
@@ -37,43 +39,27 @@ public class PreferencesService {
 
 
     public static void initializeSharedPreferences(Context context) {
-        sSharedPreferences = new SecurePreferences(context, APP_PREFERENCES, KEY, true);
-    }
-
-
-    public static boolean tryToConnect() {
-        return (sSharedPreferences.containsKey(APP_PREFERENCES_TOKEN) &&
-                (sSharedPreferences.getString(APP_PREFERENCES_TOKEN).length() == 32));
-    }
-
-    public static boolean preferencesInitialized() {
-        return sSharedPreferences != null;
+        sSharedPreferences = context.getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
     }
 
     public static String getUsernameFromPreferences() {
-        if (sSharedPreferences.containsKey(APP_PREFERENCES_USERNAME)) {
-            return sSharedPreferences.getString(APP_PREFERENCES_USERNAME);
-        }else {
-            return "";
-        }
+        return sSharedPreferences.getString(APP_PREFERENCES_USERNAME, "");
     }
 
     public static boolean isTokenAvailableInPreferences() {
-        return (sSharedPreferences != null && sSharedPreferences.containsKey(APP_PREFERENCES_TOKEN));
+        return (sSharedPreferences != null && sSharedPreferences.contains(APP_PREFERENCES_TOKEN));
     }
 
     //TODO: make private
     public static String getTokenValueFromPreferences() {
-        if (isTokenAvailableInPreferences()) {
-            return sSharedPreferences.getString(APP_PREFERENCES_TOKEN);
-        } else {
-            return "";
-        }
+        return sSharedPreferences.getString(APP_PREFERENCES_TOKEN, "");
     }
 
     public static void deleteTokenFromPreferences() {
         if (isTokenAvailableInPreferences()) {
-            sSharedPreferences.removeValue(APP_PREFERENCES_TOKEN);
+            SharedPreferences.Editor editor = sSharedPreferences.edit();
+            editor.remove(APP_PREFERENCES_TOKEN)
+                    .apply();
         }
     }
 
@@ -82,11 +68,15 @@ public class PreferencesService {
             clearSharedPreferences();
         }
 
-        sSharedPreferences.put(APP_PREFERENCES_TOKEN, token.getValue());
-        sSharedPreferences.put(APP_PREFERENCES_USERNAME, username);
+        SharedPreferences.Editor editor = sSharedPreferences.edit();
+        editor.putString(APP_PREFERENCES_TOKEN, token.getValue())
+                .putString(APP_PREFERENCES_USERNAME, username)
+                .apply();
     }
 
     private static void clearSharedPreferences() {
-        sSharedPreferences.clear();
+        SharedPreferences.Editor editor = sSharedPreferences.edit();
+        editor.clear()
+                .apply();
     }
 }

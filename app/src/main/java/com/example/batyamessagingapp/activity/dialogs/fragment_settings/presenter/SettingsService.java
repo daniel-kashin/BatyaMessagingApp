@@ -34,6 +34,11 @@ public class SettingsService implements SettingsPresenter {
     }
 
     @Override
+    public void onResume() {
+        mView.setOrdinaryToolbarLabelText();
+    }
+
+    @Override
     public void onLogoutButtonClick() {
         mDisconnectionAsyncTask = new DisconnectionAsyncTask(DisconnectionType.Normal);
         mDisconnectionAsyncTask.execute();
@@ -49,17 +54,8 @@ public class SettingsService implements SettingsPresenter {
             extends AsyncTask<Void, Void, Pair<APIAnswer, ErrorType>> {
         private final DisconnectionType disconnectionType;
 
-        public DisconnectionAsyncTask(DisconnectionType disconnectionType) {
+        DisconnectionAsyncTask(DisconnectionType disconnectionType) {
             this.disconnectionType = disconnectionType;
-
-/*
-            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    cancel(true);
-                }
-            });
-  */
         }
 
         @Override

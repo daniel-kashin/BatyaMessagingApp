@@ -54,7 +54,7 @@ public class ViewDialogsService implements ViewDialogsPresenter {
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
                 String dialogId = ((DialogAdapter)adapter).getDialogIdByPosition(position);
-                ((DialogsView)mView.getParentActivity()).openChatActivity(dialogId);
+                mView.openChatActivity(dialogId);
             }
         });
 
@@ -84,6 +84,7 @@ public class ViewDialogsService implements ViewDialogsPresenter {
     @Override
     public void onLoad() {
         if (!mInitialized) {
+            mView.setLoadingToolbarLabelText();
             startGetDialogsAsyncTask(0, true);
         } else {
             startGetDialogsWithInterval();
@@ -107,6 +108,7 @@ public class ViewDialogsService implements ViewDialogsPresenter {
         private final boolean initCall;
 
         GetDialogsAsyncTask(int offset, boolean initCall) {
+
             this.offset = offset;
             this.initCall = initCall;
         }
@@ -141,16 +143,16 @@ public class ViewDialogsService implements ViewDialogsPresenter {
                     mInitialized = true;
                     startGetDialogsWithInterval();
                 }
+
                 if (mDataModel.getSize()!=0){
                     mView.hideNoDialogsTextView();
                 }
 
-                mView.refreshToolbarLabelText();
+                mView.setCommonToolbarLabelText();
             } else if (resultPair.second == ErrorType.NoInternetConnection) {
-                stopGetDialogsWithInterval();
-                mView.showNoInternetConnection();
+                mView.setNoInternetToolbarLabelText();
+                if (initCall) onLoad();
             } else {
-                stopGetDialogsWithInterval();
                 mView.openAuthenticationActivity();
             }
 

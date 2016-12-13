@@ -26,6 +26,7 @@ import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
 import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatPresenter;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatService;
+import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
 
 public class ChatActivity extends AppCompatActivity implements ChatView {
 
@@ -52,17 +53,17 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         initializeViews();
         setListeners();
 
-        mPresenter = new ChatService(this, mDialogId, (MessagesDataModel)mRecyclerView.getAdapter());
+        mPresenter = new ChatService(this, mDialogId, (MessagesDataModel) mRecyclerView.getAdapter());
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         mPresenter.onPause();
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         mPresenter.onLoad();
     }
@@ -81,24 +82,19 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     }
 
     @Override
-    public void setToolbarLabelText(String text) {
-        mToolbarLabel.setText(text);
-    }
-
-    @Override
     public void showRefreshIcon() {
         mToolbarRefreshIcon.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void clearMessageEditText(){
+    public void clearMessageEditText() {
         mSendMessageEditText.setText("");
     }
 
     @Override
     public void scrollRecyclerViewToLast() {
         if (mRecyclerView.getAdapter().getItemCount() != 0) {
-            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount());
         }
     }
 
@@ -110,8 +106,23 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     }
 
     @Override
-    public void openAuthenticationActivity() {
-        Intent intent = new Intent(this, AuthenticationActivity.class);
+    public void setCommonToolbarLabelText() {
+        mToolbarLabel.setText(mDialogId);
+    }
+
+    @Override
+    public void setLoadingToolbarLabelText() {
+        mToolbarLabel.setText(getString(R.string.loading));
+    }
+
+    @Override
+    public void setNoInternetToolbarLabelText() {
+        mToolbarLabel.setText(getString(R.string.no_internet_connection));
+    }
+
+    @Override
+    public void openDialogsActivity() {
+        Intent intent = new Intent(this, DialogsActivity.class);
         startActivity(intent);
         finish();
     }
@@ -127,15 +138,15 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         mToolbarLabel = (TextView) findViewById(R.id.chat_toolbar_label);
         mToolbarLabel.setText(mDialogId);
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar()!=null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        mToolbarRefreshIcon = (ImageView)findViewById(R.id.chat_toolbar_refresh_icon);
+        mToolbarRefreshIcon = (ImageView) findViewById(R.id.chat_toolbar_refresh_icon);
 
         //recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.chat_message_recycler_view);
-        LinearLayoutManager manager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         manager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(new ChatMessageAdapter(this));
@@ -174,19 +185,18 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
             @Override
             public void onClick(View v) {
                 mPresenter.onSendMessageButtonClick();
-                scrollRecyclerViewToLast();
             }
         });
 
         //hide keyboard when view is scrolled
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 View view = ChatActivity.this.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                  //  imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         });
@@ -196,10 +206,10 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
             @Override
             public void onGlobalLayout() {
                 DisplayMetrics metrics = ChatActivity.this.getResources().getDisplayMetrics();
-                final float dp200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
+                final float px200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
                 final int heightDiff = mActivityRootView.getRootView().getHeight() - mActivityRootView.getHeight();
-                if (heightDiff > dp200) {
-                    scrollRecyclerViewToLast();
+                if (heightDiff > px200) {
+                    //scrollRecyclerViewToLast();
                 }
             }
         });

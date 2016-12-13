@@ -8,9 +8,9 @@ import android.app.Activity;
 
 public interface ViewDialogsView {
     void hideNoDialogsTextView();
-    Activity getParentActivity();
     void openAuthenticationActivity();
-    void onRefreshIconClick();
-    void refreshToolbarLabelText();
-    void showNoInternetConnection();
+    void openChatActivity(String dialogId);
+    void setLoadingToolbarLabelText();
+    void setNoInternetToolbarLabelText();
+    void setCommonToolbarLabelText();
 }

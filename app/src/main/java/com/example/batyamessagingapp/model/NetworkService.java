@@ -62,12 +62,10 @@ public class NetworkService {
         return sApiService.fullLogout(getTokenValueFromPreferences());
     }
 
-    public static Call<ResponseBody> getSendMessageCall(
+    public static Call<Timestamp> getSendMessageCall(
             String dialogId, String messageType, String messageData) {
-
         Message message = new Message(messageType,messageData);
-        Call<ResponseBody> call = sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
-        return call;
+        return sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
     }
 
     public void getUsers() {

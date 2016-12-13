@@ -16,7 +16,4 @@ public interface DialogsView {
     ProgressDialog getProgressDialog();
     void hideSearch();
     void showSearch();
-    void showRefreshIcon();
-    void hideRefreshIcon();
-    void refreshToolbarLabelText();
 }

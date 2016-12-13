@@ -34,7 +34,7 @@ public interface APIService {
     Call<APIAnswer> fullLogout(@Path("token") String token);
 
     @POST ("/{token}/messages/send/{dialog_id}")
-    Call<ResponseBody> sendMessage(@Path("token") String token,
+    Call<Timestamp> sendMessage(@Path("token") String token,
                                 @Path("dialog_id") String dialogId,
                                 @Body Message message);
 

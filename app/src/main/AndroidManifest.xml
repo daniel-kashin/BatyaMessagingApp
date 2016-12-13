@@ -30,7 +30,7 @@
             android:name=".activity.authentication.view.AuthenticationActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateVisible|adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".activity.chat.view.ChatActivity"/>
     </application>

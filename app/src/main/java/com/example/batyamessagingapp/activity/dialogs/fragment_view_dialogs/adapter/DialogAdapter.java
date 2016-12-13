@@ -13,6 +13,7 @@ import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.lib.TimestampHelper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -72,8 +73,9 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     public void setDialogMessageAndTimestamp(int position, String message, long timestamp) {
         if (position < mDialogList.size() && position >=0) {
             Dialog dialog = mDialogList.get(position);
-            dialog.setMessage(message);
-            dialog.setTimestamp(timestamp);
+            Dialog newDialog = new Dialog(dialog.getBitmap(),dialog.getId(), message, timestamp);
+            mDialogList.remove(position);
+            mDialogList.add(newDialog);
         }
     }
 

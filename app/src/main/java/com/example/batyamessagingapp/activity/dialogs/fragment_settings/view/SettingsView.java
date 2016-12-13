@@ -10,4 +10,6 @@ public interface SettingsView {
     void openAuthenticationActivity();
     void startProgressDialog(String message);
     void stopProgressDialog();
+    void showAlert(String message, String title);
+    void setOrdinaryToolbarLabelText();
 }

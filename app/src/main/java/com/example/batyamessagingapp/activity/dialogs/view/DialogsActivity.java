@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,10 +49,6 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     private ImageView mToolbarForwardIcon;
     private ImageView mToolbarRefreshIcon;
 
-    private FragmentTransaction mFragmentTransaction;
-    private SettingsFragment mSettingsFragment = new SettingsFragment();
-    private ViewDialogsFragment mViewDialogsFragment = new ViewDialogsFragment();
-
     private DialogsPresenter mPresenter;
 
     @Override
@@ -62,9 +60,9 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         setListeners();
 
         mPresenter = new DialogsService(this);
-        applyFragment(mViewDialogsFragment);
+        applyFragment(new ViewDialogsFragment());
     }
-
+/*
     private void applyFragment(Fragment fragment) {
         FragmentManager manager = getFragmentManager();
         String addingFragmentName = fragment.getClass().getName();
@@ -81,6 +79,23 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
                 mFragmentTransaction.addToBackStack(addingFragmentName);
                 mFragmentTransaction.commit();
             }
+        }
+    }
+*/
+
+    private void applyFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+
+        if (topFragment == null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
+        } else if (!fragment.getClass().getName().equals(topFragment.getClass().getName())) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
         }
     }
 
@@ -127,17 +142,21 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         startActivity(intent);
     }
 
+    /*
     @Override
     public void refreshToolbarLabelText() {
-        FragmentManager manager = getFragmentManager();
-        String topName = manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1).getName();
+        if (!mToolbarLabel.getText().toString().equals(getString(R.string.no_internet_connection))) {
+            FragmentManager manager = getFragmentManager();
+            String topName = manager.getBackStackEntryAt(manager.getBackStackEntryCount() - 1).getName();
 
-        if (topName.equals(mViewDialogsFragment.getClass().getName())){
-            setToolbarLabelText(getString(R.string.fragment_messages_title));
-        } else if (topName.equals(mSettingsFragment.getClass().getName())){
-            setToolbarLabelText(getString(R.string.fragment_settings_title));
+            if (topName.equals(mViewDialogsFragment.getClass().getName())) {
+                setToolbarLabelText(getString(R.string.fragment_messages_title));
+            } else if (topName.equals(mSettingsFragment.getClass().getName())) {
+                setToolbarLabelText(getString(R.string.fragment_settings_title));
+            }
         }
     }
+*/
 
     private void setListeners() {
         mToolbarForwardIcon.setOnClickListener(new View.OnClickListener() {
@@ -147,21 +166,22 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
                         mToolbarEditText.getText().toString());
             }
         });
+        /*
         mToolbarRefreshIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hideRefreshIcon();
-                ((ViewDialogsView)mViewDialogsFragment).onRefreshIconClick();
+                ((ViewDialogsView) mViewDialogsFragment).onRefreshIconClick();
             }
         });
-
-
+*/
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
             }
+
             public void onDrawerOpened(View drawerView) {
                 hideSearch();
                 super.onDrawerOpened(drawerView);
@@ -232,18 +252,19 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     }
 
     @Override
-    public void setToolbarLabelText(String newLabel){
+    public void setToolbarLabelText(String newLabel) {
         mToolbarLabel.setText(newLabel);
     }
 
     @Override
-    public ProgressDialog getProgressDialog(){
+    public ProgressDialog getProgressDialog() {
         return mProgressDialog;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         hideSearch();
     }
 
@@ -283,16 +304,6 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     }
 
     @Override
-    public void showRefreshIcon(){
-        mToolbarRefreshIcon.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideRefreshIcon(){
-        mToolbarRefreshIcon.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
     public void hideSearch() {
 
         mToolbarLabel.setVisibility(View.VISIBLE);
@@ -325,16 +336,13 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
                 @Override
                 public void onClick(View v) {
                     if (holder.getAdapterPosition() == 0) {
-                        refreshToolbarLabelText();
 
                     } else if (holder.getAdapterPosition() == 1) {
                         showSearch();
                     } else if (holder.getAdapterPosition() == 2) {
-                        refreshToolbarLabelText();
-                        applyFragment(mViewDialogsFragment);
+                        applyFragment(new ViewDialogsFragment());
                     } else {
-                        refreshToolbarLabelText();
-                        applyFragment(mSettingsFragment);
+                        applyFragment(new SettingsFragment());
                     }
                     mDrawerLayout.closeDrawers();
                 }

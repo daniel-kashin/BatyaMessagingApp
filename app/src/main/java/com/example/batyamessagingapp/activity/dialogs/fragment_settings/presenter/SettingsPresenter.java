@@ -7,4 +7,5 @@ package com.example.batyamessagingapp.activity.dialogs.fragment_settings.present
 public interface SettingsPresenter {
     void onLogoutButtonClick();
     void onFullLogoutButtonClick();
+    void onResume();
 }

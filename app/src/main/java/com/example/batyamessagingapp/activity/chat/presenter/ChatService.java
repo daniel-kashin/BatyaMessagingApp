@@ -15,13 +15,13 @@ import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
+import com.example.batyamessagingapp.model.pojo.Timestamp;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
-import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 /**
@@ -76,14 +76,12 @@ public class ChatService implements ChatPresenter {
     public void onSendMessageButtonClick() {
         mSendMessageAsyncTask = new SendMessageAsyncTask(mView.getMessage());
         mSendMessageAsyncTask.execute();
-        if (mDataModel.getSize() != 0) {
-            mView.hideNoMessagesTextView();
-        }
     }
 
     @Override
     public void onLoad() {
         if (!mInitialized) {
+            mView.setLoadingToolbarLabelText();
             mGetMessagesAsyncTask = new GetMessagesAsyncTask(150, 0, true);
             mGetMessagesAsyncTask.execute();
         } else {
@@ -118,15 +116,6 @@ public class ChatService implements ChatPresenter {
             this.limit = limit;
             this.offset = offset;
             this.initCall = initCall;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            if (initCall) {
-                mView.setToolbarLabelText(mContext.getString(R.string.loading));
-            } else {
-                mView.setToolbarLabelText(mDialogId);
-            }
         }
 
         @Override
@@ -185,20 +174,18 @@ public class ChatService implements ChatPresenter {
                     startGetMessagesWithInterval();
                 }
 
-                mView.setToolbarLabelText(mDialogId);
-
+                mView.setCommonToolbarLabelText();
             } else if (resultPair.second == ErrorType.NoInternetConnection) {
-                stopGetMessagesWithInterval();
-                mView.setToolbarLabelText(mContext.getString(R.string.no_internet_connection));
-                mView.showRefreshIcon();
+                mView.setNoInternetToolbarLabelText();
+                if (initCall) onLoad();
             } else {
                 stopGetMessagesWithInterval();
-                mView.openAuthenticationActivity();
+                mView.openDialogsActivity();
             }
         }
     }
 
-    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<ResponseBody, ErrorType>> {
+    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<Timestamp, ErrorType>> {
 
         private final String messageText;
 
@@ -206,13 +193,13 @@ public class ChatService implements ChatPresenter {
             this.messageText = messageText;
         }
 
-        protected Pair<ResponseBody, ErrorType> doInBackground(Void... voids) {
+        protected Pair<Timestamp, ErrorType> doInBackground(Void... voids) {
             try {
-                Response<ResponseBody> response = NetworkService
+                Response<Timestamp> response = NetworkService
                         .getSendMessageCall(mDialogId, "text", messageText)
                         .execute();
 
-                ResponseBody answer = response.body();
+                Timestamp answer = response.body();
 
                 if (response.code() == 200 && answer != null) {
                     return new Pair<>(answer, ErrorType.NoError);
@@ -226,12 +213,11 @@ public class ChatService implements ChatPresenter {
             }
         }
 
-        protected void onPostExecute(Pair<ResponseBody, ErrorType> resultPair) {
+        protected void onPostExecute(Pair<Timestamp, ErrorType> resultPair) {
             if (resultPair.second == ErrorType.NoError) {
                 ChatMessage message = new ChatMessage(
                         messageText,
-                        //TimestampHelper.formatTimestampWithoutDate(resultPair.first.getTimestamp()),
-                        "",
+                        TimestampHelper.formatTimestampWithoutDate(resultPair.first.getTimestamp()),
                         ChatMessage.Direction.Outcoming,
                         ""
                 );
@@ -241,12 +227,10 @@ public class ChatService implements ChatPresenter {
                 mView.scrollRecyclerViewToLast();
                 mView.hideNoMessagesTextView();
             } else if (resultPair.second == ErrorType.NoInternetConnection) {
-                stopGetMessagesWithInterval();
-                mView.setToolbarLabelText(mContext.getString(R.string.no_internet_connection));
-                mView.showRefreshIcon();
+                mView.setNoInternetToolbarLabelText();
             } else {
                 stopGetMessagesWithInterval();
-                mView.openAuthenticationActivity();
+                mView.openDialogsActivity();
             }
         }
     }

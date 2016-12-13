@@ -45,35 +45,33 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
 
         mActivity = (DialogsView)getActivity();
         mPresenter = new ViewDialogsService(this, getActivity(), (DialogsDataModel)mRecyclerView.getAdapter());
-        mPresenter.onLoad();
 
         return rootView;
     }
 
     @Override
     public void openAuthenticationActivity() {
-        mActivity.openAuthenticationActivity();
+        if (activityInitialized()) mActivity.openAuthenticationActivity();
     }
 
     @Override
-    public void showNoInternetConnection() {
-        mActivity.showRefreshIcon();
-        mActivity.setToolbarLabelText(getString(R.string.no_internet_connection));
+    public void openChatActivity(String dialogId) {
+        if (activityInitialized()) mActivity.openChatActivity(dialogId);
     }
 
     @Override
-    public void onRefreshIconClick() {
-        mPresenter.onLoad();
+    public void setNoInternetToolbarLabelText() {
+        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.no_internet_connection));
     }
 
     @Override
-    public void refreshToolbarLabelText(){
-        mActivity.refreshToolbarLabelText();
+    public void setCommonToolbarLabelText(){
+        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.fragment_messages_title));
     }
 
     @Override
-    public Activity getParentActivity(){
-        return getActivity();
+    public void setLoadingToolbarLabelText(){
+        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.loading));
     }
 
     private void initializeViews(View rootView){
@@ -83,12 +81,22 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
     @Override
     public void onResume(){
         super.onResume();
-        refreshToolbarLabelText();
+        mPresenter.onLoad();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        mPresenter.onPause();
     }
 
     @Override
     public void hideNoDialogsTextView() {
-        mNoDialogsTextView.setVisibility(View.INVISIBLE);
+        if (activityInitialized()) mNoDialogsTextView.setVisibility(View.INVISIBLE);
+    }
+
+    private boolean activityInitialized(){
+        return isAdded() && getActivity()!= null;
     }
 
     private void initializeRecyclerView(View rootView){
@@ -103,5 +111,4 @@ public class ViewDialogsFragment extends Fragment implements ViewDialogsView {
 
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
     }
-
 }

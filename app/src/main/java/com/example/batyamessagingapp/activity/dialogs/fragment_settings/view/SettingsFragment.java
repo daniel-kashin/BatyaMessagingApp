@@ -46,28 +46,42 @@ public class SettingsFragment extends Fragment implements SettingsView {
 
     @Override
     public void openAuthenticationActivity() {
-        mActivity.openAuthenticationActivity();
+        if (activityInitialized()) mActivity.openAuthenticationActivity();
     }
 
     @Override
     public void startProgressDialog(String message) {
-        mActivity.startProgressDialog(message);
+        if (activityInitialized()) mActivity.startProgressDialog(message);
     }
 
     @Override
     public void stopProgressDialog() {
-        mActivity.stopProgressDialog();
+        if (activityInitialized()) mActivity.stopProgressDialog();
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        mPresenter.onResume();
+    }
+
+    @Override
+    public void showAlert(String message, String title) {
+        if (activityInitialized()) mActivity.showAlert(message, title);
+    }
+
+    @Override
+    public void setOrdinaryToolbarLabelText() {
+        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.fragment_settings_title));
+    }
+
+    private boolean activityInitialized(){
+        return isAdded() && getActivity()!= null;
     }
 
     private void initializeViews(View view){
         mLogoutButton = (Button)view.findViewById(R.id.settings_logout_button);
         mFullLogoutButton = (Button)view.findViewById(R.id.settings_full_logout_button);
-        ((DialogsView)getActivity()).setToolbarLabelText(getString(R.string.fragment_settings_title));
     }
 
     private void setOnClickListeners(){
@@ -85,5 +99,4 @@ public class SettingsFragment extends Fragment implements SettingsView {
             }
         });
     }
-
 }

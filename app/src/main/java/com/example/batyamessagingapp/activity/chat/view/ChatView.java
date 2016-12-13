@@ -15,7 +15,9 @@ public interface ChatView {
     void scrollRecyclerViewToLast();
     void scrollRecyclerViewToFirst();
     void hideNoMessagesTextView();
-    void setToolbarLabelText(String text);
+    void setCommonToolbarLabelText();
+    void setLoadingToolbarLabelText();
+    void setNoInternetToolbarLabelText();
     void showRefreshIcon();
-    void openAuthenticationActivity();
+    void openDialogsActivity();
 }
