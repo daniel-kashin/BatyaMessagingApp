@@ -63,7 +63,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_marginEnd="15dp"
-                        android:background="@mipmap/vector_forward"/>
+                        android:background="@drawable/vector_forward"/>
                     <ImageView
                         android:visibility="invisible"
                         android:id="@+id/dialogs_toolbar_refresh_icon"

@@ -35,7 +35,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     private View mActivityRootView;
     private Toolbar mToolbar;
     private TextView mToolbarLabel;
-    private TextView mNoMessagesTextView;
+    //private TextView mNoMessagesTextView;
     private ImageView mToolbarRefreshIcon;
 
     private RecyclerView mRecyclerView;
@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @Override
     public void hideNoMessagesTextView() {
-        mNoMessagesTextView.setVisibility(View.INVISIBLE);
+       // mNoMessagesTextView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         mSendMessageEditText = (EditText) findViewById(R.id.chat_message_edit_text);
         mSendMessageIcon = (ImageView) findViewById(R.id.chat_send_message_icon);
         mActivityRootView = findViewById(R.id.activity_chat);
-        mNoMessagesTextView = (TextView) findViewById(R.id.chat_no_messages_text_view);
+        //mNoMessagesTextView = (TextView) findViewById(R.id.chat_no_messages_text_view);
     }
 
     private void setListeners() {
@@ -188,31 +188,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
             }
         });
 
-        //hide keyboard when view is scrolled
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                View view = ChatActivity.this.getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                  //  imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }
-        });
 
-        //scroll when keyboard appears
-        mActivityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                DisplayMetrics metrics = ChatActivity.this.getResources().getDisplayMetrics();
-                final float px200 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
-                final int heightDiff = mActivityRootView.getRootView().getHeight() - mActivityRootView.getHeight();
-                if (heightDiff > px200) {
-                    //scrollRecyclerViewToLast();
-                }
-            }
-        });
 
         mToolbarLabel.setOnClickListener(new View.OnClickListener() {
             @Override

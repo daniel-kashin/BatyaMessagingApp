@@ -47,7 +47,6 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
     private TextView mToolbarLabel;
     private EditText mToolbarEditText;
     private ImageView mToolbarForwardIcon;
-    private ImageView mToolbarRefreshIcon;
 
     private DialogsPresenter mPresenter;
 
@@ -215,6 +214,17 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
+
+        //call auth button onClick when user finished to write the password
+        mToolbarEditText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    mToolbarForwardIcon.callOnClick();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -288,6 +298,9 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         return true;
     }
 
+
+
+
     @Override
     public void showSearch() {
         mToolbarLabel.setVisibility(View.INVISIBLE);
@@ -331,7 +344,7 @@ public class DialogsActivity extends AppCompatActivity implements DialogsView {
         @Override
         public void onBindViewHolder(final DrawerAdapter.ViewHolder holder, int position) {
             holder.textView.setText(mTitles[position]); // Setting the Text with the array of our Titles
-            holder.imageView.setImageResource(mIcons[position]);// Settimg the image with array of our icons
+            holder.imageView.setImageResource(mIcons[position]);// Setting the image with array of our icons
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

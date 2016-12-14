@@ -6,19 +6,22 @@
     android:padding="10dp">
 
     <ImageView
-        android:tint="@color/shadow_end"
+        android:tint="@color/drawer_icon"
         android:layout_margin="5dp"
         android:id="@+id/drawer_item_icon"
         android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_height="24dp"
+        />
 
     <TextView
         style="@style/Base.Widget.AppCompat.DrawerArrowToggle"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="25dp"
         android:layout_gravity="center_vertical"
         android:id="@+id/drawer_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
         android:textColor="@color/primary_text"/>
 
 </LinearLayout>

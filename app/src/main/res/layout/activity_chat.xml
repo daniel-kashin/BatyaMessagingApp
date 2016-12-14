@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_chat"
@@ -43,9 +44,10 @@
         android:id="@+id/chat_message_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/chat_message_input"
         android:background="@color/indigo_50"
-        android:layout_below="@+id/chat_toolbar" />
+        android:layout_weight="1"/>
+
+    <!--
 
     <TextView
         style="@style/Widget.AppCompat.TextView.SpinnerItem"
@@ -56,20 +58,19 @@
         android:textColor="@color/hint_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+-->
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@drawable/layout_shadow_inversed"
-        android:layout_above="@id/chat_message_input">
+        android:background="@drawable/layout_shadow_inversed">
     </View>
 
     <RelativeLayout
         android:background="@color/white"
         android:id="@+id/chat_message_input"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
 
         <EditText
             style="@style/MessageInput"
@@ -95,13 +96,12 @@
             android:id="@+id/chat_send_message_icon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/vector_send"
+            android:background="@mipmap/vector_send"
             android:layout_margin="10dp"
-            android:tint="@color/indigo_400"
             android:layout_alignParentBottom="true"
             />
         </RelativeLayout>
     </RelativeLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

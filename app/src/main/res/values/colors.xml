@@ -12,6 +12,8 @@
     <color name="secondary_text">#8a000000</color>
     <color name="hint_text">#61000000</color>
 
+    <color name="drawer_icon">#969696</color>
+
     <color name="shadow_start">#0b000000</color>
     <color name="shadow_end">#19000000</color>
 

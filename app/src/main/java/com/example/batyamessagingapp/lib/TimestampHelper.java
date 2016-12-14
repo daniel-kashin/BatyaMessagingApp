@@ -13,23 +13,24 @@ import java.util.TimeZone;
  */
 
 public class TimestampHelper {
-    static final int secondsInDay = 86400; //60 * 60 * 24
 
     public static String formatTimestamp(long timestamp) {
-        SimpleDateFormat simpleDateFormat;
+        SimpleDateFormat monthDay = new SimpleDateFormat("MMM dd", new Locale("en-US"));
+        SimpleDateFormat hourMinute = new SimpleDateFormat("HH:mm", new Locale("en-US"));
+        monthDay.setTimeZone(Calendar.getInstance().getTimeZone());
+        hourMinute.setTimeZone(Calendar.getInstance().getTimeZone());
 
-        if (timestamp / secondsInDay == System.currentTimeMillis() / 1000 / secondsInDay) {
-            simpleDateFormat = new SimpleDateFormat("hh:mm", new Locale("ru-RU"));
+        String inputDate = monthDay.format(timestamp*1000);
+
+        if (inputDate.equals(monthDay.format(System.currentTimeMillis()))){
+            return hourMinute.format(timestamp*1000);
         } else {
-            simpleDateFormat = new SimpleDateFormat("MMM dd", new Locale("en-US"));
+            return monthDay.format(timestamp*1000);
         }
-
-        simpleDateFormat.setTimeZone(Calendar.getInstance().getTimeZone());
-        return simpleDateFormat.format(timestamp * 1000);
     }
 
     public static String formatTimestampWithoutDate(long timestamp) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm", new Locale("ru-RU"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", new Locale("en-US"));
         simpleDateFormat.setTimeZone(Calendar.getInstance().getTimeZone());
         return simpleDateFormat.format(timestamp * 1000);
     }
