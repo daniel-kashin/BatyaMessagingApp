@@ -6,7 +6,7 @@
     android:padding="10dp">
 
     <ImageView
-        android:tint="@color/drawer_icon"
+        android:tint="@color/drawer"
         android:layout_margin="5dp"
         android:id="@+id/drawer_item_icon"
         android:layout_width="24dp"
@@ -21,7 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:textSize="@dimen/drawer_item_text_size"
         android:fontFamily="sans-serif"
-        android:textColor="@color/primary_text"/>
+        android:textColor="@color/drawer"/>
 
 </LinearLayout>

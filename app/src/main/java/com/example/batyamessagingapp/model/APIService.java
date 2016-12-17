@@ -47,5 +47,6 @@ public interface APIService {
     @GET("/{token}/contacts/offset/{offset}")
     Call<DialogArray> getDialogs(@Path("token") String token, @Path("offset") int offset);
 
-    //TODO add another
+    //@POST("/{token}/name/{dialog_id}")Call<ResponseBody> setUsername()
+
 }

@@ -8,12 +8,11 @@ import com.example.batyamessagingapp.model.PreferencesService;
  * Created by Кашин on 23.10.2016.
  */
 
-//todo: кеширование
-    //// TODO: notifications            -
-    //// TODO: service                  -
+    //// todo: кеширование              -
+    //// TODO: notifications            -+
     //// TODO: android lifecycle        +
     //// TODO: android mvp              +
-    //// TODO: adapter                  -
+    //// TODO: adapter                  +
 
 public class Batya extends Application {
 

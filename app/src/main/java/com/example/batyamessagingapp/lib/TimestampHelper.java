@@ -29,7 +29,22 @@ public class TimestampHelper {
         }
     }
 
-    public static String formatTimestampWithoutDate(long timestamp) {
+    public static boolean datesDiffer(long oldTimestamp, long newTimestamp){
+        SimpleDateFormat monthDay = new SimpleDateFormat("MMM dd", new Locale("en-US"));
+        monthDay.setTimeZone(Calendar.getInstance().getTimeZone());
+
+        return !monthDay.format(oldTimestamp*1000)
+                .equals(monthDay.format(newTimestamp*1000));
+    }
+
+    public static String formatTimestampToDate(long timestamp){
+        SimpleDateFormat monthDay = new SimpleDateFormat("MMM dd", new Locale("en-US"));
+        monthDay.setTimeZone(Calendar.getInstance().getTimeZone());
+
+        return monthDay.format(timestamp*1000);
+    }
+
+    public static String formatTimestampToTime(long timestamp) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", new Locale("en-US"));
         simpleDateFormat.setTimeZone(Calendar.getInstance().getTimeZone());
         return simpleDateFormat.format(timestamp * 1000);

@@ -28,43 +28,15 @@
                 android:layout_marginStart="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <ImageView
-                android:visibility="invisible"
-                android:id="@+id/chat_toolbar_refresh_icon"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginEnd="15dp"
-                android:background="@mipmap/vector_refresh"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chat_message_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="@color/indigo_50"
         android:layout_weight="1"/>
-
-    <!--
-
-    <TextView
-        style="@style/Widget.AppCompat.TextView.SpinnerItem"
-        android:id="@+id/chat_no_messages_text_view"
-        android:text="@string/no_messages_title"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/hint_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
--->
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/layout_shadow_inversed">
-    </View>
 
     <RelativeLayout
         android:background="@color/white"

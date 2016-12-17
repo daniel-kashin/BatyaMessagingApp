@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.example.batyamessagingapp.activity.authentication.presenter.AuthenticationPresenter;
 import com.example.batyamessagingapp.activity.authentication.presenter.AuthenticationService;
-import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
+import com.example.batyamessagingapp.activity.main.view.MainActivity;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.R;
 
@@ -125,7 +125,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
 
     @Override
     public void openDialogsActivity() {
-        Intent intent = new Intent(this, DialogsActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

@@ -8,7 +8,6 @@ public interface ChatPresenter {
     void onSendMessageButtonClick();
     void onLoad();
     void onPause();
-    void onRefreshIconClick();
     boolean initialized();
 }
 

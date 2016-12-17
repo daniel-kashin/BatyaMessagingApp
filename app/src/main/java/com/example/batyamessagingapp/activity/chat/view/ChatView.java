@@ -18,6 +18,5 @@ public interface ChatView {
     void setCommonToolbarLabelText();
     void setLoadingToolbarLabelText();
     void setNoInternetToolbarLabelText();
-    void showRefreshIcon();
     void openDialogsActivity();
 }

@@ -67,28 +67,4 @@ public class NetworkService {
         Message message = new Message(messageType,messageData);
         return sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
     }
-
-    public void getUsers() {
-/*
-        int offset = 0;
-
-        Call<HashMap<String, ChatMessage>> call = sApiService.getUsers(_token, ("offset/" + offset));
-        call.enqueue(new Callback<HashMap<String, ChatMessage>>() {
-            @Override
-            public void onResponse(Call<HashMap<String, ChatMessage>> call, Response<HashMap<String, ChatMessage>> response) {
-                if (response.isSuccessful()) {
-
-
-                } else {
-                    // error response, no access to resource?
-                }
-            }
-
-            @Override
-            public void onFailure(Call<HashMap<String, ChatMessage>> call, Throwable t) {
-                // something went completely south (like no internet connection)
-            }
-        });
-*/
-    }
 }

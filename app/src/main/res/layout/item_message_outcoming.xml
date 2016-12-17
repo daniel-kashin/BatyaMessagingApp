@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/bubble_outcoming"
-        android:maxWidth="300dp"
+        android:background="@drawable/message_outcoming"
+        android:maxWidth="@dimen/message_max_width"
         android:paddingBottom="9dp"
         android:paddingEnd="19dp"
         android:paddingStart="9dp"
@@ -25,8 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="2dp"
-        android:paddingRight="8dp"
-        android:textSize="@dimen/auth_input_bottom_text_size"
+        android:paddingEnd="8dp"
+        android:textSize="@dimen/message_date_text_size"
         android:textColor="@color/hint_text"
         android:layout_toStartOf="@id/message_message_text_view"/>
 

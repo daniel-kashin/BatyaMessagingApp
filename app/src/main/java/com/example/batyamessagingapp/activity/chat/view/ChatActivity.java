@@ -1,6 +1,5 @@
 package com.example.batyamessagingapp.activity.chat.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,24 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
 import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatPresenter;
 import com.example.batyamessagingapp.activity.chat.presenter.ChatService;
-import com.example.batyamessagingapp.activity.dialogs.view.DialogsActivity;
+import com.example.batyamessagingapp.activity.main.view.MainActivity;
 
 public class ChatActivity extends AppCompatActivity implements ChatView {
 
@@ -36,7 +29,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     private Toolbar mToolbar;
     private TextView mToolbarLabel;
     //private TextView mNoMessagesTextView;
-    private ImageView mToolbarRefreshIcon;
 
     private RecyclerView mRecyclerView;
     private String mDialogId;
@@ -82,11 +74,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     }
 
     @Override
-    public void showRefreshIcon() {
-        mToolbarRefreshIcon.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void clearMessageEditText() {
         mSendMessageEditText.setText("");
     }
@@ -122,7 +109,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @Override
     public void openDialogsActivity() {
-        Intent intent = new Intent(this, DialogsActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
@@ -142,7 +129,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        mToolbarRefreshIcon = (ImageView) findViewById(R.id.chat_toolbar_refresh_icon);
 
         //recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.chat_message_recycler_view);
@@ -196,17 +182,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
                 scrollRecyclerViewToFirst();
             }
         });
-
-        mToolbarRefreshIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideRefreshIcon();
-                mPresenter.onRefreshIconClick();
-            }
-        });
     }
 
-    private void hideRefreshIcon() {
-        mToolbarRefreshIcon.setVisibility(View.INVISIBLE);
-    }
 }

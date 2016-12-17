@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.util.Pair;
 
-import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.view.ChatView;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
@@ -63,12 +62,7 @@ public class ChatService implements ChatPresenter {
     }
 
     @Override
-    public void onRefreshIconClick() {
-        onLoad();
-    }
-
-    @Override
-    public boolean initialized(){
+    public boolean initialized() {
         return mInitialized;
     }
 
@@ -142,29 +136,59 @@ public class ChatService implements ChatPresenter {
         @Override
         protected void onPostExecute(Pair<MessageArray, ErrorType> resultPair) {
             if (resultPair.first != null && resultPair.second == ErrorType.NoError) {
-
                 ArrayList<Message> messages = resultPair.first.getMessages();
                 ArrayList<ChatMessage> outputMessages = new ArrayList<>();
 
                 for (int i = 0; i < messages.size(); ++i) {
                     Message message = messages.get(i);
-                    boolean isMy = message.getSender()
-                            .equals(PreferencesService.getUsernameFromPreferences());
-                    String id = message.getGuid();
+                    String messageGuid = message.getGuid();
 
-                    if ((!isMy || initCall) && !mDataModel.hasItemWithId(id)) {
-                        ChatMessage chatMessage = new ChatMessage(
-                                message.getContent(), // text
-                                TimestampHelper.formatTimestampWithoutDate(message.getTimestamp()), // date
-                                isMy ? ChatMessage.Direction.Outcoming : ChatMessage.Direction.Incoming, // direction
-                                id // guid
-                        );
-                        outputMessages.add(chatMessage);
+                    if (!mDataModel.hasItemWithId(messageGuid)) {
+                        String messageSender = message.getSender();
+                        String messageContent = message.getContent();
+
+                        ChatMessage.Direction direction;
+                        if (messageSender.equals("")) {
+                            direction = ChatMessage.Direction.System;
+                        } else if (messageSender.equals(PreferencesService.getUsernameFromPreferences())) {
+                            direction = ChatMessage.Direction.Outcoming;
+                        } else {
+                            direction = ChatMessage.Direction.Incoming;
+                        }
+
+                        String contentToSet = null;
+                        if (direction == ChatMessage.Direction.Outcoming && initCall
+                                || direction == ChatMessage.Direction.Incoming) {
+                            contentToSet = messageContent;
+                        } else if (direction == ChatMessage.Direction.System) {
+                            int contentLength = messageContent.length();
+                            if (messageContent.equals("created")) {
+                                contentToSet = "The group was created.";
+                            } else if (contentLength > 8 && messageContent.substring(0, 7).equals("invited|")) {
+                                contentToSet = "User was invited: "
+                                        + messageContent.substring(8, contentLength - 1);
+                            } else if (contentLength > 7 && messageContent.substring(0, 6).equals("kicked|")) {
+                                contentToSet = "User was kicked: "
+                                        + messageContent.substring(7, contentLength - 1);
+                            } else if (contentLength > 5 && messageContent.substring(0, 4).equals("left|")){
+                                contentToSet = "User left the group: "
+                                        + messageContent.substring(5, contentLength - 1);
+                            }
+                        }
+
+                        if (contentToSet != null) {
+                            outputMessages.add(new ChatMessage(
+                                    contentToSet, // text
+                                    message.getTimestamp(), //timestamp
+                                    direction, // direction
+                                    messageGuid // guid
+                            ));
+                        }
                     }
                 }
 
                 if (outputMessages.size() > 0) {
-                    mDataModel.addMessages(outputMessages);
+                    mDataModel.addMessagesToEnd(outputMessages);
                     if (initCall) mView.scrollRecyclerViewToLast();
                     mView.hideNoMessagesTextView();
                 }
@@ -217,7 +241,7 @@ public class ChatService implements ChatPresenter {
             if (resultPair.second == ErrorType.NoError) {
                 ChatMessage message = new ChatMessage(
                         messageText,
-                        TimestampHelper.formatTimestampWithoutDate(resultPair.first.getTimestamp()),
+                        resultPair.first.getTimestamp(),
                         ChatMessage.Direction.Outcoming,
                         ""
                 );
@@ -234,7 +258,6 @@ public class ChatService implements ChatPresenter {
             }
         }
     }
-
 
 
     private enum ErrorType {

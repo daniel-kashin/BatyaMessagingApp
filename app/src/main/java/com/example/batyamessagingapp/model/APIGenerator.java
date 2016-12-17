@@ -12,8 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIGenerator {
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .readTimeout(60,TimeUnit.SECONDS)
-            .connectTimeout(60,TimeUnit.SECONDS);
+            .readTimeout(15,TimeUnit.SECONDS)
+            .connectTimeout(15,TimeUnit.SECONDS);
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl) {
         Retrofit.Builder builder =
