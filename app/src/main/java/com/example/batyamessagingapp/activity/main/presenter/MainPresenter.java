@@ -5,5 +5,4 @@ package com.example.batyamessagingapp.activity.main.presenter;
  */
 
 public interface MainPresenter {
-    void onForwardIconButtonClick(String username);
 }

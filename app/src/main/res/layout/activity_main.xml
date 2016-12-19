@@ -33,10 +33,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
                         <TextView
                             android:id="@+id/dialogs_toolbar_label"
                             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
@@ -55,24 +51,23 @@
                             android:layout_height="match_parent"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="0dp"
-                            android:layout_toStartOf="@+id/dialogs_toolbar_forward_icon"
+                            android:layout_toStartOf="@+id/dialogs_toolbar_clear_icon"
                             android:background="@android:color/transparent"
-                            android:hint="Username"
+                            android:hint="@string/search_username"
                             android:maxLines="1"
                             android:textColor="@color/white"
                             android:textColorHint="@color/indigo_100"
                             android:visibility="invisible" />
 
                         <ImageView
-                            android:id="@+id/dialogs_toolbar_forward_icon"
+                            android:id="@+id/dialogs_toolbar_clear_icon"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="15dp"
-                            android:background="@drawable/vector_forward"
+                            android:background="@mipmap/asset_clear"
                             android:visibility="invisible" />
-                    </RelativeLayout>
 
                 </RelativeLayout>
             </android.support.v7.widget.Toolbar>

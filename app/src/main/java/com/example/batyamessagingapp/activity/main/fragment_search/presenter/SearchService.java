@@ -69,7 +69,9 @@ public class SearchService implements SearchPresenter {
 
                 if (result.equals("")){
                     mView.showNoUsersTextView();
+                    mView.hideClearIcon();
                     mDataModel.clearUsers();
+
                 } else {
                     GetUsersAsyncTask task = new GetUsersAsyncTask(result);
                     task.execute();
@@ -90,6 +92,7 @@ public class SearchService implements SearchPresenter {
 
         @Override
         protected void onPreExecute(){
+            mView.showClearIcon();
             mView.hideTextView();
             mView.showProgressBar();
         }

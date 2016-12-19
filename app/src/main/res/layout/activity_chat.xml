@@ -70,7 +70,7 @@
             android:id="@+id/chat_send_message_icon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@mipmap/vector_send"
+            android:background="@mipmap/asset_send"
             android:layout_margin="10dp"
             android:layout_alignParentBottom="true"
             />

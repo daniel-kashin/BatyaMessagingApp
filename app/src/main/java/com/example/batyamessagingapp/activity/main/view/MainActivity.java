@@ -12,11 +12,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,7 +24,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
@@ -46,12 +43,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private ActionBarDrawerToggle mDrawerToggle;
     private TextView mToolbarLabel;
     private EditText mToolbarEditText;
-    private ImageView mToolbarForwardIcon;
+    private ImageView mToolbarClearIcon;
     private View mToolbarRelativeLayout;
     private TextWatcher mCurrentTextWatcher;
 
     private MainPresenter mPresenter;
-
 
 
     //-----------------------------AppCompatActivity overriden methods------------------------------
@@ -82,9 +78,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-            if (topFragment instanceof SearchFragment){
+            if (topFragment instanceof SearchFragment) {
                 applyFragment(new DialogsFragment());
-            } if (mToolbarEditText.getVisibility() == View.VISIBLE) {
+            }
+            if (mToolbarEditText.getVisibility() == View.VISIBLE) {
                 hideSearch();
             }
             return true;
@@ -165,24 +162,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void showNewConversationInterface() {
+    public void showSearchInterface() {
         mToolbarLabel.setVisibility(View.INVISIBLE);
-        mToolbarForwardIcon.setVisibility(View.VISIBLE);
-        mToolbarEditText.setVisibility(View.VISIBLE);
-        mToolbarEditText.post(new Runnable() {
-            @Override
-            public void run() {
-                mToolbarEditText.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-    }
-
-    @Override
-    public void showSearchInterface(){
-        mToolbarLabel.setVisibility(View.INVISIBLE);
-        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+        mToolbarClearIcon.setVisibility(View.INVISIBLE);
         mToolbarEditText.setVisibility(View.VISIBLE);
         mToolbarEditText.post(new Runnable() {
             @Override
@@ -196,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void setOnToolbarTextListener(TextWatcher textWatcher) {
-        if (mCurrentTextWatcher != null) mToolbarEditText.removeTextChangedListener(mCurrentTextWatcher);
+        if (mCurrentTextWatcher != null)
+            mToolbarEditText.removeTextChangedListener(mCurrentTextWatcher);
 
         mCurrentTextWatcher = textWatcher;
         mToolbarEditText.addTextChangedListener(textWatcher);
@@ -206,45 +189,30 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void hideSearch() {
         mToolbarLabel.setVisibility(View.VISIBLE);
         mToolbarEditText.setVisibility(View.INVISIBLE);
-        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+        mToolbarClearIcon.setVisibility(View.INVISIBLE);
         mToolbarEditText.setText("");
     }
 
     @Override
-    public void setOnToolbarDefaultTextListener() {
-        setOnToolbarTextListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() != 0 && mToolbarEditText.getVisibility() == View.VISIBLE) {
-                    mToolbarForwardIcon.setVisibility(View.VISIBLE);
-                } else {
-                    mToolbarForwardIcon.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
+    public void showClearIcon() {
+        mToolbarClearIcon.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void hideClearIcon() {
+        mToolbarClearIcon.setVisibility(View.INVISIBLE);
+    }
+
 
     //-----------------------------------------private methods--------------------------------------
 
     private void setListeners() {
-        mToolbarForwardIcon.setOnClickListener(new View.OnClickListener() {
+        mToolbarClearIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.onForwardIconButtonClick(
-                        mToolbarEditText.getText().toString());
+                mToolbarEditText.setText("");
             }
         });
-
 
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -262,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
 
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset){
+            public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, 0);
             }
         };
@@ -280,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    mToolbarForwardIcon.callOnClick();
+                    mToolbarClearIcon.callOnClick();
                 }
                 return false;
             }
@@ -295,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-        mToolbarForwardIcon = (ImageView) findViewById(R.id.dialogs_toolbar_forward_icon);
+        mToolbarClearIcon = (ImageView) findViewById(R.id.dialogs_toolbar_clear_icon);
         mToolbarEditText = (EditText) findViewById(R.id.dialogs_toolbar_edit_text);
         mToolbarLabel = (TextView) findViewById(R.id.dialogs_toolbar_label);
         mToolbarRelativeLayout = findViewById(R.id.dialogs_toolbar_relative_layout);
@@ -352,10 +320,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 @Override
                 public void onClick(View v) {
                     if (holder.getAdapterPosition() == 0) {
-                        applyFragment(new SearchFragment());
+
                     } else if (holder.getAdapterPosition() == 1) {
-                        setOnToolbarDefaultTextListener();
-                        showNewConversationInterface();
+                        applyFragment(new SearchFragment());
                     } else if (holder.getAdapterPosition() == 2) {
                         applyFragment(new DialogsFragment());
                     } else {

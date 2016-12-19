@@ -71,7 +71,6 @@ public class SearchFragment extends Fragment implements SearchView {
         super.onPause();
         if (activityInitialized()) {
             mActivity.hideSearch();
-            mActivity.setOnToolbarDefaultTextListener();
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
@@ -84,6 +83,19 @@ public class SearchFragment extends Fragment implements SearchView {
         }
     }
 
+    @Override
+    public void showClearIcon() {
+        if (activityInitialized()){
+            mActivity.showClearIcon();
+        }
+    }
+
+    @Override
+    public void hideClearIcon() {
+        if (activityInitialized()){
+            mActivity.hideClearIcon();
+        }
+    }
 
     @Override
     public void hideProgressBar() {

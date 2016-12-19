@@ -142,18 +142,15 @@ public class DialogsService implements DialogsPresenter {
         protected void onPostExecute(Pair<DialogArray, NetworkExecutor.ErrorType> resultPair) {
             try {
                 if (resultPair.second == NetworkExecutor.ErrorType.NoError && resultPair.first != null) {
+                    mView.setCommonToolbarLabelText();
+
                     addDialogArrayToAdapter(resultPair.first.getDialogs());
+                    if (mDataModel.getSize() != 0) mView.hideNoDialogsTextView();
 
                     if (initCall) {
                         mInitialized = true;
                         startGetDialogsWithInterval();
                     }
-
-                    if (mDataModel.getSize() != 0) {
-                        mView.hideNoDialogsTextView();
-                    }
-
-                    mView.setCommonToolbarLabelText();
 
                     if (resultPair.first.getDialogs().size() >= MAX_DIALOGS_PER_CALL) {
                         startGetDialogsAsyncTask(offset + 25, false);

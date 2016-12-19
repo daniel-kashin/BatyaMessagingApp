@@ -10,8 +10,8 @@
         android:maxLines="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textSize="@dimen/dialog_username_text_size"
+        android:padding="15dp"
+        android:textSize="@dimen/search_item_text_size"
         android:fontFamily="sans-serif"
         android:textColor="@color/primary_text"
         />

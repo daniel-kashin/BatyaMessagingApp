@@ -16,8 +16,8 @@ public interface MainView {
     void stopProgressDialog();
     ProgressDialog getProgressDialog();
     void hideSearch();
-    void showNewConversationInterface();
+    void showClearIcon();
+    void hideClearIcon();
     void setOnToolbarTextListener(TextWatcher textWatcher);
-    void setOnToolbarDefaultTextListener();
     void showSearchInterface();
 }

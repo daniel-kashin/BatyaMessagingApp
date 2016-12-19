@@ -15,7 +15,7 @@
         android:theme="@style/CircularProgress"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        style="?android:attr/progressBarStyleSmall"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

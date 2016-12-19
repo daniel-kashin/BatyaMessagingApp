@@ -35,8 +35,7 @@
         <item name="hintTextAppearance">@style/AppTheme.TextFloatLabelAppearance</item>
         <item name="errorTextAppearance">@style/AppTheme.TextErrorAppearance</item>
         <item name="counterTextAppearance">@style/TextAppearance.Design.Counter</item>
-        <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow
-        </item>
+        <item name="counterOverflowTextAppearance">@style/TextAppearance.Design.Counter.Overflow</item>
         <item name="android:textColorHint">@color/indigo_100</item>
         <item name="android:textColorHighlight">@color/indigo_100</item>
         <item name="android:textColorHighlightInverse">@color/white</item>
@@ -75,8 +74,6 @@
         <item name="android:windowBackground">@color/white</item>
         <item name="android:windowDisablePreview">true</item>
 
-        <item name="searchViewStyle">@style/MySearchViewStyle</item>
-
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
         <item name="colorControlHighlight">@color/white</item>
@@ -90,17 +87,6 @@
     </style>
 
 
-    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="goIcon">@mipmap/vector_forward</item>
-        <item name="commitIcon">@mipmap/vector_forward</item>
-        <item name="android:iconifiedByDefault">false</item>
-        <item name="closeIcon">@mipmap/ic_launcher</item>
-        <item name="searchIcon">@null</item>
-        <item name="searchHintIcon">@null</item>
-        <item name="android:hint">Username</item>
-        <item name="android:queryHint">Username</item>
-        <item name="android:textColorHint">@color/white</item>
-    </style>
 
     <style name="ThemeOverlay.AppTheme.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@color/white</item>

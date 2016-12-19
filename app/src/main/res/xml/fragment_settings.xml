@@ -4,7 +4,7 @@
     <android.support.v7.preference.PreferenceCategory
         android:title="Account">
         <android.support.v7.preference.Preference
-            android:title="Identifier"
+            android:title="Id (cannot be changed)"
             android:summary="DanilDanil"
             android:key="account_identifier"/>
         <android.support.v7.preference.Preference
@@ -20,11 +20,9 @@
         android:title="Log out">
         <android.support.v7.preference.Preference
             android:title="Current device"
-            android:summary="Log out from exactily this device"
             android:key="log_out_current"/>
         <android.support.v7.preference.Preference
-            android:title="All devices"
-            android:summary="Log out from all devices where you entered"
+            android:title="All active devices"
             android:key="log_out_all"/>
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

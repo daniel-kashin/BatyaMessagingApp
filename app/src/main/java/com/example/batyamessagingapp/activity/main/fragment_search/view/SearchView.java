@@ -15,4 +15,6 @@ public interface SearchView {
     void showNoUsersTextView();
     void showNoInternetConnectionTextView();
     void hideTextView();
+    void showClearIcon();
+    void hideClearIcon();
 }
