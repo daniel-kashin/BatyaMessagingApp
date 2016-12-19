@@ -2,12 +2,29 @@
 <android.support.v7.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
     <android.support.v7.preference.PreferenceCategory
+        android:title="Account">
+        <android.support.v7.preference.Preference
+            android:title="Identifier"
+            android:summary="DanilDanil"
+            android:key="account_identifier"/>
+        <android.support.v7.preference.Preference
+            android:title="Username"
+            android:summary="DanilDanil"
+            android:key="account_current"/>
+        <android.support.v7.preference.Preference
+            android:title="Change password"
+            android:summary=""
+            android:key="account_password"/>
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:title="Log out">
         <android.support.v7.preference.Preference
             android:title="Current device"
+            android:summary="Log out from exactily this device"
             android:key="log_out_current"/>
         <android.support.v7.preference.Preference
             android:title="All devices"
+            android:summary="Log out from all devices where you entered"
             android:key="log_out_all"/>
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

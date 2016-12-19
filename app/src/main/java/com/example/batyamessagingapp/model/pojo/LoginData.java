@@ -12,6 +12,7 @@ public class LoginData {
     @SerializedName("username")
     @Expose
     private String username;
+
     @SerializedName("password")
     @Expose
     private String password;

@@ -13,9 +13,11 @@ import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.Dial
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.OnDialogClickListener;
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsView;
 import com.example.batyamessagingapp.lib.CircleBitmapFactory;
+import com.example.batyamessagingapp.model.NetworkExecutor;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
+import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.PairLastMessageDialogId;
 
@@ -23,6 +25,9 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Response;
 
@@ -33,6 +38,7 @@ import retrofit2.Response;
 
 public class DialogsService implements DialogsPresenter {
 
+    private int MAX_DIALOGS_PER_CALL = 25;
     private int GET_DIALOGS_INTERVAL = 3000;
     private boolean mInitialized;
     private boolean mRunning;
@@ -52,8 +58,9 @@ public class DialogsService implements DialogsPresenter {
         mDataModel.setOnDialogClickListener(new OnDialogClickListener() {
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
-                String dialogId = ((DialogAdapter) adapter).getDialogIdByPosition(position);
-                mView.openChatActivity(dialogId);
+                String dialogId = ((DialogsDataModel) adapter).getDialogIdByPosition(position);
+                String dialogName = ((DialogsDataModel) adapter).getDialogNameByPosition(position);
+                mView.openChatActivity(dialogId, dialogName);
             }
         });
 
@@ -101,19 +108,18 @@ public class DialogsService implements DialogsPresenter {
         mGetDialogsAsyncTask.execute();
     }
 
-    private class GetDialogsAsyncTask extends AsyncTask<Void, Void, Pair<DialogArray, ErrorType>> {
+    private class GetDialogsAsyncTask extends AsyncTask<Void, Void, Pair<DialogArray, NetworkExecutor.ErrorType>> {
 
         private final int offset;
         private final boolean initCall;
 
         GetDialogsAsyncTask(int offset, boolean initCall) {
-
             this.offset = offset;
             this.initCall = initCall;
         }
 
         @Override
-        protected Pair<DialogArray, ErrorType> doInBackground(Void... params) {
+        protected Pair<DialogArray, NetworkExecutor.ErrorType> doInBackground(Void... params) {
             try {
                 Response<DialogArray> response = NetworkService
                         .getGetDialogsCall(offset)
@@ -122,91 +128,106 @@ public class DialogsService implements DialogsPresenter {
                 DialogArray dialogArray = response.body();
 
                 if (response.code() == 200 && dialogArray != null) {
-                    return new Pair<>(dialogArray, ErrorType.NoError);
+                    return new Pair<>(dialogArray, NetworkExecutor.ErrorType.NoError);
                 } else {
-                    return new Pair<>(null, ErrorType.NoAccess);
+                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
                 }
-
             } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, ErrorType.NoInternetConnection);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
             } catch (IOException e) {
-                return new Pair<>(null, ErrorType.NoAccess);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
             }
         }
 
-        protected void onPostExecute(Pair<DialogArray, ErrorType> resultPair) {
-            if (resultPair.second == ErrorType.NoError && resultPair.first != null) {
-                addDialogArrayToAdapter(resultPair.first);
+        protected void onPostExecute(Pair<DialogArray, NetworkExecutor.ErrorType> resultPair) {
+            try {
+                if (resultPair.second == NetworkExecutor.ErrorType.NoError && resultPair.first != null) {
+                    addDialogArrayToAdapter(resultPair.first.getDialogs());
 
-                if (initCall) {
-                    mInitialized = true;
-                    startGetDialogsWithInterval();
+                    if (initCall) {
+                        mInitialized = true;
+                        startGetDialogsWithInterval();
+                    }
+
+                    if (mDataModel.getSize() != 0) {
+                        mView.hideNoDialogsTextView();
+                    }
+
+                    mView.setCommonToolbarLabelText();
+
+                    if (resultPair.first.getDialogs().size() >= MAX_DIALOGS_PER_CALL) {
+                        startGetDialogsAsyncTask(offset + 25, false);
+                    }
+                } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
+                    throw new ConnectException();
+                } else {
+                    throw new IOException();
                 }
-
-                if (mDataModel.getSize() != 0) {
-                    mView.hideNoDialogsTextView();
-                }
-
-                mView.setCommonToolbarLabelText();
-            } else if (resultPair.second == ErrorType.NoInternetConnection) {
+            } catch (ConnectException | InterruptedException | ExecutionException e){
                 mView.setNoInternetToolbarLabelText();
                 if (initCall) onLoad();
-            } else {
+            } catch (IOException e){
+                stopGetDialogsWithInterval();
                 mView.openAuthenticationActivity();
             }
-
-
         }
-
     }
 
-    private void addDialogArrayToAdapter(DialogArray dialogArray) {
+    private void addDialogArrayToAdapter(ArrayList<PairLastMessageDialogId> dialogs)
+            throws InterruptedException, ExecutionException, IOException {
 
-        ArrayList<PairLastMessageDialogId> pairList = dialogArray.getDialogs();
+        Collections.sort(dialogs, new Comparator<PairLastMessageDialogId>() {
+            @Override
+            public int compare(PairLastMessageDialogId o1, PairLastMessageDialogId o2) {
+                if (o1.getMessage().getTimestamp() > o2.getMessage().getTimestamp()) {
+                    return 1;
+                } else if (o1.getMessage().getTimestamp() < o2.getMessage().getTimestamp()){
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
 
-        for (int i = 0; i < pairList.size(); ++i) {
-            PairLastMessageDialogId pair = pairList.get(i);
+        for (int i = dialogs.size() - 1; i >= 0; --i) {
+            // get dialog data
+            PairLastMessageDialogId pair = dialogs.get(i);
             String dialogId = pair.getDialogId();
             Message message = pair.getMessage();
 
+            // try to find the dialog in data model
             int dialogPosition = mDataModel
                     .findDialogPositionById(dialogId);
 
-            if (dialogPosition == -1) {
-                //generate bitmap
+            // whether last message is mine
+            boolean isMe = message.getSender()
+                    .equals(PreferencesService.getUsernameFromPreferences());
+
+            if (dialogPosition == -1) { // couldn`t find the dialog, add it
+                // generate bitmap
                 int color = CircleBitmapFactory.getMaterialColor(dialogId.hashCode());
                 String firstLetter = CircleBitmapFactory.getFirstLetter(dialogId);
                 Bitmap bitmap = CircleBitmapFactory
                         .generateCircleBitmap(mContext, color, 55, firstLetter);
 
-                //add dialog to data model
-                boolean isMe = message.getSender()
-                        .equals(PreferencesService.getUsernameFromPreferences());
+                // create and add dialog
                 Dialog dialog = new Dialog(
                         bitmap,
                         dialogId,
+                        NetworkExecutor.getDialogNameFromId(dialogId),
                         (isMe ? "you: " : "") + message.getContent(),
-                        message.getTimestamp()
-                );
+                        message.getTimestamp());
                 mDataModel.addDialog(dialog);
-            } else { //item_dialog exists
-                boolean isMe = message.getSender()
-                        .equals(PreferencesService.getUsernameFromPreferences());
+            } else { // dialog exists
+                // refresh the data
                 mDataModel.setDialogMessageAndTimestamp(
                         dialogPosition,
                         (isMe ? "you: " : "") + message.getContent(),
-                        message.getTimestamp()
-                );
+                        NetworkExecutor.getDialogNameFromId(dialogId),
+                        message.getTimestamp());
             }
-
         }//for
 
         mDataModel.refresh();
-    }
-
-    private enum ErrorType {
-        NoInternetConnection,
-        NoAccess,
-        NoError
     }
 }

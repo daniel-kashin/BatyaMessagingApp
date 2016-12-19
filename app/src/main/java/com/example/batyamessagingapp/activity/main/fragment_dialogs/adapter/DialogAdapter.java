@@ -37,12 +37,22 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         mOnDialogClickListener = onDialogClickListener;
     }
 
+    @Override
     public String getDialogIdByPosition(int position){
-        if (position <= mDialogList.size() - 1 && position >= 0){
+        if (position > mDialogList.size() - 1 || position < 0){
+            throw new IndexOutOfBoundsException();
+        } else{
             return mDialogList.get(position).getId();
         }
+    }
 
-        return null;
+    @Override
+    public String getDialogNameByPosition(int position){
+        if (position > mDialogList.size() - 1 || position < 0){
+            throw new IndexOutOfBoundsException();
+        } else{
+            return mDialogList.get(position).getName();
+        }
     }
 
     public DialogAdapter(Context context) {
@@ -69,12 +79,17 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         return getItemCount();
     }
 
-    public void setDialogMessageAndTimestamp(int position, String message, long timestamp) {
+    public void setDialogMessageAndTimestamp(int position, String message, String dialogName, long timestamp) {
         if (position < mDialogList.size() && position >=0) {
             Dialog dialog = mDialogList.get(position);
-            Dialog newDialog = new Dialog(dialog.getBitmap(),dialog.getId(), message, timestamp);
-            mDialogList.remove(position);
-            mDialogList.add(newDialog);
+            if (dialog.getTimestamp() != timestamp) {
+                Dialog newDialog = new Dialog(dialog.getBitmap(), dialog.getId(), dialogName,
+                        message, timestamp);
+                mDialogList.remove(position);
+                mDialogList.add(0, newDialog);
+            }
+        } else {
+            throw new IndexOutOfBoundsException();
         }
     }
 
@@ -94,7 +109,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         viewHolder.setImage(dialog.getBitmap());
         viewHolder.setMessage(dialog.getMessage());
         viewHolder.setTime(TimestampHelper.formatTimestamp(dialog.getTimestamp()));
-        viewHolder.setId(dialog.getId());
+        viewHolder.setDialogName(dialog.getName());
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -126,14 +141,14 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
         private ImageView imageView;
         private TextView messageTextView;
-        private TextView idTextView;
+        private TextView dialogNameTextView;
         private TextView timeTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.dialog_image_view);
             messageTextView = (TextView) itemView.findViewById(R.id.dialog_message_text_view);
-            idTextView = (TextView) itemView.findViewById(R.id.dialog_username_text_view);
+            dialogNameTextView = (TextView) itemView.findViewById(R.id.dialog_username_text_view);
             timeTextView = (TextView) itemView.findViewById(R.id.dialog_time_text_view);
         }
 
@@ -145,8 +160,8 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
             messageTextView.setText(text);
         }
 
-        void setId(String text) {
-            idTextView.setText(text);
+        void setDialogName(String text) {
+            dialogNameTextView.setText(text);
         }
 
         void setTime(String text) {

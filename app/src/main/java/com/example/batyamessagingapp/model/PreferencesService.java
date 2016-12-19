@@ -51,7 +51,7 @@ public class PreferencesService {
     }
 
     //TODO: make private
-    public static String getTokenValueFromPreferences() {
+    public static String getTokenFromPreferences() {
         return sSharedPreferences.getString(APP_PREFERENCES_TOKEN, "");
     }
 

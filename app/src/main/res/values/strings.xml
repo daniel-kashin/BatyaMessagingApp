@@ -4,7 +4,7 @@
     <string name="greeting">Welcome to the BATYA</string>
     <string name="solid_startup_name">BATYA inc. ® 2016</string>
     <string name="description">Cross-platform instant messenger</string>
-    <string name="username">Username</string>
+    <string name="name">Username</string>
     <string name="password">Password</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="message_hint">Message</string>
@@ -15,5 +15,7 @@
     <string name="full_log_out">Log out from all devices</string>
     <string name="fragment_settings_title">Settings</string>
     <string name="loading">Loading&#8230;</string>
-    <string name="no_internet_connection">Waiting for connection&#8230;</string>
+    <string name="waiting_for_connection">Waiting for connection&#8230;</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="no_users">No users were found.</string>
 </resources>

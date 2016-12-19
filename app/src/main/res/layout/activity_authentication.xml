@@ -47,7 +47,7 @@
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/authentication_username_edit_text"
                     style="@style/AuthInput"
-                    android:hint="@string/username"
+                    android:hint="@string/name"
                     android:inputType="textNoSuggestions|textVisiblePassword"
                     android:paddingStart="3dp"/>
 

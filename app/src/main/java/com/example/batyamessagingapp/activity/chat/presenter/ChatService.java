@@ -10,6 +10,7 @@ import com.example.batyamessagingapp.activity.chat.view.ChatView;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
 import com.example.batyamessagingapp.lib.TimestampHelper;
+import com.example.batyamessagingapp.model.NetworkExecutor;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Message;
@@ -34,6 +35,7 @@ public class ChatService implements ChatPresenter {
     private boolean mInitialized;
     private boolean mRunning;
     private final String mDialogId;
+    private final String mDialogName;
     private Context mContext;
     private ChatMessageAdapter mAdapter;
     private SendMessageAsyncTask mSendMessageAsyncTask;
@@ -44,10 +46,11 @@ public class ChatService implements ChatPresenter {
     private ChatView mView;
     private MessagesDataModel mDataModel;
 
-    public ChatService(ChatView view, String dialogId, MessagesDataModel dataModel) {
+    public ChatService(ChatView view, String dialogId, String dialogName, MessagesDataModel dataModel) {
         mView = view;
         mContext = (Context) view;
         mDialogId = dialogId;
+        mDialogName = dialogName;
         mDataModel = dataModel;
 
         mHandler = new Handler();
@@ -101,7 +104,7 @@ public class ChatService implements ChatPresenter {
     }
 
     private class GetMessagesAsyncTask
-            extends AsyncTask<Void, Void, Pair<MessageArray, ErrorType>> {
+            extends AsyncTask<Void, Void, Pair<MessageArray, NetworkExecutor.ErrorType>> {
         private final int limit;
         private final int offset;
         private final boolean initCall;
@@ -113,7 +116,7 @@ public class ChatService implements ChatPresenter {
         }
 
         @Override
-        protected Pair<MessageArray, ErrorType> doInBackground(Void... params) {
+        protected Pair<MessageArray, NetworkExecutor.ErrorType> doInBackground(Void... params) {
             try {
                 Response<MessageArray> response = NetworkService
                         .getGetMessagesCall(mDialogId, limit, offset)
@@ -122,20 +125,20 @@ public class ChatService implements ChatPresenter {
                 MessageArray answer = response.body();
 
                 if (response.code() == 200 && answer != null) {
-                    return new Pair<>(answer, ErrorType.NoError);
+                    return new Pair<>(answer, NetworkExecutor.ErrorType.NoError);
                 } else {
-                    return new Pair<>(null, ErrorType.NoAccess);
+                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
                 }
             } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, ErrorType.NoInternetConnection);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
             } catch (IOException e) {
-                return new Pair<>(null, ErrorType.NoAccess);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
             }
         }
 
         @Override
-        protected void onPostExecute(Pair<MessageArray, ErrorType> resultPair) {
-            if (resultPair.first != null && resultPair.second == ErrorType.NoError) {
+        protected void onPostExecute(Pair<MessageArray, NetworkExecutor.ErrorType> resultPair) {
+            if (resultPair.first != null && resultPair.second == NetworkExecutor.ErrorType.NoError) {
                 ArrayList<Message> messages = resultPair.first.getMessages();
                 ArrayList<ChatMessage> outputMessages = new ArrayList<>();
 
@@ -199,7 +202,7 @@ public class ChatService implements ChatPresenter {
                 }
 
                 mView.setCommonToolbarLabelText();
-            } else if (resultPair.second == ErrorType.NoInternetConnection) {
+            } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
                 mView.setNoInternetToolbarLabelText();
                 if (initCall) onLoad();
             } else {
@@ -209,7 +212,7 @@ public class ChatService implements ChatPresenter {
         }
     }
 
-    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<Timestamp, ErrorType>> {
+    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<Timestamp, NetworkExecutor.ErrorType>> {
 
         private final String messageText;
 
@@ -217,7 +220,7 @@ public class ChatService implements ChatPresenter {
             this.messageText = messageText;
         }
 
-        protected Pair<Timestamp, ErrorType> doInBackground(Void... voids) {
+        protected Pair<Timestamp, NetworkExecutor.ErrorType> doInBackground(Void... voids) {
             try {
                 Response<Timestamp> response = NetworkService
                         .getSendMessageCall(mDialogId, "text", messageText)
@@ -226,19 +229,19 @@ public class ChatService implements ChatPresenter {
                 Timestamp answer = response.body();
 
                 if (response.code() == 200 && answer != null) {
-                    return new Pair<>(answer, ErrorType.NoError);
+                    return new Pair<>(answer, NetworkExecutor.ErrorType.NoError);
                 } else {
-                    return new Pair<>(null, ErrorType.NoAccess);
+                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
                 }
             } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, ErrorType.NoInternetConnection);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
             } catch (IOException e) {
-                return new Pair<>(null, ErrorType.NoAccess);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
             }
         }
 
-        protected void onPostExecute(Pair<Timestamp, ErrorType> resultPair) {
-            if (resultPair.second == ErrorType.NoError) {
+        protected void onPostExecute(Pair<Timestamp, NetworkExecutor.ErrorType> resultPair) {
+            if (resultPair.second == NetworkExecutor.ErrorType.NoError) {
                 ChatMessage message = new ChatMessage(
                         messageText,
                         resultPair.first.getTimestamp(),
@@ -250,19 +253,12 @@ public class ChatService implements ChatPresenter {
                 mView.clearMessageEditText();
                 mView.scrollRecyclerViewToLast();
                 mView.hideNoMessagesTextView();
-            } else if (resultPair.second == ErrorType.NoInternetConnection) {
+            } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
                 mView.setNoInternetToolbarLabelText();
             } else {
                 stopGetMessagesWithInterval();
                 mView.openDialogsActivity();
             }
         }
-    }
-
-
-    private enum ErrorType {
-        NoInternetConnection,
-        NoAccess,
-        NoError
     }
 }

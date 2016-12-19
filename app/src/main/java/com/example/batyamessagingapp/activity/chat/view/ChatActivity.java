@@ -25,13 +25,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     private EditText mSendMessageEditText;
     private ImageView mSendMessageIcon;
-    private View mActivityRootView;
     private Toolbar mToolbar;
     private TextView mToolbarLabel;
-    //private TextView mNoMessagesTextView;
 
     private RecyclerView mRecyclerView;
     private String mDialogId;
+    private String mDialogName;
 
     private ChatPresenter mPresenter;
 
@@ -41,11 +40,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         setContentView(R.layout.activity_chat);
 
         mDialogId = getIntent().getStringExtra("dialog_id");
+        mDialogName = getIntent().getStringExtra("dialog_name");
 
         initializeViews();
         setListeners();
 
-        mPresenter = new ChatService(this, mDialogId, (MessagesDataModel) mRecyclerView.getAdapter());
+        mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @Override
     public void setCommonToolbarLabelText() {
-        mToolbarLabel.setText(mDialogId);
+        mToolbarLabel.setText(mDialogName);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @Override
     public void setNoInternetToolbarLabelText() {
-        mToolbarLabel.setText(getString(R.string.no_internet_connection));
+        mToolbarLabel.setText(getString(R.string.waiting_for_connection));
     }
 
     @Override
@@ -139,8 +139,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
         mSendMessageEditText = (EditText) findViewById(R.id.chat_message_edit_text);
         mSendMessageIcon = (ImageView) findViewById(R.id.chat_send_message_icon);
-        mActivityRootView = findViewById(R.id.activity_chat);
-        //mNoMessagesTextView = (TextView) findViewById(R.id.chat_no_messages_text_view);
     }
 
     private void setListeners() {
@@ -173,8 +171,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
                 mPresenter.onSendMessageButtonClick();
             }
         });
-
-
 
         mToolbarLabel.setOnClickListener(new View.OnClickListener() {
             @Override

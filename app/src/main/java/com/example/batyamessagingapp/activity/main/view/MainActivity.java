@@ -26,11 +26,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity;
 import com.example.batyamessagingapp.activity.chat.view.ChatActivity;
+import com.example.batyamessagingapp.activity.main.fragment_search.view.SearchFragment;
 import com.example.batyamessagingapp.activity.main.fragment_settings.view.SettingsFragment;
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsFragment;
 import com.example.batyamessagingapp.activity.main.presenter.MainPresenter;
@@ -45,8 +47,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private TextView mToolbarLabel;
     private EditText mToolbarEditText;
     private ImageView mToolbarForwardIcon;
+    private View mToolbarRelativeLayout;
+    private TextWatcher mCurrentTextWatcher;
 
     private MainPresenter mPresenter;
+
+
+
+    //-----------------------------AppCompatActivity overriden methods------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,36 +68,46 @@ public class MainActivity extends AppCompatActivity implements MainView {
         applyFragment(new DialogsFragment());
     }
 
-    private void applyFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-
-        if (topFragment == null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
-        } else if (!fragment.getClass().getName().equals(topFragment.getClass().getName())) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void startProgressDialog(String message) {
-        mProgressDialog.setMessage(message);
-        if (!mProgressDialog.isShowing()) {
-            mProgressDialog.show();
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+            if (topFragment instanceof SearchFragment){
+                applyFragment(new DialogsFragment());
+            } if (mToolbarEditText.getVisibility() == View.VISIBLE) {
+                hideSearch();
+            }
+            return true;
         }
+
+        super.onKeyDown(keyCode, event);
+        return true;
     }
 
     @Override
-    public void stopProgressDialog() {
-        if (mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    //---------------------------------MainView overriden methods-----------------------------------
 
     @Override
     public void showAlert(String message, String title) {
@@ -113,11 +131,110 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void openChatActivity(String dialogId) {
+    public void openChatActivity(String dialogId, String dialogName) {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("dialog_id", dialogId);
+        intent.putExtra("dialog_name", dialogName);
         startActivity(intent);
     }
+
+
+    @Override
+    public void setToolbarLabelText(String newLabel) {
+        mToolbarLabel.setText(newLabel);
+    }
+
+    @Override
+    public ProgressDialog getProgressDialog() {
+        return mProgressDialog;
+    }
+
+    @Override
+    public void startProgressDialog(String message) {
+        mProgressDialog.setMessage(message);
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    @Override
+    public void stopProgressDialog() {
+        if (mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void showNewConversationInterface() {
+        mToolbarLabel.setVisibility(View.INVISIBLE);
+        mToolbarForwardIcon.setVisibility(View.VISIBLE);
+        mToolbarEditText.setVisibility(View.VISIBLE);
+        mToolbarEditText.post(new Runnable() {
+            @Override
+            public void run() {
+                mToolbarEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+    }
+
+    @Override
+    public void showSearchInterface(){
+        mToolbarLabel.setVisibility(View.INVISIBLE);
+        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+        mToolbarEditText.setVisibility(View.VISIBLE);
+        mToolbarEditText.post(new Runnable() {
+            @Override
+            public void run() {
+                mToolbarEditText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+    }
+
+    @Override
+    public void setOnToolbarTextListener(TextWatcher textWatcher) {
+        if (mCurrentTextWatcher != null) mToolbarEditText.removeTextChangedListener(mCurrentTextWatcher);
+
+        mCurrentTextWatcher = textWatcher;
+        mToolbarEditText.addTextChangedListener(textWatcher);
+    }
+
+    @Override
+    public void hideSearch() {
+        mToolbarLabel.setVisibility(View.VISIBLE);
+        mToolbarEditText.setVisibility(View.INVISIBLE);
+        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+        mToolbarEditText.setText("");
+    }
+
+    @Override
+    public void setOnToolbarDefaultTextListener() {
+        setOnToolbarTextListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() != 0 && mToolbarEditText.getVisibility() == View.VISIBLE) {
+                    mToolbarForwardIcon.setVisibility(View.VISIBLE);
+                } else {
+                    mToolbarForwardIcon.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+    }
+
+    //-----------------------------------------private methods--------------------------------------
 
     private void setListeners() {
         mToolbarForwardIcon.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         mToolbarEditText.getText().toString());
             }
         });
+
+
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar, R.string.app_name, R.string.app_name) {
@@ -147,7 +266,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 super.onDrawerSlide(drawerView, 0);
             }
         };
-
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         String[] actions = {"New Group", "New Chat", "Messages", "Settings"};
@@ -156,25 +274,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         RecyclerView drawerRecyclerView = (RecyclerView) findViewById(R.id.dialogs_drawer_recycler_view);
         drawerRecyclerView.setAdapter(new DrawerAdapter(actions, icons));
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mToolbarEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() != 0 && mToolbarEditText.getVisibility() == View.VISIBLE) {
-                    mToolbarForwardIcon.setVisibility(View.VISIBLE);
-                } else {
-                    mToolbarForwardIcon.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
 
         //call auth button onClick when user finished to write the password
         mToolbarEditText.setOnKeyListener(new View.OnKeyListener() {
@@ -188,18 +287,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         });
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
     private void initializeViews() {
         //toolbar
         mToolbar = (Toolbar) findViewById(R.id.dialogs_toolbar);
@@ -208,11 +295,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.dialogs_drawer_layout);
         mToolbarForwardIcon = (ImageView) findViewById(R.id.dialogs_toolbar_forward_icon);
         mToolbarEditText = (EditText) findViewById(R.id.dialogs_toolbar_edit_text);
         mToolbarLabel = (TextView) findViewById(R.id.dialogs_toolbar_label);
+        mToolbarRelativeLayout = findViewById(R.id.dialogs_toolbar_relative_layout);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.dialogs_drawer_layout);
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setIndeterminate(true);
@@ -221,69 +309,24 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mProgressDialog.setCancelable(false);
     }
 
-    @Override
-    public void setToolbarLabelText(String newLabel) {
-        mToolbarLabel.setText(newLabel);
-    }
+    private void applyFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-    @Override
-    public ProgressDialog getProgressDialog() {
-        return mProgressDialog;
-    }
+        Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        hideSearch();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        if (topFragment == null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
+        } else if (!fragment.getClass().getName().equals(topFragment.getClass().getName())) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
         }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
-                && mToolbarEditText.getVisibility() == View.VISIBLE) {
-            hideSearch();
-        } else {
-            finish();
-        }
-        return true;
     }
 
 
-
-
-    @Override
-    public void showSearch() {
-        mToolbarLabel.setVisibility(View.INVISIBLE);
-        mToolbarForwardIcon.setVisibility(View.VISIBLE);
-        mToolbarEditText.setVisibility(View.VISIBLE);
-        mToolbarEditText.post(new Runnable() {
-            @Override
-            public void run() {
-                mToolbarEditText.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mToolbarEditText, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-    }
-
-    @Override
-    public void hideSearch() {
-
-        mToolbarLabel.setVisibility(View.VISIBLE);
-        mToolbarEditText.setVisibility(View.INVISIBLE);
-        mToolbarForwardIcon.setVisibility(View.INVISIBLE);
-        mToolbarEditText.setText("");
-    }
+    //--------------------------------------inner classes-------------------------------------------
 
     private class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
         private String mTitles[];
@@ -309,13 +352,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 @Override
                 public void onClick(View v) {
                     if (holder.getAdapterPosition() == 0) {
-
+                        applyFragment(new SearchFragment());
                     } else if (holder.getAdapterPosition() == 1) {
-                        showSearch();
+                        setOnToolbarDefaultTextListener();
+                        showNewConversationInterface();
                     } else if (holder.getAdapterPosition() == 2) {
                         applyFragment(new DialogsFragment());
                     } else {
-                        applyFragment((PreferenceFragmentCompat)new SettingsFragment());
+                        applyFragment(new SettingsFragment());
                     }
                     mDrawerLayout.closeDrawers();
                 }
@@ -337,6 +381,5 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 imageView = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
             }
         }
-
     }
 }

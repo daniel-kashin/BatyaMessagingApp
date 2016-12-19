@@ -12,6 +12,7 @@ import com.example.batyamessagingapp.model.pojo.APIAnswer;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 
 import retrofit2.Response;
 
@@ -32,7 +33,7 @@ public class SettingsService implements SettingsPresenter {
 
     @Override
     public void onResume() {
-        mView.setOrdinaryToolbarLabelText();
+        mView.setCommonToolbarLabelText();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class SettingsService implements SettingsPresenter {
                 } else {
                     return new Pair<>(null, ErrorType.NoAccess);
                 }
-            } catch (ConnectException e) {
+            } catch (ConnectException | SocketTimeoutException e) {
                 return new Pair<>(null, ErrorType.NoInternetConnection);
             } catch (IOException e) {
                 return new Pair<>(null, ErrorType.NoAccess);

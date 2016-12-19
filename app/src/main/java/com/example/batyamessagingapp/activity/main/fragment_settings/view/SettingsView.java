@@ -9,5 +9,5 @@ public interface SettingsView {
     void startProgressDialog(String message);
     void stopProgressDialog();
     void showAlert(String message, String title);
-    void setOrdinaryToolbarLabelText();
+    void setCommonToolbarLabelText();
 }

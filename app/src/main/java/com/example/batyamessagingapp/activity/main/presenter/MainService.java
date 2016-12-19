@@ -43,15 +43,8 @@ public class MainService implements MainPresenter {
         }
 
         protected void onPostExecute(ResponseBody responseBody) {
-            mView.openChatActivity(username);
+           // mView.openChatActivity(username);
             mView.hideSearch();
         }
-    }
-
-
-    private enum ErrorType {
-        NoInternetConnection,
-        NoAccess,
-        NoError
     }
 }

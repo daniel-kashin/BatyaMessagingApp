@@ -8,6 +8,7 @@ import android.util.Pair;
 
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.authentication.view.AuthenticationView;
+import com.example.batyamessagingapp.model.NetworkExecutor;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Token;
@@ -58,7 +59,7 @@ public class AuthenticationService implements AuthenticationPresenter {
         }
     }
 
-    private class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, ErrorType>> {
+    private class ConnectionAsyncTask extends AsyncTask<Void, Void, Pair<Token, NetworkExecutor.ErrorType>> {
 
         private final ProgressDialog progressDialog;
         private final ConnectionType connectionType;
@@ -93,7 +94,7 @@ public class AuthenticationService implements AuthenticationPresenter {
         }
 
         @Override
-        protected Pair<Token, ErrorType> doInBackground(Void... voids) {
+        protected Pair<Token, NetworkExecutor.ErrorType> doInBackground(Void... voids) {
             try {
                 Response<Token> response;
                 if (connectionType == ConnectionType.Login) {
@@ -105,30 +106,30 @@ public class AuthenticationService implements AuthenticationPresenter {
                 Token token = response.body();
 
                 if (response.code() == 200 && token != null) {
-                    return new Pair<>(token, ErrorType.NoError);
+                    return new Pair<>(token, NetworkExecutor.ErrorType.NoError);
                 } else {
-                    return new Pair<>(null, ErrorType.NoAccess);
+                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
                 }
             } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, ErrorType.NoInternetConnection);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
             } catch (IOException e) {
-                return new Pair<>(null, ErrorType.NoAccess);
+                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
             }
         }
 
         @Override
-        protected void onPostExecute(Pair<Token, ErrorType> resultPair) {
+        protected void onPostExecute(Pair<Token, NetworkExecutor.ErrorType> resultPair) {
             mView.stopProgressDialog();
 
-            if (resultPair.second == ErrorType.NoError && resultPair.first != null) {
+            if (resultPair.second == NetworkExecutor.ErrorType.NoError && resultPair.first != null) {
                 PreferencesService.saveTokenAndUsernameToPreferences(resultPair.first, username);
                 mView.openDialogsActivity();
             } else { //error occured
                 String message = "";
 
-                if (resultPair.second == ErrorType.NoInternetConnection) {
+                if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
                     message = "No internet connection";
-                } else if (resultPair.second == ErrorType.NoAccess) {
+                } else if (resultPair.second == NetworkExecutor.ErrorType.NoAccess) {
                     if (connectionType == ConnectionType.Login) {
                         message = "Invalid username or password";
                     } else {
@@ -144,11 +145,5 @@ public class AuthenticationService implements AuthenticationPresenter {
     private enum ConnectionType {
         Register,
         Login
-    }
-
-    private enum ErrorType {
-        NoInternetConnection,
-        NoAccess,
-        NoError
     }
 }

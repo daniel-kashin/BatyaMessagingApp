@@ -10,11 +10,13 @@ public class Dialog {
     private Bitmap bitmap;
     private String id;
     private String message;
+    private String name;
     private long timestamp;
 
-    public Dialog(Bitmap bitmap, String id, String message, long timestamp){
+    public Dialog(Bitmap bitmap, String id, String name, String message, long timestamp){
         this.bitmap = bitmap;
         this.id = id;
+        this.name = name;
         this.message = message;
         this.timestamp = timestamp;
     }
@@ -27,6 +29,10 @@ public class Dialog {
         return id;
     }
 
+    public String getName(){
+        return name;
+    }
+
     public String getMessage(){
         return message;
     }
@@ -34,6 +40,7 @@ public class Dialog {
     public long getTimestamp(){
         return timestamp;
     }
+
 
     public void setMessage(String message){
         this.message = message;

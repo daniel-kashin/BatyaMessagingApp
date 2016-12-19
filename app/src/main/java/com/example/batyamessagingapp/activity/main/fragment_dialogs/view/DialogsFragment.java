@@ -54,13 +54,13 @@ public class DialogsFragment extends Fragment implements DialogsView {
     }
 
     @Override
-    public void openChatActivity(String dialogId) {
-        if (activityInitialized()) mActivity.openChatActivity(dialogId);
+    public void openChatActivity(String dialogId, String dialogName) {
+        if (activityInitialized()) mActivity.openChatActivity(dialogId, dialogName);
     }
 
     @Override
     public void setNoInternetToolbarLabelText() {
-        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.no_internet_connection));
+        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.waiting_for_connection));
     }
 
     @Override
@@ -103,10 +103,12 @@ public class DialogsFragment extends Fragment implements DialogsView {
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL,false);
+
         mRecyclerView.setLayoutManager(manager);
 
         DialogAdapter adapter = new DialogAdapter(getActivity());
         mRecyclerView.setAdapter(adapter);
+
 
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
     }

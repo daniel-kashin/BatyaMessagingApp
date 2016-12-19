@@ -2,18 +2,17 @@ package com.example.batyamessagingapp.model;
 
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
+import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
+import com.example.batyamessagingapp.model.pojo.UserIds;
 
-import java.sql.Time;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 
-import static com.example.batyamessagingapp.model.PreferencesService.getTokenValueFromPreferences;
+import static com.example.batyamessagingapp.model.PreferencesService.getTokenFromPreferences;
 
 /**
  * Created by Кашин on 15.11.2016.
@@ -41,7 +40,7 @@ public class NetworkService {
     }
 
     public static Call<MessageArray> getGetMessagesCall(String dialogId, int limit, int offset){
-        return sApiService.getMessages(getTokenValueFromPreferences(),dialogId,limit,offset);
+        return sApiService.getMessages(getTokenFromPreferences(),dialogId,limit,offset);
     }
 
     public static Call<Token> getRegisterCall(final String username, final String password) {
@@ -51,20 +50,28 @@ public class NetworkService {
     }
 
     public static Call<DialogArray> getGetDialogsCall(int offset){
-        return sApiService.getDialogs(getTokenValueFromPreferences(), offset);
+        return sApiService.getDialogs(getTokenFromPreferences(), offset);
     }
 
     public static Call<APIAnswer> getLogoutCall() {
-        return sApiService.logout(getTokenValueFromPreferences());
+        return sApiService.logout(getTokenFromPreferences());
     }
 
     public static Call<APIAnswer> getFullLogoutCall() {
-        return sApiService.fullLogout(getTokenValueFromPreferences());
+        return sApiService.fullLogout(getTokenFromPreferences());
     }
 
     public static Call<Timestamp> getSendMessageCall(
             String dialogId, String messageType, String messageData) {
         Message message = new Message(messageType,messageData);
-        return sApiService.sendMessage(getTokenValueFromPreferences(), dialogId, message);
+        return sApiService.sendMessage(getTokenFromPreferences(), dialogId, message);
+    }
+
+    public static Call<DialogName> getGetDialogNameCall(String dialogId){
+        return sApiService.getDialogName(getTokenFromPreferences(), dialogId);
+    }
+
+    public static Call<UserIds> getGetSearchedUsersCall(String dialogId){
+        return sApiService.getSearchedUsers(getTokenFromPreferences(), dialogId);
     }
 }

@@ -1,12 +1,14 @@
 package com.example.batyamessagingapp.model;
 
 import com.example.batyamessagingapp.model.pojo.DialogArray;
+import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
+import com.example.batyamessagingapp.model.pojo.UserIds;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -46,6 +48,12 @@ public interface APIService {
 
     @GET("/{token}/contacts/offset/{offset}")
     Call<DialogArray> getDialogs(@Path("token") String token, @Path("offset") int offset);
+
+    @GET("/{token}/name/{dialog_id}")
+    Call<DialogName> getDialogName(@Path("token") String token, @Path("dialog_id") String dialogId);
+
+    @GET("/{token}/search_users/{search_request}")
+    Call<UserIds> getSearchedUsers(@Path("token") String token, @Path("search_request") String searchRequest);
 
     //@POST("/{token}/name/{dialog_id}")Call<ResponseBody> setUsername()
 

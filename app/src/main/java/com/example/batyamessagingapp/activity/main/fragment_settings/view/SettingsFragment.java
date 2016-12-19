@@ -1,13 +1,10 @@
 package com.example.batyamessagingapp.activity.main.fragment_settings.view;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.main.fragment_settings.presenter.SettingsPresenter;
@@ -65,10 +62,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     }
 
     @Override
-    public void setOrdinaryToolbarLabelText() {
+    public void setCommonToolbarLabelText() {
         if (activityInitialized())
             mActivity.setToolbarLabelText(getString(R.string.fragment_settings_title));
     }
+
+
 
     private boolean activityInitialized() {
         return isAdded() && getActivity() != null;
