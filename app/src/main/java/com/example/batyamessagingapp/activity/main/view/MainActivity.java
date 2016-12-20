@@ -75,24 +75,26 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-            return false;
-        }
-
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-            if (topFragment instanceof SearchFragment) {
+            boolean actionPerformed = false;
+
+            if (topFragment instanceof SearchFragment || topFragment instanceof SettingsFragment) {
                 applyFragment(new DialogsFragment());
+                actionPerformed = true;
             }
             if (mToolbarEditText.getVisibility() == View.VISIBLE) {
                 hideSearch();
+                actionPerformed = true;
             }
-            return true;
+
+            if (actionPerformed) {
+                return false;
+            }
         }
 
-        super.onKeyDown(keyCode, event);
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

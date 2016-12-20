@@ -17,11 +17,6 @@
         <item name="colorControlHighlight">@color/white</item>
     </style>
 
-    <style name="CircularProgress" parent="AppTheme">
-        <item name="colorAccent">@color/hint_text</item>
-    </style>
-
-
     <style name="AuthButton" parent="Base.Widget.AppCompat.Button">
         <item name="android:background">@drawable/auth_button</item>
         <item name="android:textColor">@color/indigo_100</item>
