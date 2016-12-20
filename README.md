@@ -11,7 +11,7 @@ http://batya-api.readthedocs.io/en/latest/
 
 Technologies used
 -----------------
-Application is based on the Model-View-Presender architectural pattern and Retrofit REST library
+Application is based on the Model-View-Presender architectural pattern, Retrofit REST library and Support library (Android 4.4+)
 
 
 Samples
