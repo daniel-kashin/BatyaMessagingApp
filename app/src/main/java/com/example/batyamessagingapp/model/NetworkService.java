@@ -6,10 +6,13 @@ import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
+import com.example.batyamessagingapp.model.pojo.NewUsername;
+import com.example.batyamessagingapp.model.pojo.OldNewPassword;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
 import com.example.batyamessagingapp.model.pojo.UserIds;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 import static com.example.batyamessagingapp.model.PreferencesService.getTokenFromPreferences;
@@ -73,5 +76,17 @@ public class NetworkService {
 
     public static Call<UserIds> getGetSearchedUsersCall(String dialogId){
         return sApiService.getSearchedUsers(getTokenFromPreferences(), dialogId);
+    }
+
+    public static Call<ResponseBody> getChangePasswordCall(String password, String newPassword){
+        return  sApiService.changePassword(getTokenFromPreferences(), new OldNewPassword(password, newPassword));
+    }
+
+    public static Call<ResponseBody> getChangeUsernameCall(String newUsername, String dialogId){
+        if (dialogId == null){
+            return sApiService.changeUsername(getTokenFromPreferences(), new NewUsername(newUsername));
+        } else {
+            return sApiService.changeUsername(getTokenFromPreferences(), dialogId, new NewUsername(newUsername));
+        }
     }
 }

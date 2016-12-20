@@ -5,10 +5,12 @@ package com.example.batyamessagingapp.activity.main.fragment_dialogs.view;
  */
 
 public interface DialogsView {
+    void showNoDialogsTextView();
     void hideNoDialogsTextView();
     void openAuthenticationActivity();
     void openChatActivity(String dialogId, String dialogName);
-    void setLoadingToolbarLabelText();
+    void showProgressBar();
+    void hideProgressBar();
     void setNoInternetToolbarLabelText();
     void setCommonToolbarLabelText();
 }

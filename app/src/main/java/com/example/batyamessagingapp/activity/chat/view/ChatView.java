@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public interface ChatView {
-    String getMessage();
+    String getInputMessage();
     void clearMessageEditText();
     void scrollRecyclerViewToLast();
     void scrollRecyclerViewToFirst();

@@ -47,6 +47,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>
     @Override
     public void clearUsers() {
         mUserList = new ArrayList<>();
+        notifyDataSetChanged();
     }
 
     @Override

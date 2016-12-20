@@ -181,9 +181,17 @@ public class ChatMessageAdapter
                 long currentTimestamp = currentMessage.getTimestamp();
                 boolean addCurrent = false;
 
-                if (messagesWithDates.size() == 0 || TimestampHelper.datesDiffer(currentTimestamp,
-                        messagesWithDates.get(messagesWithDates.size() - 1).getTimestamp())) {
-                    addCurrent = true;
+
+                if (addToEnd) {
+                    if (messagesWithDates.size() == 0 && mChatMessageList.size() == 0){
+                        addCurrent = true;
+                    } else if (messagesWithDates.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
+                            messagesWithDates.get(messagesWithDates.size() - 1).getTimestamp())) {
+                        addCurrent = true;
+                    } else if (mChatMessageList.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
+                            mChatMessageList.get(mChatMessageList.size() - 1).getTimestamp())){
+                        addCurrent = true;
+                    }
                 }
 
                 if (addCurrent) {

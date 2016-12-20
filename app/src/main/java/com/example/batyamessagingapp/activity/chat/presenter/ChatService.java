@@ -9,7 +9,6 @@ import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.view.ChatView;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
-import com.example.batyamessagingapp.lib.TimestampHelper;
 import com.example.batyamessagingapp.model.NetworkExecutor;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
@@ -71,8 +70,10 @@ public class ChatService implements ChatPresenter {
 
     @Override
     public void onSendMessageButtonClick() {
-        mSendMessageAsyncTask = new SendMessageAsyncTask(mView.getMessage());
-        mSendMessageAsyncTask.execute();
+        if (mView.getInputMessage().length() > 0) {
+            mSendMessageAsyncTask = new SendMessageAsyncTask(mView.getInputMessage());
+            mSendMessageAsyncTask.execute();
+        }
     }
 
     @Override
@@ -153,7 +154,7 @@ public class ChatService implements ChatPresenter {
                         ChatMessage.Direction direction;
                         if (messageSender.equals("")) {
                             direction = ChatMessage.Direction.System;
-                        } else if (messageSender.equals(PreferencesService.getUsernameFromPreferences())) {
+                        } else if (messageSender.equals(PreferencesService.getIdFromPreferences())) {
                             direction = ChatMessage.Direction.Outcoming;
                         } else {
                             direction = ChatMessage.Direction.Incoming;

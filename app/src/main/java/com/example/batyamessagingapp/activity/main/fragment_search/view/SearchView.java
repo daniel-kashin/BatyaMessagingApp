@@ -7,6 +7,7 @@ import android.text.TextWatcher;
  */
 
 public interface SearchView {
+    boolean isInputEmpty();
     void showProgressBar();
     void hideProgressBar();
     void openAuthenticationActivity();

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
@@ -27,6 +28,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     private ImageView mSendMessageIcon;
     private Toolbar mToolbar;
     private TextView mToolbarLabel;
+    private ProgressBar mProgressBar;
 
     private RecyclerView mRecyclerView;
     private String mDialogId;
@@ -44,8 +46,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
         initializeViews();
         setListeners();
-
-        mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
     }
 
     @Override
@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     @Override
     protected void onResume() {
         super.onResume();
+        mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
         mPresenter.onLoad();
     }
 
@@ -115,7 +116,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     }
 
     @Override
-    public String getMessage() {
+    public String getInputMessage() {
         return mSendMessageEditText.getText().toString();
     }
 

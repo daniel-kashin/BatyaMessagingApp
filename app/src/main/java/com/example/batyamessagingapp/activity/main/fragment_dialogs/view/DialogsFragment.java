@@ -1,5 +1,6 @@
 package com.example.batyamessagingapp.activity.main.fragment_dialogs.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
@@ -25,6 +27,8 @@ public class DialogsFragment extends Fragment implements DialogsView {
 
     private RecyclerView mRecyclerView;
     private TextView mNoDialogsTextView;
+    private ProgressBar mProgressBar;
+    private View mRootView;
 
     private DialogsPresenter mPresenter;
     private MainView mActivity;
@@ -37,15 +41,15 @@ public class DialogsFragment extends Fragment implements DialogsView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_view_dialogs, null);
-
-        initializeViews(rootView);
-        initializeRecyclerView(rootView);
-
         mActivity = (MainView)getActivity();
-        mPresenter = new DialogsService(this, getActivity(), (DialogsDataModel)mRecyclerView.getAdapter());
+        mRootView = inflater.inflate(R.layout.fragment_view_dialogs, null);
 
-        return rootView;
+        initializeViews(mRootView);
+        initializeRecyclerView(mRootView);
+
+        mPresenter = new DialogsService(this, (Context)mActivity, (DialogsDataModel)mRecyclerView.getAdapter());
+
+        return mRootView;
     }
 
     @Override
@@ -69,17 +73,30 @@ public class DialogsFragment extends Fragment implements DialogsView {
     }
 
     @Override
-    public void setLoadingToolbarLabelText(){
-        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.loading));
+    public void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private void initializeViews(View rootView){
         mNoDialogsTextView = (TextView)rootView.findViewById(R.id.dialogs_no_dialogs_text_view);
+        mProgressBar = (ProgressBar)rootView.findViewById(R.id.dialogs_progress_bar);
     }
 
     @Override
     public void onResume(){
         super.onResume();
+
+        if (activityInitialized()) {
+            mActivity.hideSearch();
+            mActivity.clearOnToolbarTextListener();
+            setCommonToolbarLabelText();
+        }
+
         mPresenter.onLoad();
     }
 
@@ -91,7 +108,12 @@ public class DialogsFragment extends Fragment implements DialogsView {
 
     @Override
     public void hideNoDialogsTextView() {
-        if (activityInitialized()) mNoDialogsTextView.setVisibility(View.INVISIBLE);
+        mNoDialogsTextView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showNoDialogsTextView() {
+        mNoDialogsTextView.setVisibility(View.VISIBLE);
     }
 
     private boolean activityInitialized(){

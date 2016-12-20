@@ -55,26 +55,35 @@ public class SearchService implements SearchPresenter {
         mView.setOnToolbarTextListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                String result = s.toString();
+                boolean newLineFound = false;
 
-                if (result.equals("")){
-                    mView.showNoUsersTextView();
-                    mView.hideClearIcon();
-                    mDataModel.clearUsers();
+                for (int i = s.length(); i > 0; --i) {
+                    if (s.subSequence(i - 1, i).toString().equals("\n") ||
+                            s.subSequence(i - 1, i).toString().equals("\r")) {
+                        newLineFound = true;
+                        s.replace(i - 1, i, "");
+                    }
+                }
 
-                } else {
-                    GetUsersAsyncTask task = new GetUsersAsyncTask(result);
-                    task.execute();
+                if (!newLineFound) {
+                    String result = s.toString();
+
+                    if (result.equals("")) {
+                        mView.showNoUsersTextView();
+                        mView.hideClearIcon();
+                        mDataModel.clearUsers();
+                    } else {
+                        GetUsersAsyncTask task = new GetUsersAsyncTask(result);
+                        task.execute();
+                    }
                 }
             }
         });
@@ -91,10 +100,11 @@ public class SearchService implements SearchPresenter {
         }
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mView.showClearIcon();
             mView.hideTextView();
             mView.showProgressBar();
+            mDataModel.clearUsers();
         }
 
         protected Pair<UserIds, NetworkExecutor.ErrorType> doInBackground(Void... voids) {
@@ -105,12 +115,12 @@ public class SearchService implements SearchPresenter {
 
                 UserIds userIds = response.body();
 
-                if (response.code() == 200 && userIds!= null) {
+                if (response.code() == 200 && userIds != null) {
                     return new Pair<>(userIds, NetworkExecutor.ErrorType.NoError);
                 } else {
                     return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
                 }
-            } catch (ConnectException  | SocketTimeoutException e) {
+            } catch (ConnectException | SocketTimeoutException e) {
                 return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
             } catch (IOException e) {
                 return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
@@ -118,30 +128,29 @@ public class SearchService implements SearchPresenter {
         }
 
         protected void onPostExecute(Pair<UserIds, NetworkExecutor.ErrorType> resultPair) {
-            mView.hideProgressBar();
-
             try {
-                if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
-                    throw new ConnectException();
-                } else if (resultPair.second == NetworkExecutor.ErrorType.NoError) {
-                    if (resultPair.first != null && resultPair.first.toList().size() != 0) {
+                if (resultPair.second == NetworkExecutor.ErrorType.NoError) {
+                    if (resultPair.first != null && resultPair.first.toList().size() != 0
+                            && !mView.isInputEmpty()) {
                         mView.hideTextView();
                         mDataModel.addUsers(resultPair.first.toList());
                     } else {
                         mView.showNoUsersTextView();
-                        mDataModel.clearUsers();
                     }
+                } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
+                    throw new ConnectException();
                 } else {
                     throw new IOException();
                 }
-            } catch (ConnectException e){
+            } catch (ConnectException e) {
                 mView.showNoInternetConnectionTextView();
-            } catch (IOException | InterruptedException | ExecutionException e){
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 mView.openAuthenticationActivity();
             }
+
+            mView.hideProgressBar();
         }
     }
-
 
 
 }

@@ -40,7 +40,7 @@
                             android:layout_height="match_parent"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="0dp"
-                            android:layout_toStartOf="@+id/dialogs_toolbar_forward_icon"
+                            android:layout_toStartOf="@+id/dialogs_toolbar_clear_icon"
                             android:gravity="center_vertical"
                             android:maxLines="1"
                             android:textColor="@color/white" />

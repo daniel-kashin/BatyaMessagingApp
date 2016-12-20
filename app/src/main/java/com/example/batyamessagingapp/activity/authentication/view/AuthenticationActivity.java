@@ -48,8 +48,10 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
 
+        PreferencesService.deleteTokenFromPreferences();
+
+        setContentView(R.layout.activity_authentication);
         initializeViews();
         setListeners();
 
@@ -140,7 +142,7 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
         mRegistrationButton = (Button) findViewById(R.id.authentication_registration_button);
         mAuthButton = (Button) findViewById(R.id.authentication_auth_button);
         mUsernameEditText = (EditText) findViewById(R.id.authentication_username_edit_text);
-        mUsernameEditText.setText(PreferencesService.getUsernameFromPreferences());
+        mUsernameEditText.setText(PreferencesService.getIdFromPreferences());
         mPasswordEditText = (EditText) findViewById(R.id.authentication_password_edit_text);
         mActivityRootView = findViewById(R.id.activity_authentication);
         mScrollView = (ScrollView) findViewById(R.id.authenctication_scroll_view);

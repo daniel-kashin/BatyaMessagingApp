@@ -33,7 +33,7 @@ public class PreferencesService {
     private static SharedPreferences sSharedPreferences;
 
     private static final String APP_PREFERENCES = "auth";
-    private static final String APP_PREFERENCES_USERNAME = "username";
+    private static final String APP_PREFERENCES_USERNAME = "id";
     private static final String APP_PREFERENCES_TOKEN = "token";
     private static final String KEY = "onetwothreefoutfivesixseveneightnineten";
 
@@ -42,7 +42,7 @@ public class PreferencesService {
         sSharedPreferences = context.getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
     }
 
-    public static String getUsernameFromPreferences() {
+    public static String getIdFromPreferences() {
         return sSharedPreferences.getString(APP_PREFERENCES_USERNAME, "");
     }
 

@@ -58,7 +58,7 @@ public class SettingsService implements SettingsPresenter {
 
         @Override
         protected void onPreExecute(){
-            mView.startProgressDialog(mContext.getString(R.string.loading));
+            mView.startProgressDialog();
         }
 
         protected Pair<APIAnswer, ErrorType> doInBackground(Void... voids) {

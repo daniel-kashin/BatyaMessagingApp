@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private MainPresenter mPresenter;
 
 
-    //-----------------------------AppCompatActivity overriden methods------------------------------
+    //---------------------------------AppCompatActivity methods------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            return false;
+        }
+
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment topFragment = fragmentManager.findFragmentById(R.id.fragment_container);
@@ -104,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
 
-    //---------------------------------MainView overriden methods-----------------------------------
+    //-------------------------------------MainView methods-----------------------------------------
 
     @Override
     public void showAlert(String message, String title) {
@@ -147,8 +151,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void startProgressDialog(String message) {
-        mProgressDialog.setMessage(message);
+    public void startProgressDialog() {
         if (!mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }
@@ -177,9 +180,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void setOnToolbarTextListener(TextWatcher textWatcher) {
-        if (mCurrentTextWatcher != null)
+    public void clearOnToolbarTextListener() {
+        if (mCurrentTextWatcher != null) {
             mToolbarEditText.removeTextChangedListener(mCurrentTextWatcher);
+        }
+    }
+
+    @Override
+    public void setOnToolbarTextListener(TextWatcher textWatcher) {
+        clearOnToolbarTextListener();
 
         mCurrentTextWatcher = textWatcher;
         mToolbarEditText.addTextChangedListener(textWatcher);
@@ -203,6 +212,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mToolbarClearIcon.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public boolean isInputEmpty() {
+        return mToolbarEditText.getText().toString().isEmpty();
+    }
 
     //-----------------------------------------private methods--------------------------------------
 
@@ -214,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
         });
 
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar, R.string.app_name, R.string.app_name) {
             @Override
@@ -224,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                hideSearch();
                 super.onDrawerOpened(drawerView);
                 super.onDrawerSlide(drawerView, 0);
             }
@@ -242,17 +253,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         RecyclerView drawerRecyclerView = (RecyclerView) findViewById(R.id.dialogs_drawer_recycler_view);
         drawerRecyclerView.setAdapter(new DrawerAdapter(actions, icons));
         drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //call auth button onClick when user finished to write the password
-        mToolbarEditText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    mToolbarClearIcon.callOnClick();
-                }
-                return false;
-            }
-        });
     }
 
     private void initializeViews() {
@@ -275,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         mProgressDialog.setTitle(null);
         mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage(getString(R.string.loading));
     }
 
     private void applyFragment(Fragment fragment) {
@@ -320,12 +321,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 @Override
                 public void onClick(View v) {
                     if (holder.getAdapterPosition() == 0) {
-
+                        mDrawerLayout.closeDrawers();
                     } else if (holder.getAdapterPosition() == 1) {
+                        mDrawerLayout.closeDrawers();
                         applyFragment(new SearchFragment());
                     } else if (holder.getAdapterPosition() == 2) {
+                        mDrawerLayout.closeDrawers();
                         applyFragment(new DialogsFragment());
                     } else {
+                        mDrawerLayout.closeDrawers();
                         applyFragment(new SettingsFragment());
                     }
                     mDrawerLayout.closeDrawers();

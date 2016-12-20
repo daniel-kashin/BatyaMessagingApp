@@ -11,8 +11,11 @@ import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.lib.TimestampHelper;
+import com.example.batyamessagingapp.model.pojo.PairLastMessageDialogId;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -72,6 +75,18 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     public void refresh(){
+        Collections.sort(mDialogList, new Comparator<Dialog>() {
+            @Override
+            public int compare(Dialog o1, Dialog o2) {
+                if (o1.getTimestamp() < o2.getTimestamp()) {
+                    return 1;
+                } else if (o1.getTimestamp() > o2.getTimestamp()){
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
         notifyDataSetChanged();
     }
 

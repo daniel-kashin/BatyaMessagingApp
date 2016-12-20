@@ -6,7 +6,7 @@ package com.example.batyamessagingapp.activity.main.fragment_settings.view;
 
 public interface SettingsView {
     void openAuthenticationActivity();
-    void startProgressDialog(String message);
+    void startProgressDialog();
     void stopProgressDialog();
     void showAlert(String message, String title);
     void setCommonToolbarLabelText();

@@ -6,6 +6,8 @@ import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
+import com.example.batyamessagingapp.model.pojo.NewUsername;
+import com.example.batyamessagingapp.model.pojo.OldNewPassword;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 import com.example.batyamessagingapp.model.pojo.Token;
 import com.example.batyamessagingapp.model.pojo.UserIds;
@@ -54,6 +56,18 @@ public interface APIService {
 
     @GET("/{token}/search_users/{search_request}")
     Call<UserIds> getSearchedUsers(@Path("token") String token, @Path("search_request") String searchRequest);
+
+    @POST("/{token}")
+    Call<ResponseBody> changePassword(@Path("token") String token, @Body OldNewPassword oldNewPassword);
+
+    @POST("/{token}/name/{dialog_id}")
+    Call<ResponseBody> changeUsername(@Path("token") String token,
+                                      @Path("dialog_id") String dialogId,
+                                      @Body NewUsername newUsername);
+
+    @POST("/{token}/name")
+    Call<ResponseBody> changeUsername(@Path("token") String token,
+                                      @Body NewUsername newUsername);
 
     //@POST("/{token}/name/{dialog_id}")Call<ResponseBody> setUsername()
 

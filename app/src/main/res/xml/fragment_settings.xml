@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <android.support.v7.preference.PreferenceCategory
         android:title="Account">
         <android.support.v7.preference.Preference
-            android:title="Id (cannot be changed)"
-            android:summary="DanilDanil"
-            android:key="account_identifier"/>
+            android:title="DanilDanil"
+            android:summary="Id (cannot be changed)"
+            android:key="id"/>
         <android.support.v7.preference.Preference
-            android:title="Username"
-            android:summary="DanilDanil"
-            android:key="account_current"/>
+            android:title="DanilDanil"
+            android:summary="Username"
+            android:key="change_username"/>
         <android.support.v7.preference.Preference
             android:title="Change password"
-            android:summary=""
-            android:key="account_password"/>
+            android:key="change_password"/>
     </android.support.v7.preference.PreferenceCategory>
+
     <android.support.v7.preference.PreferenceCategory
         android:title="Log out">
         <android.support.v7.preference.Preference
@@ -24,5 +25,15 @@
         <android.support.v7.preference.Preference
             android:title="All active devices"
             android:key="log_out_all"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="Support">
+        <android.support.v7.preference.Preference
+            android:title="Official website"
+            android:key="website"/>
+        <android.support.v7.preference.Preference
+            android:title="Privacy policy"
+            android:key="privacy"/>
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

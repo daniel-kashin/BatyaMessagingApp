@@ -35,9 +35,7 @@ public class Message {
     }
 
     public Message(){
-
     }
-
 
     public String getGuid() {
         return guid;

@@ -8,7 +8,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.Dialog;
-import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.DialogAdapter;
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.DialogsDataModel;
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.adapter.OnDialogClickListener;
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsView;
@@ -17,7 +16,6 @@ import com.example.batyamessagingapp.model.NetworkExecutor;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
-import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.PairLastMessageDialogId;
 
@@ -25,8 +23,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 import retrofit2.Response;
@@ -90,7 +86,9 @@ public class DialogsService implements DialogsPresenter {
     @Override
     public void onLoad() {
         if (!mInitialized) {
-            mView.setLoadingToolbarLabelText();
+            mView.showProgressBar();
+            mView.hideNoDialogsTextView();
+
             startGetDialogsAsyncTask(0, true);
         } else {
             startGetDialogsWithInterval();
@@ -145,7 +143,11 @@ public class DialogsService implements DialogsPresenter {
                     mView.setCommonToolbarLabelText();
 
                     addDialogArrayToAdapter(resultPair.first.getDialogs());
-                    if (mDataModel.getSize() != 0) mView.hideNoDialogsTextView();
+                    if (mDataModel.getSize() != 0) {
+                        mView.hideNoDialogsTextView();
+                    } else {
+                        mView.showNoDialogsTextView();
+                    }
 
                     if (initCall) {
                         mInitialized = true;
@@ -166,25 +168,14 @@ public class DialogsService implements DialogsPresenter {
             } catch (IOException e){
                 stopGetDialogsWithInterval();
                 mView.openAuthenticationActivity();
+            } finally {
+                if (initCall) mView.hideProgressBar();
             }
         }
     }
 
     private void addDialogArrayToAdapter(ArrayList<PairLastMessageDialogId> dialogs)
             throws InterruptedException, ExecutionException, IOException {
-
-        Collections.sort(dialogs, new Comparator<PairLastMessageDialogId>() {
-            @Override
-            public int compare(PairLastMessageDialogId o1, PairLastMessageDialogId o2) {
-                if (o1.getMessage().getTimestamp() > o2.getMessage().getTimestamp()) {
-                    return 1;
-                } else if (o1.getMessage().getTimestamp() < o2.getMessage().getTimestamp()){
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        });
 
         for (int i = dialogs.size() - 1; i >= 0; --i) {
             // get dialog data
@@ -198,7 +189,7 @@ public class DialogsService implements DialogsPresenter {
 
             // whether last message is mine
             boolean isMe = message.getSender()
-                    .equals(PreferencesService.getUsernameFromPreferences());
+                    .equals(PreferencesService.getIdFromPreferences());
 
             if (dialogPosition == -1) { // couldn`t find the dialog, add it
                 // generate bitmap

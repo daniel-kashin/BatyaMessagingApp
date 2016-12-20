@@ -33,12 +33,15 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
+
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chat_message_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/indigo_50"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:background="@color/indigo_50" />
 
     <RelativeLayout
         android:background="@color/white"

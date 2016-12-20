@@ -1,5 +1,6 @@
 package com.example.batyamessagingapp.activity.main.fragment_search.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import com.example.batyamessagingapp.activity.main.fragment_search.adapter.UserA
 import com.example.batyamessagingapp.activity.main.fragment_search.adapter.UserDataModel;
 import com.example.batyamessagingapp.activity.main.fragment_search.presenter.SearchPresenter;
 import com.example.batyamessagingapp.activity.main.fragment_search.presenter.SearchService;
+import com.example.batyamessagingapp.activity.main.view.MainActivity;
 import com.example.batyamessagingapp.activity.main.view.MainView;
 
 import java.util.ArrayList;
@@ -30,10 +32,10 @@ public class SearchFragment extends Fragment implements SearchView {
     private RecyclerView mRecyclerView;
     private TextView mTextView;
     private ProgressBar mProgressBar;
+    private View mRootView;
 
     private SearchPresenter mPresenter;
     private MainView mActivity;
-
 
 
     @Override
@@ -44,35 +46,34 @@ public class SearchFragment extends Fragment implements SearchView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_search, null);
+        mRootView = inflater.inflate(R.layout.fragment_search, null);
+        mActivity = (MainActivity)getActivity();
 
-        mTextView = (TextView) rootView.findViewById(R.id.search_text_view);
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.search_progress_bar);
-        initializeRecyclerView(rootView);
+        mTextView = (TextView) mRootView.findViewById(R.id.search_text_view);
+        mProgressBar = (ProgressBar) mRootView.findViewById(R.id.search_progress_bar);
+        initializeRecyclerView(mRootView);
 
-        mActivity = (MainView)getActivity();
-        mPresenter = new SearchService(this, getActivity(), (UserDataModel)mRecyclerView.getAdapter());
+        mPresenter = new SearchService(this, (Context)mActivity, (UserDataModel)mRecyclerView.getAdapter());
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.onResume();
+
         if (activityInitialized()) {
             mActivity.showSearchInterface();
+            mProgressBar.setVisibility(View.INVISIBLE);
             showNoUsersTextView();
         }
+
+        mPresenter.onResume();
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        if (activityInitialized()) {
-            mActivity.hideSearch();
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override
@@ -98,6 +99,15 @@ public class SearchFragment extends Fragment implements SearchView {
     }
 
     @Override
+    public boolean isInputEmpty() {
+        if (activityInitialized()){
+            return mActivity.isInputEmpty();
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public void hideProgressBar() {
         if (activityInitialized()){
             mProgressBar.setVisibility(View.INVISIBLE);
@@ -117,7 +127,7 @@ public class SearchFragment extends Fragment implements SearchView {
     public void showNoInternetConnectionTextView() {
         if (activityInitialized()) {
             mTextView.setText(getString(R.string.no_internet_connection));
-            mTextView.setVisibility(View.INVISIBLE);
+            mTextView.setVisibility(View.VISIBLE);
             hideProgressBar();
         }
     }
