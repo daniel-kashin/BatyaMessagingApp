@@ -54,9 +54,13 @@ public class DialogsService implements DialogsPresenter {
         mDataModel.setOnDialogClickListener(new OnDialogClickListener() {
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
-                String dialogId = ((DialogsDataModel) adapter).getDialogIdByPosition(position);
-                String dialogName = ((DialogsDataModel) adapter).getDialogNameByPosition(position);
-                mView.openChatActivity(dialogId, dialogName);
+                try {
+                    String dialogId = ((DialogsDataModel) adapter).getDialogIdByPosition(position);
+                    String dialogName = ((DialogsDataModel) adapter).getDialogNameByPosition(position);
+                    mView.openChatActivity(dialogId, dialogName);
+                } catch (IndexOutOfBoundsException e){
+                    // do nothing club
+                }
             }
         });
 

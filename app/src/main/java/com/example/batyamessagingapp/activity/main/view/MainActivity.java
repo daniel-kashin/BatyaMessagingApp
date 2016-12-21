@@ -34,6 +34,11 @@ import com.example.batyamessagingapp.activity.main.fragment_settings.view.Settin
 import com.example.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsFragment;
 import com.example.batyamessagingapp.activity.main.presenter.MainPresenter;
 import com.example.batyamessagingapp.activity.main.presenter.MainService;
+import com.example.batyamessagingapp.model.NetworkExecutor;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -295,6 +300,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
     }
 
+    private void handleCreateNewConference(){
+        try {
+            String newConferenceId = NetworkExecutor.getNewConferenceId(this);
+            openChatActivity(newConferenceId, newConferenceId);
+        } catch (ConnectException e){
+            showAlert("No internet connection","Error");
+        } catch (IOException | InterruptedException | ExecutionException e){
+            openAuthenticationActivity();
+        }
+    }
+
 
     //--------------------------------------inner classes-------------------------------------------
 
@@ -321,15 +337,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (holder.getAdapterPosition() == 0) {
-                        mDrawerLayout.closeDrawers();
-                    } else if (holder.getAdapterPosition() == 1) {
+                    if (holder.getAdapterPosition() == 0) {         // new conference
+                        handleCreateNewConference();
+                    } else if (holder.getAdapterPosition() == 1) {  // new chat
                         mDrawerLayout.closeDrawers();
                         applyFragment(new SearchFragment());
-                    } else if (holder.getAdapterPosition() == 2) {
+                    } else if (holder.getAdapterPosition() == 2) {  // messages
                         mDrawerLayout.closeDrawers();
                         applyFragment(new DialogsFragment());
-                    } else {
+                    } else {                                        // settings
                         mDrawerLayout.closeDrawers();
                         applyFragment(new SettingsFragment());
                     }

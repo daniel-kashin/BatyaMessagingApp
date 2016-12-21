@@ -10,7 +10,7 @@ public interface AuthenticationView {
     String getUsername();
     String getPassword();
 
-    void startProgressDialog(String message);
+    void startProgressDialog();
     void stopProgressDialog();
     ProgressDialog getProgressDialog();
 

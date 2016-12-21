@@ -1,10 +1,13 @@
 package com.example.batyamessagingapp.model;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 
+import com.example.batyamessagingapp.R;
+import com.example.batyamessagingapp.model.pojo.ConferenceId;
 import com.example.batyamessagingapp.model.pojo.DialogName;
 
 import java.io.IOException;
@@ -39,20 +42,14 @@ public class NetworkExecutor {
         }
     }
 
-    public static void changePassword(String password, String newPassword, ProgressDialog progressDialog)
-            throws InterruptedException, ExecutionException, IOException {
-        ErrorType error = new ChangePasswordTask(password, newPassword, progressDialog).execute().get();
-
-        if (error == ErrorType.NoInternetConnection){
-            throw new  ConnectException();
-        } else if (error == ErrorType.NoAccess) {
-            throw  new IOException();
-        }
+    public static void changePassword(String password, String newPassword,
+                                      Context context, AsyncTaskCompleteListener<ErrorType> callback) {
+        new ChangePasswordTask(password, newPassword, context, callback).execute();
     }
 
-    public static void changeUsername(String newUsername, String dialogId, ProgressDialog progressDialog)
+    public static void changeUsername(String newUsername, String dialogId, Context context)
             throws InterruptedException, ExecutionException, IOException {
-        ErrorType error = new ChangeUsernameTask(newUsername, dialogId, progressDialog).execute().get();
+        ErrorType error = new ChangeUsernameTask(newUsername, dialogId, context).execute().get();
 
         if (error == ErrorType.NoInternetConnection){
             throw new ConnectException();
@@ -61,27 +58,85 @@ public class NetworkExecutor {
         }
     }
 
+    public static String getNewConferenceId(Context context)
+            throws  InterruptedException, ExecutionException, IOException {
+
+        Pair<String,ErrorType> result = new GetNewConferenceIdTask(context).execute().get();
+
+        if (result.second == ErrorType.NoInternetConnection){
+            throw  new ConnectException();
+        } else if (result.second == ErrorType.NoAccess){
+            throw new IOException();
+        } else {
+            return result.first;
+        }
+    }
+
 
     //-----------------------------------Low-level Async Tasks--------------------------------------
+
+    private static class GetNewConferenceIdTask extends AsyncTask<Void, Void, Pair<String, ErrorType>> {
+
+        private ProgressDialog progressDialog;
+        private Context context;
+
+        private GetNewConferenceIdTask(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            this.progressDialog = ProgressDialog.show(context, ""
+                    , context.getString(R.string.loading),true,false);
+        }
+
+        @Override
+        protected Pair<String, ErrorType> doInBackground(Void... params) {
+            try {
+                Response<ConferenceId> response = NetworkService
+                        .getGetNewConferenceIdCall()
+                        .execute();
+
+                ConferenceId conferenceId = response.body();
+
+                if (response.code() == 200 && conferenceId != null) {
+                    return new Pair<>(conferenceId.toString(),ErrorType.NoError);
+                } else {
+                    return new Pair<>(null, ErrorType.NoAccess);
+                }
+            } catch (ConnectException | SocketTimeoutException e) {
+                return new Pair<>(null, ErrorType.NoInternetConnection);
+            } catch (IOException e) {
+                return new Pair<>(null, ErrorType.NoAccess);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Pair<String,ErrorType> pair){
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        }
+    }
+
 
     private static class ChangeUsernameTask extends AsyncTask<Void, Void, ErrorType> {
 
         private final String newUsername;
         private final String dialogId;
         private ProgressDialog progressDialog;
+        private Context context;
 
-        private ChangeUsernameTask(String newUsername, String dialogId, ProgressDialog progressDialog) {
+        private ChangeUsernameTask(String newUsername, String dialogId, Context context) {
             this.newUsername = newUsername;
             this.dialogId = dialogId;
-            this.progressDialog = progressDialog;
+            this.context = context;
         }
 
         @Override
         protected void onPreExecute(){
-            progressDialog.setCancelable(false);
-            if (!progressDialog.isShowing()) {
-                progressDialog.show();
-            }
+            this.progressDialog = ProgressDialog.show(context, ""
+                    , context.getString(R.string.loading),true,false);
         }
 
         @Override
@@ -115,22 +170,30 @@ public class NetworkExecutor {
 
     private static class ChangePasswordTask extends AsyncTask<Void, Void, ErrorType> {
 
+        private AsyncTaskCompleteListener<ErrorType> callback;
+
         private final String password;
         private final String newPassword;
         private ProgressDialog progressDialog;
+        private Context context;
 
-        private ChangePasswordTask(String password, String newPassword, ProgressDialog progressDialog) {
+
+        private ChangePasswordTask(String password, String newPassword,
+                                   Context context, AsyncTaskCompleteListener<ErrorType> callback) {
             this.password = password;
             this.newPassword = newPassword;
-            this.progressDialog = progressDialog;
+            this.context = context;
+            this.callback = callback;
         }
 
         @Override
         protected void onPreExecute(){
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(context.getString(R.string.loading));
             progressDialog.setCancelable(false);
-            if (!progressDialog.isShowing()) {
-                progressDialog.show();
-            }
+            progressDialog.setIndeterminate(true);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.show();
         }
 
         @Override
@@ -155,10 +218,11 @@ public class NetworkExecutor {
         }
 
         @Override
-        protected void onPostExecute(ErrorType error){
+        protected void onPostExecute(ErrorType error) {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
+            callback.onTaskComplete(error);
         }
     }
 
@@ -196,5 +260,9 @@ public class NetworkExecutor {
         NoInternetConnection,
         NoAccess,
         NoError
+    }
+
+    public interface AsyncTaskCompleteListener<T> {
+        public void onTaskComplete(T result);
     }
 }

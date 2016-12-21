@@ -1,5 +1,6 @@
 package com.example.batyamessagingapp.model;
 
+import com.example.batyamessagingapp.model.pojo.ConferenceId;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
 import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.Message;
@@ -69,6 +70,6 @@ public interface APIService {
     Call<ResponseBody> changeUsername(@Path("token") String token,
                                       @Body NewUsername newUsername);
 
-    //@POST("/{token}/name/{dialog_id}")Call<ResponseBody> setUsername()
-
+    @POST("/{token}/conferences/create")
+    Call<ConferenceId> getNewConferenceId(@Path("token") String token);
 }

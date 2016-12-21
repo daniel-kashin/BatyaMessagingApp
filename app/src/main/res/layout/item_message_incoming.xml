@@ -1,33 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="6dp"
     android:layout_marginTop="6dp">
 
-    <TextView
-        android:id="@+id/message_message_text_view"
+
+    <LinearLayout
+        android:id="@+id/message_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:background="@drawable/message_incoming"
-        android:maxWidth="@dimen/message_max_width"
         android:paddingBottom="9dp"
         android:paddingEnd="9dp"
         android:paddingStart="19dp"
         android:paddingTop="9dp"
-        android:textColor="@color/primary_text"
-        android:textSize="@dimen/auth_button_text_size"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_sender_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:maxWidth="@dimen/message_max_width"
+            android:text="DanilDanil"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/message_sender_text_size" />
+
+        <TextView
+            android:id="@+id/message_message_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:maxWidth="@dimen/message_max_width"
+            android:text="that was awful"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/auth_button_text_size" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/message_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/message_linear_layout"
+        android:paddingStart="8dp"
         android:paddingTop="2dp"
-        android:paddingStart ="8dp"
-        android:textSize="@dimen/message_date_text_size"
         android:textColor="@color/hint_text"
-        android:layout_toEndOf="@id/message_message_text_view"/>
+        android:textSize="@dimen/message_date_text_size" />
 
 </RelativeLayout>

@@ -167,7 +167,7 @@ public class ChatService implements ChatPresenter {
                         } else if (direction == ChatMessage.Direction.System) {
                             int contentLength = messageContent.length();
                             if (messageContent.equals("created")) {
-                                contentToSet = "The group was created.";
+                                contentToSet = "The group was created";
                             } else if (contentLength > 8 && messageContent.substring(0, 7).equals("invited|")) {
                                 contentToSet = "User was invited: "
                                         + messageContent.substring(8, contentLength - 1);
@@ -183,6 +183,7 @@ public class ChatService implements ChatPresenter {
                         if (contentToSet != null) {
                             outputMessages.add(new ChatMessage(
                                     contentToSet, // text
+                                    message.getSender(),
                                     message.getTimestamp(), //timestamp
                                     direction, // direction
                                     messageGuid // guid
@@ -245,6 +246,7 @@ public class ChatService implements ChatPresenter {
             if (resultPair.second == NetworkExecutor.ErrorType.NoError) {
                 ChatMessage message = new ChatMessage(
                         messageText,
+                        PreferencesService.getIdFromPreferences(),
                         resultPair.first.getTimestamp(),
                         ChatMessage.Direction.Outcoming,
                         ""

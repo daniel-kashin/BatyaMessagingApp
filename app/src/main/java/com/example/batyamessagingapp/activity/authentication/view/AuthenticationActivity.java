@@ -59,8 +59,8 @@ public class AuthenticationActivity extends AppCompatActivity implements Authent
     }
 
     @Override
-    public void startProgressDialog(String message) {
-        mProgressDialog.setMessage(message);
+    public void startProgressDialog() {
+        mProgressDialog.setMessage(getString(R.string.loading));
         if (!mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }

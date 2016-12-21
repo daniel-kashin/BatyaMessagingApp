@@ -2,6 +2,7 @@ package com.example.batyamessagingapp.activity.main.fragment_settings.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
@@ -100,13 +101,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         mIdButton.setTitle(PreferencesService.getIdFromPreferences());
     }
 
-    private void setChangeUsernameButtonData(){
+    private void setChangeUsernameButtonData() {
         try {
             mChangeUsernameButton.setTitle(
                     NetworkExecutor.getDialogNameFromId(PreferencesService.getIdFromPreferences()));
-        } catch (ConnectException e){
+        } catch (ConnectException e) {
             mChangeUsernameButton.setTitle("No internet connection");
-        } catch (InterruptedException | ExecutionException | IOException e){
+        } catch (InterruptedException | ExecutionException | IOException e) {
             mActivity.openAuthenticationActivity();
         }
     }
@@ -164,7 +165,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
                     // set positive button listener
                     DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(final DialogInterface dialog, int which) {
                             String oldPassword = oldPasswordEditText.getText().toString();
                             String newPassword = newPasswordEditText.getText().toString();
                             String newPassword2 = newPasswordEditText2.getText().toString();
@@ -177,18 +178,27 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                             } else if (!newPassword.equals(newPassword2)) {
                                 showAlert("New passwords differ", "Error");
                             } else {
-                                try {
-                                    NetworkExecutor.changePassword(
-                                            oldPassword,
-                                            newPassword,
-                                            mActivity.getProgressDialog());
-                                    showAlert("Your password was successfully changed", "Success");
-                                    setChangeUsernameButtonData();
-                                } catch (ConnectException e) {
-                                    showAlert("No internet connection", "Error");
-                                } catch (InterruptedException | ExecutionException | IOException e) {
-                                    showAlert("Wrong password", "Error");
-                                }
+                                NetworkExecutor.AsyncTaskCompleteListener<NetworkExecutor.ErrorType> callback =
+                                        new NetworkExecutor.AsyncTaskCompleteListener<NetworkExecutor.ErrorType>() {
+                                            @Override
+                                            public void onTaskComplete(NetworkExecutor.ErrorType result) {
+                                                if (result == NetworkExecutor.ErrorType.NoInternetConnection) {
+                                                    showAlert("No internet connection", "Error");
+                                                    dialog.cancel();
+                                                } else if (result == NetworkExecutor.ErrorType.NoAccess) {
+                                                    showAlert("Wrong password", "Error");
+                                                } else {
+                                                    showAlert("Your password was successfully changed", "Success");
+                                                    setChangeUsernameButtonData();
+                                                }
+                                            }
+                                        };
+
+                                NetworkExecutor.changePassword(
+                                        oldPassword,
+                                        newPassword,
+                                        getActivity(),
+                                        callback);
                             }
                         }
                     };
@@ -237,7 +247,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                             Pattern usernamePattern = Pattern.compile("[A-Za-z0-9_-]+");
 
                             if (!usernamePattern.matcher(newUsername).matches()) {
-                                showAlert("only letters, numbers and _-", "Error");
+                                showAlert("Username can contain only letters, numbers and _-", "Error");
                             } else if (newUsername.length() < 2 || newUsername.length() > 256) {
                                 showAlert("Username length should be 2..256 characters long",
                                         "Error");
@@ -246,7 +256,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                                     NetworkExecutor.changeUsername(
                                             newUsername,
                                             null,
-                                            mActivity.getProgressDialog());
+                                            getActivity());
                                     showAlert("Your username was successfully changed", "Success");
                                     setChangeUsernameButtonData();
                                 } catch (ConnectException e) {

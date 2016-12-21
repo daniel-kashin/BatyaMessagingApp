@@ -29,16 +29,18 @@ public class ChatMessageAdapter
 
     private ArrayList<ChatMessage> mChatMessageList;
     private Context mContext;
+    private boolean mIsGroup;
 
-    public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList) {
+    public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList, boolean isGroup) {
         if (chatMessageList == null) throw new NullPointerException();
 
         mChatMessageList = chatMessageList;
         mContext = context;
+        mIsGroup = isGroup;
     }
 
-    public ChatMessageAdapter(Context context) {
-        this(context, new ArrayList<ChatMessage>());
+    public ChatMessageAdapter(Context context, boolean isGroup) {
+        this(context, new ArrayList<ChatMessage>(), isGroup);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class ChatMessageAdapter
                 || TimestampHelper.datesDiffer(getLast().getTimestamp(), currentTimestamp)){
             mChatMessageList.add(new ChatMessage(
                     TimestampHelper.formatTimestampToDate(currentTimestamp),
+                    "",
                     currentTimestamp,
                     ChatMessage.Direction.System,
                     ""
@@ -125,10 +128,19 @@ public class ChatMessageAdapter
 
         //set text
         if (viewHolder.getDirection() == mChatMessageList.get(position).getDirection()) {
-            viewHolder.setMessage(chatMessage.getContent());
             if (viewHolder.getDirection() != ChatMessage.Direction.System) {
                 viewHolder.setTime(chatMessage.getTime());
             }
+
+            if (viewHolder.getDirection() == ChatMessage.Direction.Incoming){
+                if (mIsGroup){
+                    viewHolder.setSender(chatMessage.getSender());
+                } else {
+                    viewHolder.hideSenderTextView();
+                }
+            }
+
+            viewHolder.setMessage(chatMessage.getContent());
         }
 
         //create alert item_dialog
@@ -197,6 +209,7 @@ public class ChatMessageAdapter
                 if (addCurrent) {
                     messagesWithDates.add(new ChatMessage(
                             TimestampHelper.formatTimestampToDate(currentTimestamp),
+                            "",
                             currentTimestamp,
                             ChatMessage.Direction.System,
                             ""
@@ -229,6 +242,7 @@ public class ChatMessageAdapter
     class ViewHolder extends RecyclerView.ViewHolder {
         private TextView messageTextView;
         private TextView timeTextView;
+        private TextView senderTextView;
         private ChatMessage.Direction direction;
 
         private ViewHolder(View view, ChatMessage.Direction direction) {
@@ -236,6 +250,7 @@ public class ChatMessageAdapter
             this.direction = direction;
             messageTextView = (TextView) view.findViewById(R.id.message_message_text_view);
             timeTextView = (TextView) view.findViewById(R.id.message_time_text_view);
+            senderTextView = (TextView) view.findViewById(R.id.message_sender_text_view);
         }
 
         private void setMessage(String message) {
@@ -246,8 +261,16 @@ public class ChatMessageAdapter
             if (timeTextView != null) timeTextView.setText(time);
         }
 
+        private void setSender(String sender){
+            if (senderTextView != null) senderTextView.setText(sender);
+        }
+
         private void setMessageTextViewOnClickListener(View.OnClickListener listener) {
             messageTextView.setOnClickListener(listener);
+        }
+
+        private void hideSenderTextView(){
+            senderTextView.setVisibility(View.GONE);
         }
 
         private ChatMessage.Direction getDirection() {

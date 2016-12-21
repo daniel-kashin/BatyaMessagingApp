@@ -10,14 +10,16 @@ public class ChatMessage {
 
     private String content;
     private String time;
+    private String sender;
     private long timestamp;
     private Direction direction;
     private String guid;
 
-    public ChatMessage(String content, long timestamp, Direction direction, String guid){
+    public ChatMessage(String content, String sender,  long timestamp, Direction direction, String guid){
         this.content = content;
-        this.time = TimestampHelper.formatTimestampToTime(timestamp);
         this.timestamp = timestamp;
+        this.time = TimestampHelper.formatTimestampToTime(timestamp);
+        this.sender = sender;
         this.direction = direction;
         this.guid = guid;
     }
@@ -36,6 +38,10 @@ public class ChatMessage {
 
     public String getGuid(){
         return guid;
+    }
+
+    public String getSender(){
+        return sender;
     }
 
     public long getTimestamp() {

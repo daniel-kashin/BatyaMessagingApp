@@ -90,7 +90,7 @@ public class AuthenticationService implements AuthenticationPresenter {
 
         @Override
         protected void onPreExecute() {
-            mView.startProgressDialog(mContext.getString(R.string.loading));
+            mView.startProgressDialog();
         }
 
         @Override
@@ -137,7 +137,7 @@ public class AuthenticationService implements AuthenticationPresenter {
                     }
                 }
 
-                mView.showAlert(message, "Auth error");
+                mView.showAlert(message, "Error");
             }
         }
     } // Connection async task

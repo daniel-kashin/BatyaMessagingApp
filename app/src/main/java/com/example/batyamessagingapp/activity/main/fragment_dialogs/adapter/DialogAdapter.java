@@ -101,8 +101,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
                 mDialogList.remove(position);
                 mDialogList.add(0, newDialog);
             }
-        } else {
-            throw new IndexOutOfBoundsException();
         }
     }
 

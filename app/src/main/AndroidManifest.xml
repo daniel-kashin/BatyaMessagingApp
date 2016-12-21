@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".Batya"
@@ -20,6 +20,7 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,9 +31,10 @@
             android:name=".activity.authentication.view.AuthenticationActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:windowSoftInputMode="adjustResize"
+            android:name=".activity.chat.view.ChatActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:name=".activity.chat.view.ChatActivity"/>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".activity.dialog_settings.view.DialogSettingsActivity"></activity>
     </application>
 
 </manifest>

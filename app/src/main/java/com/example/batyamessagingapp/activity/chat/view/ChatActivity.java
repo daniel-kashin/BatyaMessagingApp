@@ -29,10 +29,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     private Toolbar mToolbar;
     private TextView mToolbarLabel;
     private ProgressBar mProgressBar;
-
     private RecyclerView mRecyclerView;
+
     private String mDialogId;
     private String mDialogName;
+    private boolean mIsGroup;
+    private boolean mIsGroupOriginator;
 
     private ChatPresenter mPresenter;
 
@@ -43,9 +45,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
         mDialogId = getIntent().getStringExtra("dialog_id");
         mDialogName = getIntent().getStringExtra("dialog_name");
+        mIsGroup = mDialogId.charAt(0) == '+';
 
         initializeViews();
         setListeners();
+
+        mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
     }
 
     @Override
@@ -57,7 +62,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     @Override
     protected void onResume() {
         super.onResume();
-        mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
         mPresenter.onLoad();
     }
 
@@ -136,7 +140,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         manager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setAdapter(new ChatMessageAdapter(this));
+        mRecyclerView.setAdapter(new ChatMessageAdapter(this, mIsGroup));
 
         mSendMessageEditText = (EditText) findViewById(R.id.chat_message_edit_text);
         mSendMessageIcon = (ImageView) findViewById(R.id.chat_send_message_icon);

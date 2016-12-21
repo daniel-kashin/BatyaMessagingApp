@@ -1,6 +1,7 @@
 package com.example.batyamessagingapp.model;
 
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
+import com.example.batyamessagingapp.model.pojo.ConferenceId;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
 import com.example.batyamessagingapp.model.pojo.DialogName;
 import com.example.batyamessagingapp.model.pojo.LoginData;
@@ -88,5 +89,9 @@ public class NetworkService {
         } else {
             return sApiService.changeUsername(getTokenFromPreferences(), dialogId, new NewUsername(newUsername));
         }
+    }
+
+    public static Call<ConferenceId> getGetNewConferenceIdCall(){
+        return sApiService.getNewConferenceId(getTokenFromPreferences());
     }
 }
