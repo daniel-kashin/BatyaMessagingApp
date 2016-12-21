@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="15dp">
 
     <TextView
-        android:id="@+id/search_text_view"
+        android:id="@+id/search_username_text_view"
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:maxLines="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="15dp"
         android:textSize="@dimen/search_item_text_size"
         android:fontFamily="sans-serif"
         android:textColor="@color/primary_text"
         />
+
+    <TextView
+        android:id="@+id/search_id_text_view"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/dialog_message_text_size"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/hint_text"
+        />
+
 
 
 </LinearLayout>

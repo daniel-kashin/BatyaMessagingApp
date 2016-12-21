@@ -244,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, 0);
             }
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);

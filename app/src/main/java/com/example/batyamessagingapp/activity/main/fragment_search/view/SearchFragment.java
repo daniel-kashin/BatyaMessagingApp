@@ -13,15 +13,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.activity.main.fragment_search.adapter.User;
 import com.example.batyamessagingapp.activity.main.fragment_search.adapter.UserAdapter;
 import com.example.batyamessagingapp.activity.main.fragment_search.adapter.UserDataModel;
 import com.example.batyamessagingapp.activity.main.fragment_search.presenter.SearchPresenter;
 import com.example.batyamessagingapp.activity.main.fragment_search.presenter.SearchService;
 import com.example.batyamessagingapp.activity.main.view.MainActivity;
 import com.example.batyamessagingapp.activity.main.view.MainView;
-
-import java.util.ArrayList;
 
 /**
  * Created by Кашин on 18.12.2016.
@@ -49,7 +46,7 @@ public class SearchFragment extends Fragment implements SearchView {
         mRootView = inflater.inflate(R.layout.fragment_search, null);
         mActivity = (MainActivity)getActivity();
 
-        mTextView = (TextView) mRootView.findViewById(R.id.search_text_view);
+        mTextView = (TextView) mRootView.findViewById(R.id.search_username_text_view);
         mProgressBar = (ProgressBar) mRootView.findViewById(R.id.search_progress_bar);
         initializeRecyclerView(mRootView);
 

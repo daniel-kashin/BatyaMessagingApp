@@ -81,7 +81,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>
     public void onBindViewHolder(final UserAdapter.ViewHolder viewHolder, final int position) {
         User user = mUserList.get(position);
 
-        viewHolder.setText(user.getUsername());
+        viewHolder.setUsername(user.getUsername());
+        viewHolder.setId(user.getId());
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -102,14 +103,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView usernameTextView;
+        private TextView idTextView;
 
         ViewHolder(View itemView) {
             super(itemView);
-            usernameTextView = (TextView) itemView.findViewById(R.id.search_text_view);
+            usernameTextView = (TextView) itemView.findViewById(R.id.search_username_text_view);
+            idTextView = (TextView) itemView.findViewById(R.id.search_id_text_view);
         }
 
-        void setText(String text) {
-            usernameTextView.setText(text);
+        void setUsername(String username) {
+            usernameTextView.setText(username);
+        }
+
+        void setId(String id) {
+            idTextView.setText("id: " + id);
         }
     }
 }

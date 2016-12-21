@@ -46,7 +46,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
         mPresenter = new SettingsService(this, getActivity());
 
         initializeViews();
-        setOnClickListeners();
     }
 
     @Override
@@ -67,6 +66,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     @Override
     public void onResume() {
         super.onResume();
+        setOnClickListeners();
         setChangeUsernameButtonData();
         if (activityInitialized()) {
             mActivity.hideSearch();

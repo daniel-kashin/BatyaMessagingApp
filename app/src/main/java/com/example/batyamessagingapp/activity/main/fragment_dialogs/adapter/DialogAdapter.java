@@ -70,8 +70,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         for (Dialog dialog : dialogs) {
             mDialogList.add(dialog);
         }
-
-        notifyDataSetChanged();
     }
 
     public void refresh(){
