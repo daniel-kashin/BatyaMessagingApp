@@ -15,6 +15,6 @@ public interface UserDataModel {
     String getUserIdByPosition(int position);
     String getUsernameByPosition(int position);
     void clearUsers();
-    void addUsers(ArrayList<String> usernames) throws IOException, InterruptedException, ExecutionException;
+    void setUsers(ArrayList<User> users);
     void setOnUserClickListener(OnUserClickListener onUserClickListener);
 }

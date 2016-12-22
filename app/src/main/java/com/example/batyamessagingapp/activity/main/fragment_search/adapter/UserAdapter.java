@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.batyamessagingapp.R;
-import com.example.batyamessagingapp.model.NetworkExecutor;
+import com.example.batyamessagingapp.model.BasicAsyncTask;
+import com.example.batyamessagingapp.model.NetworkService;
+import com.example.batyamessagingapp.model.pojo.DialogName;
+import com.example.batyamessagingapp.model.pojo.NewUsername;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,104 +22,101 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>
-        implements UserDataModel {
+    implements UserDataModel {
 
-    private ArrayList<User> mUserList;
-    private final Context mContext;
-    private OnUserClickListener mOnUserClickListener;
+  private ArrayList<User> mUserList;
+  private final Context mContext;
+  private OnUserClickListener mOnUserClickListener;
 
-    public UserAdapter(Context context) {
-        mContext = context;
-        mUserList = new ArrayList<>();
+  public UserAdapter(Context context) {
+    mContext = context;
+    mUserList = new ArrayList<>();
+  }
+
+  @Override
+  public void setOnUserClickListener(OnUserClickListener onUserClickListener) {
+    mOnUserClickListener = onUserClickListener;
+  }
+
+  @Override
+  public void setUsers(ArrayList<User> users) {
+    mUserList = users;
+    notifyDataSetChanged();
+  }
+
+  @Override
+  public void clearUsers() {
+    mUserList = new ArrayList<>();
+    notifyDataSetChanged();
+  }
+
+  @Override
+  public String getUserIdByPosition(int position) {
+    if (position < 0 || position > mUserList.size() - 1) {
+      throw new IndexOutOfBoundsException();
+    } else {
+      return mUserList.get(position).getId();
+    }
+  }
+
+  @Override
+  public String getUsernameByPosition(int position) {
+    if (position < 0 || position > mUserList.size() - 1) {
+      throw new IndexOutOfBoundsException();
+    } else {
+      return mUserList.get(position).getUsername();
+    }
+  }
+
+  @Override
+  public UserAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View view = LayoutInflater
+        .from(parent.getContext())
+        .inflate(R.layout.item_search, parent, false);
+
+    return new UserAdapter.ViewHolder(view);
+  }
+
+  @Override
+  public void onBindViewHolder(final UserAdapter.ViewHolder viewHolder, final int position) {
+    User user = mUserList.get(position);
+
+    viewHolder.setUsername(user.getUsername());
+    viewHolder.setId(user.getId());
+
+    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mOnUserClickListener.onItemClick(
+            UserAdapter.this,
+            viewHolder.getAdapterPosition()
+        );
+      }
+    });
+  }
+
+  @Override
+  public int getItemCount() {
+    return mUserList.size();
+  }
+
+  class ViewHolder extends RecyclerView.ViewHolder {
+
+    private TextView usernameTextView;
+    private TextView idTextView;
+
+    ViewHolder(View itemView) {
+      super(itemView);
+      usernameTextView = (TextView) itemView.findViewById(R.id.search_username_text_view);
+      idTextView = (TextView) itemView.findViewById(R.id.search_id_text_view);
     }
 
-    @Override
-    public void setOnUserClickListener(OnUserClickListener onUserClickListener){
-        mOnUserClickListener = onUserClickListener;
+    void setUsername(String username) {
+      usernameTextView.setText(username);
     }
 
-    @Override
-    public void addUsers(ArrayList<String> userIds) throws IOException, InterruptedException , ExecutionException {
-        mUserList = new ArrayList<>(25);
-        for (String id : userIds){
-            mUserList.add(new User(id, NetworkExecutor.getDialogNameFromId(id)));
-        }
-        notifyDataSetChanged();
+    void setId(String id) {
+      idTextView.setText("id: " + id);
     }
-
-    @Override
-    public void clearUsers() {
-        mUserList = new ArrayList<>();
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public String getUserIdByPosition(int position) {
-        if (position < 0 || position > mUserList.size() - 1) {
-            throw new IndexOutOfBoundsException();
-        } else {
-            return mUserList.get(position).getId();
-        }
-    }
-
-    @Override
-    public String getUsernameByPosition(int position) {
-        if (position < 0 || position > mUserList.size() - 1) {
-            throw new IndexOutOfBoundsException();
-        } else {
-            return mUserList.get(position).getUsername();
-        }
-    }
-
-    @Override
-    public UserAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater
-                .from(parent.getContext())
-                .inflate(R.layout.item_search, parent, false);
-
-        return new UserAdapter.ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(final UserAdapter.ViewHolder viewHolder, final int position) {
-        User user = mUserList.get(position);
-
-        viewHolder.setUsername(user.getUsername());
-        viewHolder.setId(user.getId());
-
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                mOnUserClickListener.onItemClick(
-                        UserAdapter.this,
-                        viewHolder.getAdapterPosition()
-                );
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mUserList.size();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView usernameTextView;
-        private TextView idTextView;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            usernameTextView = (TextView) itemView.findViewById(R.id.search_username_text_view);
-            idTextView = (TextView) itemView.findViewById(R.id.search_id_text_view);
-        }
-
-        void setUsername(String username) {
-            usernameTextView.setText(username);
-        }
-
-        void setId(String id) {
-            idTextView.setText("id: " + id);
-        }
-    }
+  }
 }

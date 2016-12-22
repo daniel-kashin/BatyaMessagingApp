@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.util.Pair;
 
-import com.example.batyamessagingapp.R;
 import com.example.batyamessagingapp.activity.main.fragment_settings.view.SettingsView;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;

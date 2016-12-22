@@ -13,7 +13,6 @@ import okhttp3.ResponseBody;
  */
 
 public class MainService implements MainPresenter {
-
     private MainView mView;
     private Context mContext;
 
@@ -21,6 +20,5 @@ public class MainService implements MainPresenter {
         mView = mainView;
         mContext = (Context) mainView;
     }
-
 
 }

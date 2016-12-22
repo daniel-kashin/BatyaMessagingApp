@@ -1,27 +1,21 @@
 package com.example.batyamessagingapp.activity.chat.presenter;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.util.Pair;
+import android.util.Pair;
 
 import com.example.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
 import com.example.batyamessagingapp.activity.chat.view.ChatView;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessage;
 import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
-import com.example.batyamessagingapp.model.NetworkExecutor;
+import com.example.batyamessagingapp.model.BasicAsyncTask;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-
-import retrofit2.Response;
 
 /**
  * Created by Кашин on 15.11.2016.
@@ -29,239 +23,214 @@ import retrofit2.Response;
 
 public class ChatService implements ChatPresenter {
 
-    private final int GET_MESSAGES_INTERVAL = 2000;
+  private final int GET_MESSAGES_INTERVAL = 2000;
 
-    private boolean mInitialized;
-    private boolean mRunning;
-    private final String mDialogId;
-    private final String mDialogName;
-    private Context mContext;
-    private ChatMessageAdapter mAdapter;
-    private SendMessageAsyncTask mSendMessageAsyncTask;
-    private GetMessagesAsyncTask mGetMessagesAsyncTask;
-    private Handler mHandler;
-    private Runnable mGetMessagesWithInterval;
+  private boolean mInitialized;
+  private boolean mRunning;
+  private final String mDialogId;
+  private final String mDialogName;
+  private Context mContext;
+  private ChatMessageAdapter mAdapter;
+  private Handler mHandler;
+  private Runnable mGetMessagesWithInterval;
+  private String currentMessage;
 
-    private ChatView mView;
-    private MessagesDataModel mDataModel;
+  private ChatView mView;
+  private MessagesDataModel mDataModel;
 
-    public ChatService(ChatView view, String dialogId, String dialogName, MessagesDataModel dataModel) {
-        mView = view;
-        mContext = (Context) view;
-        mDialogId = dialogId;
-        mDialogName = dialogName;
-        mDataModel = dataModel;
+  public ChatService(ChatView view, String dialogId, String dialogName, MessagesDataModel dataModel) {
+    mView = view;
+    mContext = (Context) view;
+    mDialogId = dialogId;
+    mDialogName = dialogName;
+    mDataModel = dataModel;
 
-        mHandler = new Handler();
-        mGetMessagesWithInterval = new Runnable() {
+    mHandler = new Handler();
+    mGetMessagesWithInterval = new Runnable() {
+      @Override
+      public void run() {
+        BasicAsyncTask.AsyncTaskCompleteListener
+            <Pair<MessageArray, BasicAsyncTask.ErrorType>> callback =
+            new BasicAsyncTask.AsyncTaskCompleteListener<Pair<MessageArray, BasicAsyncTask.ErrorType>>() {
+              @Override
+              public void onTaskComplete(Pair<MessageArray, BasicAsyncTask.ErrorType> result) {
+                if (result.second == BasicAsyncTask.ErrorType.NoError) {
+                  ArrayList<Message> messages = result.first.getMessages();
+                  mView.setCommonToolbarLabelText();
+                } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
+                  mView.setNoInternetToolbarLabelText();
+                } else {
+                  stopGetMessagesWithInterval();
+                  mView.openDialogsActivity();
+                }
+              }
+            };
+
+        new BasicAsyncTask<MessageArray>(
+            NetworkService.getGetMessagesCall(mDialogId, 20, 0),
+            null,
+            false,
+            callback).execute();
+
+        mHandler.postDelayed(mGetMessagesWithInterval, GET_MESSAGES_INTERVAL);
+      }
+    };
+  }
+
+  @Override
+  public boolean initialized() {
+    return mInitialized;
+  }
+
+  @Override
+  public void onSendMessageButtonClick() {
+    if (mView.getInputMessage() != null && !mView.getInputMessage().isEmpty()) {
+      currentMessage = mView.getInputMessage();
+
+      BasicAsyncTask.AsyncTaskCompleteListener
+          <Pair<Timestamp, BasicAsyncTask.ErrorType>> callback =
+          new BasicAsyncTask.AsyncTaskCompleteListener<Pair<Timestamp, BasicAsyncTask.ErrorType>>() {
             @Override
-            public void run() {
-                mGetMessagesAsyncTask = new GetMessagesAsyncTask(20, 0, false);
-                mGetMessagesAsyncTask.execute();
-                mHandler.postDelayed(mGetMessagesWithInterval, GET_MESSAGES_INTERVAL);
-            }
-        };
-    }
-
-    @Override
-    public boolean initialized() {
-        return mInitialized;
-    }
-
-    @Override
-    public void onSendMessageButtonClick() {
-        if (mView.getInputMessage().length() > 0) {
-            mSendMessageAsyncTask = new SendMessageAsyncTask(mView.getInputMessage());
-            mSendMessageAsyncTask.execute();
-        }
-    }
-
-    @Override
-    public void onLoad() {
-        if (!mInitialized) {
-            mView.setLoadingToolbarLabelText();
-            mGetMessagesAsyncTask = new GetMessagesAsyncTask(150, 0, true);
-            mGetMessagesAsyncTask.execute();
-        } else {
-            startGetMessagesWithInterval();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        stopGetMessagesWithInterval();
-    }
-
-    private void startGetMessagesWithInterval() {
-        if (!mRunning) {
-            mRunning = true;
-            mGetMessagesWithInterval.run();
-        }
-    }
-
-    private void stopGetMessagesWithInterval() {
-        mRunning = false;
-        mHandler.removeCallbacks(mGetMessagesWithInterval);
-    }
-
-    private class GetMessagesAsyncTask
-            extends AsyncTask<Void, Void, Pair<MessageArray, NetworkExecutor.ErrorType>> {
-        private final int limit;
-        private final int offset;
-        private final boolean initCall;
-
-        private GetMessagesAsyncTask(int limit, int offset, boolean initCall) {
-            this.limit = limit;
-            this.offset = offset;
-            this.initCall = initCall;
-        }
-
-        @Override
-        protected Pair<MessageArray, NetworkExecutor.ErrorType> doInBackground(Void... params) {
-            try {
-                Response<MessageArray> response = NetworkService
-                        .getGetMessagesCall(mDialogId, limit, offset)
-                        .execute();
-
-                MessageArray answer = response.body();
-
-                if (response.code() == 200 && answer != null) {
-                    return new Pair<>(answer, NetworkExecutor.ErrorType.NoError);
-                } else {
-                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
-                }
-            } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
-            } catch (IOException e) {
-                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Pair<MessageArray, NetworkExecutor.ErrorType> resultPair) {
-            if (resultPair.first != null && resultPair.second == NetworkExecutor.ErrorType.NoError) {
-                ArrayList<Message> messages = resultPair.first.getMessages();
-                ArrayList<ChatMessage> outputMessages = new ArrayList<>();
-
-                for (int i = 0; i < messages.size(); ++i) {
-                    Message message = messages.get(i);
-                    String messageGuid = message.getGuid();
-
-                    if (!mDataModel.hasItemWithId(messageGuid)) {
-                        String messageSender = message.getSender();
-                        String messageContent = message.getContent();
-
-                        ChatMessage.Direction direction;
-                        if (messageSender.equals("")) {
-                            direction = ChatMessage.Direction.System;
-                        } else if (messageSender.equals(PreferencesService.getIdFromPreferences())) {
-                            direction = ChatMessage.Direction.Outcoming;
-                        } else {
-                            direction = ChatMessage.Direction.Incoming;
-                        }
-
-                        String contentToSet = null;
-                        if (direction == ChatMessage.Direction.Outcoming && initCall
-                                || direction == ChatMessage.Direction.Incoming) {
-                            contentToSet = messageContent;
-                        } else if (direction == ChatMessage.Direction.System) {
-                            int contentLength = messageContent.length();
-                            if (messageContent.equals("created")) {
-                                contentToSet = "The group was created";
-                            } else if (contentLength > 8 && messageContent.substring(0, 7).equals("invited|")) {
-                                contentToSet = "User was invited: "
-                                        + messageContent.substring(8, contentLength - 1);
-                            } else if (contentLength > 7 && messageContent.substring(0, 6).equals("kicked|")) {
-                                contentToSet = "User was kicked: "
-                                        + messageContent.substring(7, contentLength - 1);
-                            } else if (contentLength > 5 && messageContent.substring(0, 4).equals("left|")){
-                                contentToSet = "User left the group: "
-                                        + messageContent.substring(5, contentLength - 1);
-                            }
-                        }
-
-                        if (contentToSet != null) {
-                            outputMessages.add(new ChatMessage(
-                                    contentToSet, // text
-                                    message.getSender(),
-                                    message.getTimestamp(), //timestamp
-                                    direction, // direction
-                                    messageGuid // guid
-                            ));
-                        }
-                    }
-                }
-
-                if (outputMessages.size() > 0) {
-                    mDataModel.addMessagesToEnd(outputMessages);
-                    if (initCall) mView.scrollRecyclerViewToLast();
-                    mView.hideNoMessagesTextView();
-                }
-
-                if (initCall) {
-                    mInitialized = true;
-                    startGetMessagesWithInterval();
-                }
-
-                mView.setCommonToolbarLabelText();
-            } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
-                mView.setNoInternetToolbarLabelText();
-                if (initCall) onLoad();
-            } else {
-                stopGetMessagesWithInterval();
-                mView.openDialogsActivity();
-            }
-        }
-    }
-
-    private class SendMessageAsyncTask extends AsyncTask<Void, Void, Pair<Timestamp, NetworkExecutor.ErrorType>> {
-
-        private final String messageText;
-
-        public SendMessageAsyncTask(String messageText) {
-            this.messageText = messageText;
-        }
-
-        protected Pair<Timestamp, NetworkExecutor.ErrorType> doInBackground(Void... voids) {
-            try {
-                Response<Timestamp> response = NetworkService
-                        .getSendMessageCall(mDialogId, "text", messageText)
-                        .execute();
-
-                Timestamp answer = response.body();
-
-                if (response.code() == 200 && answer != null) {
-                    return new Pair<>(answer, NetworkExecutor.ErrorType.NoError);
-                } else {
-                    return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
-                }
-            } catch (ConnectException | SocketTimeoutException e) {
-                return new Pair<>(null, NetworkExecutor.ErrorType.NoInternetConnection);
-            } catch (IOException e) {
-                return new Pair<>(null, NetworkExecutor.ErrorType.NoAccess);
-            }
-        }
-
-        protected void onPostExecute(Pair<Timestamp, NetworkExecutor.ErrorType> resultPair) {
-            if (resultPair.second == NetworkExecutor.ErrorType.NoError) {
+            public void onTaskComplete(Pair<Timestamp, BasicAsyncTask.ErrorType> result) {
+              if (result.second == BasicAsyncTask.ErrorType.NoError) {
                 ChatMessage message = new ChatMessage(
-                        messageText,
-                        PreferencesService.getIdFromPreferences(),
-                        resultPair.first.getTimestamp(),
-                        ChatMessage.Direction.Outcoming,
-                        ""
-                );
-
+                    currentMessage,
+                    PreferencesService.getIdFromPreferences(),
+                    result.first.getTimestamp(),
+                    ChatMessage.Direction.Outcoming,
+                    "");
                 mDataModel.addMessage(message);
                 mView.clearMessageEditText();
                 mView.scrollRecyclerViewToLast();
                 mView.hideNoMessagesTextView();
-            } else if (resultPair.second == NetworkExecutor.ErrorType.NoInternetConnection) {
+              } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
                 mView.setNoInternetToolbarLabelText();
-            } else {
+              } else {
                 stopGetMessagesWithInterval();
                 mView.openDialogsActivity();
+              }
             }
-        }
+          };
+
+      new BasicAsyncTask<Timestamp>(
+          NetworkService.getSendMessageCall(mDialogId, "text", currentMessage),
+          null,
+          false,
+          callback).execute();
     }
+  }
+
+  @Override
+  public void onLoad() {
+    if (!mInitialized) {
+      mView.setLoadingToolbarLabelText();
+
+      BasicAsyncTask.AsyncTaskCompleteListener
+          <Pair<MessageArray, BasicAsyncTask.ErrorType>> callback =
+          new BasicAsyncTask.AsyncTaskCompleteListener
+              <Pair<MessageArray, BasicAsyncTask.ErrorType>>() {
+            @Override
+            public void onTaskComplete(Pair<MessageArray, BasicAsyncTask.ErrorType> result) {
+              if (result.second == BasicAsyncTask.ErrorType.NoError) {
+                ArrayList<Message> messages = result.first.getMessages();
+                addMessagesToAdapter(messages, true);
+                mInitialized = true;
+                startGetMessagesWithInterval();
+                mView.setCommonToolbarLabelText();
+              } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
+                mView.setNoInternetToolbarLabelText();
+                onLoad();
+              } else {
+                stopGetMessagesWithInterval();
+                mView.openDialogsActivity();
+              }
+            }
+          };
+
+      new BasicAsyncTask<MessageArray>(
+          NetworkService.getGetMessagesCall(mDialogId, 200, 0),
+          null,
+          false,
+          callback
+      ).execute();
+    } else {
+      startGetMessagesWithInterval();
+    }
+  }
+
+  @Override
+  public void onPause() {
+    stopGetMessagesWithInterval();
+  }
+
+  private void startGetMessagesWithInterval() {
+    if (!mRunning) {
+      mRunning = true;
+      mGetMessagesWithInterval.run();
+    }
+  }
+
+  private void stopGetMessagesWithInterval() {
+    mRunning = false;
+    mHandler.removeCallbacks(mGetMessagesWithInterval);
+  }
+
+  private void addMessagesToAdapter(ArrayList<Message> messages, boolean initCall) {
+    ArrayList<ChatMessage> outputMessages = new ArrayList<>();
+
+    for (int i = 0; i < messages.size(); ++i) {
+      Message message = messages.get(i);
+      String messageGuid = message.getGuid();
+
+      if (!mDataModel.hasItemWithId(messageGuid)) {
+        String messageSender = message.getSender();
+        String messageContent = message.getContent();
+
+        ChatMessage.Direction direction;
+        if (messageSender.equals("")) {
+          direction = ChatMessage.Direction.System;
+        } else if (messageSender.equals(PreferencesService.getIdFromPreferences())) {
+          direction = ChatMessage.Direction.Outcoming;
+        } else {
+          direction = ChatMessage.Direction.Incoming;
+        }
+
+        String contentToSet = null;
+        if (direction == ChatMessage.Direction.Outcoming && initCall
+            || direction == ChatMessage.Direction.Incoming) {
+          contentToSet = messageContent;
+        } else if (direction == ChatMessage.Direction.System) {
+          int contentLength = messageContent.length();
+          if (messageContent.equals("created")) {
+            contentToSet = "The group was created";
+          } else if (contentLength > 8 && messageContent.substring(0, 7).equals("invited|")) {
+            contentToSet = "User was invited: "
+                + messageContent.substring(8, contentLength - 1);
+          } else if (contentLength > 7 && messageContent.substring(0, 6).equals("kicked|")) {
+            contentToSet = "User was kicked: "
+                + messageContent.substring(7, contentLength - 1);
+          } else if (contentLength > 5 && messageContent.substring(0, 4).equals("left|")) {
+            contentToSet = "User left the group: "
+                + messageContent.substring(5, contentLength - 1);
+          }
+        }
+
+        if (contentToSet != null) {
+          outputMessages.add(new ChatMessage(
+              contentToSet, // text
+              message.getSender(),
+              message.getTimestamp(), //timestamp
+              direction, // direction
+              messageGuid // guid
+          ));
+        }
+      }
+    }
+
+    if (outputMessages.size() > 0) {
+      mDataModel.addMessagesToEnd(outputMessages);
+      if (initCall) mView.scrollRecyclerViewToLast();
+      mView.hideNoMessagesTextView();
+    }
+  }
 }

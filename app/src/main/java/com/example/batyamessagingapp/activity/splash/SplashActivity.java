@@ -18,7 +18,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startNextActivity(){
         Intent intent;
-        //TODO: add test call
+
         if (PreferencesService.isTokenAvailableInPreferences()) {
             intent = new Intent(this, MainActivity.class);
         } else {
@@ -27,7 +27,6 @@ public class SplashActivity extends AppCompatActivity {
 
         startActivity(intent);
         overridePendingTransition(0, 0);
-
         finish();
     }
 
