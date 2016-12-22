@@ -7,13 +7,13 @@ import com.google.gson.annotations.SerializedName;
  * Created by Кашин on 21.12.2016.
  */
 
-public class ConferenceId {
+public class GroupId {
 
     @SerializedName("conference_id")
     @Expose
     private final String congerenceId;
 
-    public ConferenceId(String congerenceId){
+    public GroupId(String congerenceId){
         this.congerenceId = congerenceId;
     }
 

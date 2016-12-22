@@ -5,9 +5,14 @@ package com.example.batyamessagingapp.activity.chat.presenter;
  */
 
 public interface ChatPresenter {
-    void onSendMessageButtonClick();
-    void onLoad();
-    void onPause();
-    boolean initialized();
+  void onSendMessageButtonClick();
+
+  void onLoad();
+
+  void onPause();
+
+  boolean initialized();
+
+  void onInitializeProperties();
 }
 

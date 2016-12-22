@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.example.batyamessagingapp.R;
 
-public class DialogSettingsActivity extends AppCompatActivity {
+public class DialogSettingsActivity extends AppCompatActivity implements DialogSettingsView {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

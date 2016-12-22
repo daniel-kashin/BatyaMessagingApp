@@ -13,11 +13,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.Preference;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -42,12 +40,8 @@ import com.example.batyamessagingapp.activity.main.presenter.MainPresenter;
 import com.example.batyamessagingapp.activity.main.presenter.MainService;
 import com.example.batyamessagingapp.model.BasicAsyncTask;
 import com.example.batyamessagingapp.model.NetworkService;
-import com.example.batyamessagingapp.model.pojo.ConferenceId;
-import com.example.batyamessagingapp.model.pojo.NewUsername;
+import com.example.batyamessagingapp.model.pojo.GroupId;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
@@ -343,10 +337,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
               "Error");
         } else { // name is correct
           BasicAsyncTask.AsyncTaskCompleteListener
-              <Pair<ConferenceId, BasicAsyncTask.ErrorType>> createGroupCallback =
-              new BasicAsyncTask.AsyncTaskCompleteListener<Pair<ConferenceId, BasicAsyncTask.ErrorType>>() {
+              <Pair<GroupId, BasicAsyncTask.ErrorType>> createGroupCallback =
+              new BasicAsyncTask.AsyncTaskCompleteListener<Pair<GroupId, BasicAsyncTask.ErrorType>>() {
                 @Override
-                public void onTaskComplete(Pair<ConferenceId, BasicAsyncTask.ErrorType> result) {
+                public void onTaskComplete(Pair<GroupId, BasicAsyncTask.ErrorType> result) {
                   if (result.second == BasicAsyncTask.ErrorType.NoError) { // the group was created
 
                     BasicAsyncTask.AsyncTaskCompleteListener
@@ -380,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 }
               };
 
-          new BasicAsyncTask<ConferenceId>(
+          new BasicAsyncTask<GroupId>(
               NetworkService.getGetNewConferenceIdCall(),
               MainActivity.this,
               false,

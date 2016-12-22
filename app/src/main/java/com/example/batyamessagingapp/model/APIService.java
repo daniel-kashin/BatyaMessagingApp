@@ -1,8 +1,9 @@
 package com.example.batyamessagingapp.model;
 
-import com.example.batyamessagingapp.model.pojo.ConferenceId;
+import com.example.batyamessagingapp.model.pojo.GroupId;
 import com.example.batyamessagingapp.model.pojo.DialogArray;
 import com.example.batyamessagingapp.model.pojo.DialogName;
+import com.example.batyamessagingapp.model.pojo.GroupUsers;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.APIAnswer;
 import com.example.batyamessagingapp.model.pojo.LoginData;
@@ -71,5 +72,8 @@ public interface APIService {
                                     @Body NewUsername newUsername);
 
   @POST("/{token}/conferences/create")
-  Call<ConferenceId> getNewConferenceId(@Path("token") String token);
+  Call<GroupId> getNewConferenceId(@Path("token") String token);
+
+  @POST("/{token}/conferences/{conference_id}/user_list")
+  Call<GroupUsers> getGroupUsers(@Path("token") String token, @Path("conference_id") String conferenceId);
 }

@@ -10,13 +10,22 @@ import java.util.List;
  */
 
 public interface ChatView {
-    String getInputMessage();
-    void clearMessageEditText();
-    void scrollRecyclerViewToLast();
-    void scrollRecyclerViewToFirst();
-    void hideNoMessagesTextView();
-    void setCommonToolbarLabelText();
-    void setLoadingToolbarLabelText();
-    void setNoInternetToolbarLabelText();
-    void openDialogsActivity();
+  void setProperties(boolean isGroup, boolean isGroupOriginator,
+                     boolean isChatWithMyself, int groupCount);
+
+  String getInputMessage();
+
+  void clearMessageEditText();
+
+  void scrollRecyclerViewToLast();
+
+  void scrollRecyclerViewToFirst();
+
+  void setCommonToolbarLabelText();
+
+  void setLoadingToolbarLabelText();
+
+  void setNoInternetToolbarLabelText();
+
+  void openDialogsActivity();
 }

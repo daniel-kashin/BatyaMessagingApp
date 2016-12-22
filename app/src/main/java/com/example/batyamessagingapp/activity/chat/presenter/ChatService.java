@@ -11,11 +11,13 @@ import com.example.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
 import com.example.batyamessagingapp.model.BasicAsyncTask;
 import com.example.batyamessagingapp.model.NetworkService;
 import com.example.batyamessagingapp.model.PreferencesService;
+import com.example.batyamessagingapp.model.pojo.GroupUsers;
 import com.example.batyamessagingapp.model.pojo.Message;
 import com.example.batyamessagingapp.model.pojo.MessageArray;
 import com.example.batyamessagingapp.model.pojo.Timestamp;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Кашин on 15.11.2016.
@@ -78,11 +80,6 @@ public class ChatService implements ChatPresenter {
   }
 
   @Override
-  public boolean initialized() {
-    return mInitialized;
-  }
-
-  @Override
   public void onSendMessageButtonClick() {
     if (mView.getInputMessage() != null && !mView.getInputMessage().isEmpty()) {
       currentMessage = mView.getInputMessage();
@@ -102,7 +99,6 @@ public class ChatService implements ChatPresenter {
                 mDataModel.addMessage(message);
                 mView.clearMessageEditText();
                 mView.scrollRecyclerViewToLast();
-                mView.hideNoMessagesTextView();
               } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
                 mView.setNoInternetToolbarLabelText();
               } else {
@@ -162,6 +158,54 @@ public class ChatService implements ChatPresenter {
   public void onPause() {
     stopGetMessagesWithInterval();
   }
+
+  @Override
+  public boolean initialized() {
+    return mInitialized;
+  }
+
+  @Override
+  public void onInitializeProperties() {
+    boolean isGroup = mDialogId.charAt(0) == '+';
+    boolean isGroupOriginator = false;
+    boolean isChatWithMyself = false;
+    int groupCount = -1;
+
+    if (isGroup){
+      try {
+        Pair<GroupUsers, BasicAsyncTask.ErrorType> result =
+            new BasicAsyncTask<GroupUsers>(
+                NetworkService.getGetGroupUsersCall(mDialogId),
+                null,
+                false,
+                null
+            ).execute().get();
+
+        if (result.second == BasicAsyncTask.ErrorType.NoError){
+          if (result.first.getOriginatorId()
+              .equals(PreferencesService.getIdFromPreferences())){
+            isGroupOriginator = true;
+          }
+          groupCount = result.first.getUsers().size() + 1;
+        } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection){
+          mView.setNoInternetToolbarLabelText();
+          onInitializeProperties();
+        } else {
+          mView.openDialogsActivity();
+        }
+      } catch (ExecutionException | InterruptedException e){
+        mView.openDialogsActivity();
+      }
+    }
+
+    if (!isGroup){
+      isChatWithMyself = mDialogId.equals(PreferencesService.getIdFromPreferences());
+    }
+
+    mView.setProperties(isGroup, isGroupOriginator, isChatWithMyself, groupCount);
+  }
+
+
 
   private void startGetMessagesWithInterval() {
     if (!mRunning) {
@@ -230,7 +274,6 @@ public class ChatService implements ChatPresenter {
     if (outputMessages.size() > 0) {
       mDataModel.addMessagesToEnd(outputMessages);
       if (initCall) mView.scrollRecyclerViewToLast();
-      mView.hideNoMessagesTextView();
     }
   }
 }

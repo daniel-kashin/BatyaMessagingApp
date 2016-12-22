@@ -176,7 +176,7 @@ public class DialogsService implements DialogsPresenter {
 
           if (result.second == BasicAsyncTask.ErrorType.NoError) {
             int color = CircleBitmapFactory.getMaterialColor(dialogId.hashCode());
-            String firstLetter = CircleBitmapFactory.getFirstLetter(dialogId);
+            String firstLetter = CircleBitmapFactory.getFirstLetter(result.first.getDialogName());
             Bitmap bitmap = CircleBitmapFactory
                 .generateCircleBitmap(mContext, color, 55, firstLetter);
 
