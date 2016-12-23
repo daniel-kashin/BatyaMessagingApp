@@ -25,257 +25,260 @@ import java.util.List;
  */
 
 public class ChatMessageAdapter
-        extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements MessagesDataModel {
+    extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements MessagesDataModel {
 
-    private ArrayList<ChatMessage> mChatMessageList;
-    private Context mContext;
-    private boolean mIsGroup;
+  private ArrayList<ChatMessage> mChatMessageList;
+  private Context mContext;
+  private boolean mIsGroup;
 
-    public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList, boolean isGroup) {
-        if (chatMessageList == null) throw new NullPointerException();
+  public ChatMessageAdapter(Context context, ArrayList<ChatMessage> chatMessageList, boolean isGroup) {
+    if (chatMessageList == null) throw new NullPointerException();
 
-        mChatMessageList = chatMessageList;
-        mContext = context;
-        mIsGroup = isGroup;
+    mChatMessageList = chatMessageList;
+    mContext = context;
+    mIsGroup = isGroup;
+  }
+
+  public ChatMessageAdapter(Context context, boolean isGroup) {
+    this(context, new ArrayList<ChatMessage>(), isGroup);
+  }
+
+  @Override
+  public void addMessage(ChatMessage chatMessage) {
+    long currentTimestamp = chatMessage.getTimestamp();
+    if (mChatMessageList.size() == 0 || getLast() == null
+        || TimestampHelper.datesDiffer(getLast().getTimestamp(), currentTimestamp)) {
+      mChatMessageList.add(new ChatMessage(
+          TimestampHelper.formatTimestampToDate(currentTimestamp),
+          "",
+          currentTimestamp,
+          ChatMessage.Direction.System,
+          ""
+      ));
     }
 
-    public ChatMessageAdapter(Context context, boolean isGroup) {
-        this(context, new ArrayList<ChatMessage>(), isGroup);
+    mChatMessageList.add(chatMessage);
+
+    notifyDataSetChanged();
+  }
+
+  @Override
+  public void addMessagesToEnd(List<ChatMessage> messages) {
+    messages = addTimesToMessages(messages, true);
+    for (ChatMessage message : messages) {
+      mChatMessageList.add(message);
+    }
+    notifyDataSetChanged();
+  }
+
+  @Override
+  public void addMessagesToBegin(List<ChatMessage> messages) {
+    messages = addTimesToMessages(messages, false);
+    for (ChatMessage message : messages) {
+      mChatMessageList.add(message);
+    }
+    notifyDataSetChanged();
+  }
+
+  @Override
+  public int getSize() {
+    return getItemCount();
+  }
+
+  @Override
+  public boolean hasItemWithId(String guid) {
+    for (int i = mChatMessageList.size() - 1; i >= 0; --i) {
+      if (mChatMessageList.get(i).getGuid().equals(guid)) return true;
     }
 
-    @Override
-    public void addMessage(ChatMessage chatMessage) {
-        long currentTimestamp = chatMessage.getTimestamp();
-        if (mChatMessageList.size() == 0 || getLast() == null
-                || TimestampHelper.datesDiffer(getLast().getTimestamp(), currentTimestamp)){
-            mChatMessageList.add(new ChatMessage(
-                    TimestampHelper.formatTimestampToDate(currentTimestamp),
-                    "",
-                    currentTimestamp,
-                    ChatMessage.Direction.System,
-                    ""
-            ));
-        }
+    return false;
+  }
 
-        mChatMessageList.add(chatMessage);
-
-        notifyDataSetChanged();
+  @Override
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    int layout = -1;
+    ChatMessage.Direction direction;
+    if (viewType == ChatMessage.Direction.Incoming.getIntValue()) {
+      layout = R.layout.item_message_incoming;
+      direction = ChatMessage.Direction.Incoming;
+    } else if (viewType == ChatMessage.Direction.Outcoming.getIntValue()) {
+      layout = R.layout.item_message_outcoming;
+      direction = ChatMessage.Direction.Outcoming;
+    } else {
+      layout = R.layout.item_message_system;
+      direction = ChatMessage.Direction.System;
     }
 
-    @Override
-    public void addMessagesToEnd(List<ChatMessage> messages) {
-        messages = addTimesToMessages(messages, true);
-        for (ChatMessage message : messages) {
-            mChatMessageList.add(message);
-        }
-        notifyDataSetChanged();
-    }
+    View view = LayoutInflater
+        .from(parent.getContext())
+        .inflate(layout, parent, false);
 
-    @Override
-    public void addMessagesToBegin(List<ChatMessage> messages) {
-        messages = addTimesToMessages(messages, false);
-        for (ChatMessage message : messages) {
-            mChatMessageList.add(message);
-        }
-        notifyDataSetChanged();
-    }
+    return new ViewHolder(view, direction);
+  }
 
-    @Override
-    public int getSize() {
-        return getItemCount();
-    }
+  @Override
+  public int getItemViewType(int position) {
+    return mChatMessageList.get(position).getDirection().getIntValue();
+  }
 
-    @Override
-    public boolean hasItemWithId(String guid) {
-        for (int i = mChatMessageList.size() - 1; i >= 0; --i) {
-            if (mChatMessageList.get(i).getGuid().equals(guid)) return true;
-        }
+  @Override
+  public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    //get chatMessage
+    final ChatMessage chatMessage = mChatMessageList.get(position);
 
-        return false;
-    }
+    //set text
+    if (viewHolder.getDirection() == mChatMessageList.get(position).getDirection()) {
+      if (viewHolder.getDirection() != ChatMessage.Direction.System) {
+        viewHolder.setTime(chatMessage.getTime());
+      }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layout = -1;
-        ChatMessage.Direction direction;
-        if (viewType == ChatMessage.Direction.Incoming.getIntValue()) {
-            layout = R.layout.item_message_incoming;
-            direction = ChatMessage.Direction.Incoming;
-        } else if (viewType == ChatMessage.Direction.Outcoming.getIntValue()) {
-            layout = R.layout.item_message_outcoming;
-            direction = ChatMessage.Direction.Outcoming;
+      if (viewHolder.getDirection() == ChatMessage.Direction.Incoming) {
+        if (mIsGroup) {
+          viewHolder.setSender(chatMessage.getSender());
         } else {
-            layout = R.layout.item_message_system;
-            direction = ChatMessage.Direction.System;
+          viewHolder.hideSenderTextView();
         }
+      }
 
-        View view = LayoutInflater
-                .from(parent.getContext())
-                .inflate(layout, parent, false);
-
-        return new ViewHolder(view, direction);
+      viewHolder.setMessage(chatMessage.getContent());
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return mChatMessageList.get(position).getDirection().getIntValue();
-    }
+    //create alert item_dialog
+    if (viewHolder.getDirection() != ChatMessage.Direction.System) {
 
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        //get chatMessage
-        final ChatMessage chatMessage = mChatMessageList.get(position);
-
-        //set text
-        if (viewHolder.getDirection() == mChatMessageList.get(position).getDirection()) {
-            if (viewHolder.getDirection() != ChatMessage.Direction.System) {
-                viewHolder.setTime(chatMessage.getTime());
+      final AlertDialog.Builder builder = new AlertDialog.Builder(
+          new ContextThemeWrapper(mContext, android.R.style.Theme_DeviceDefault_Light_Dialog));
+      builder.setTitle("Message");
+      final ArrayAdapter<String> arrayAdapter =
+          new ArrayAdapter<>(mContext, android.R.layout.select_dialog_item);
+      arrayAdapter.add("Copy");
+      builder.setAdapter(
+          arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              String name = arrayAdapter.getItem(which);
+              if (name != null && name.equals("Copy")) {
+                ClipboardManager clipboardManager = (ClipboardManager)
+                    mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("chatMessage", chatMessage.getContent());
+                clipboardManager.setPrimaryClip(clip);
+              }
             }
+          });
+      final AlertDialog alert = builder.create();
+      alert.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-            if (viewHolder.getDirection() == ChatMessage.Direction.Incoming){
-                if (mIsGroup){
-                    viewHolder.setSender(chatMessage.getSender());
-                } else {
-                    viewHolder.hideSenderTextView();
-                }
-            }
+      //show alertDialog on click
+      viewHolder.setMessageTextViewOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          alert.show();
+        }
+      });
+    }
+  }
 
-            viewHolder.setMessage(chatMessage.getContent());
+
+  @Override
+  public int getItemCount() {
+    return mChatMessageList.size();
+  }
+
+  private List<ChatMessage> addTimesToMessages(List<ChatMessage> messages, boolean addToEnd) {
+    List<ChatMessage> messagesWithDates = new ArrayList<>();
+
+    for (int i = 0; i < messages.size(); ++i) {
+      ChatMessage currentMessage = messages.get(i);
+      if (currentMessage != null) {
+        long currentTimestamp = currentMessage.getTimestamp();
+        boolean addCurrent = false;
+
+
+        if (addToEnd) {
+          if (messagesWithDates.size() == 0 && mChatMessageList.size() == 0) {
+            addCurrent = true;
+          } else if (messagesWithDates.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
+              messagesWithDates.get(messagesWithDates.size() - 1).getTimestamp())) {
+            addCurrent = true;
+          } else if (mChatMessageList.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
+              mChatMessageList.get(mChatMessageList.size() - 1).getTimestamp())) {
+            addCurrent = true;
+          }
         }
 
-        //create alert item_dialog
-        if (viewHolder.getDirection() != ChatMessage.Direction.System) {
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(
-                    new ContextThemeWrapper(mContext, android.R.style.Theme_DeviceDefault_Light_Dialog));
-            builder.setTitle("Message");
-            final ArrayAdapter<String> arrayAdapter =
-                    new ArrayAdapter<>(mContext, android.R.layout.select_dialog_item);
-            arrayAdapter.add("Copy");
-            builder.setAdapter(
-                    arrayAdapter, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String name = arrayAdapter.getItem(which);
-                            if (name != null && name.equals("Copy")) {
-                                ClipboardManager clipboardManager = (ClipboardManager)
-                                        mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clip = ClipData.newPlainText("chatMessage", chatMessage.getContent());
-                                clipboardManager.setPrimaryClip(clip);
-                            }
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-            //show alertDialog on click
-            viewHolder.setMessageTextViewOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    alert.show();
-                }
-            });
+        if (addCurrent) {
+          messagesWithDates.add(new ChatMessage(
+              TimestampHelper.formatTimestampToDate(currentTimestamp),
+              "",
+              currentTimestamp,
+              ChatMessage.Direction.System,
+              ""
+          ));
         }
+
+        messagesWithDates.add(messages.get(i));
+      }
     }
 
+    return messagesWithDates;
+  }
 
-    @Override
-    public int getItemCount() {
-        return mChatMessageList.size();
+  private ChatMessage getLast() {
+    if (mChatMessageList.size() == 0) {
+      return null;
+    } else {
+      return mChatMessageList.get(mChatMessageList.size() - 1);
+    }
+  }
+
+  private ChatMessage getFirst() {
+    if (mChatMessageList.size() == 0) {
+      return null;
+    } else {
+      return mChatMessageList.get(0);
+    }
+  }
+
+  class ViewHolder extends RecyclerView.ViewHolder {
+    private TextView messageTextView;
+    private TextView timeTextView;
+    private TextView senderTextView;
+    private ChatMessage.Direction direction;
+
+    private ViewHolder(View view, ChatMessage.Direction direction) {
+      super(view);
+      this.direction = direction;
+      messageTextView = (TextView) view.findViewById(R.id.message_message_text_view);
+      timeTextView = (TextView) view.findViewById(R.id.message_time_text_view);
+      senderTextView = (TextView) view.findViewById(R.id.message_sender_text_view);
     }
 
-    private List<ChatMessage> addTimesToMessages(List<ChatMessage> messages, boolean addToEnd) {
-        List<ChatMessage> messagesWithDates = new ArrayList<>();
-
-        for (int i = 0; i < messages.size(); ++i) {
-            ChatMessage currentMessage = messages.get(i);
-            if (currentMessage != null) {
-                long currentTimestamp = currentMessage.getTimestamp();
-                boolean addCurrent = false;
-
-
-                if (addToEnd) {
-                    if (messagesWithDates.size() == 0 && mChatMessageList.size() == 0){
-                        addCurrent = true;
-                    } else if (messagesWithDates.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
-                            messagesWithDates.get(messagesWithDates.size() - 1).getTimestamp())) {
-                        addCurrent = true;
-                    } else if (mChatMessageList.size() != 0 && TimestampHelper.datesDiffer(currentTimestamp,
-                            mChatMessageList.get(mChatMessageList.size() - 1).getTimestamp())){
-                        addCurrent = true;
-                    }
-                }
-
-                if (addCurrent) {
-                    messagesWithDates.add(new ChatMessage(
-                            TimestampHelper.formatTimestampToDate(currentTimestamp),
-                            "",
-                            currentTimestamp,
-                            ChatMessage.Direction.System,
-                            ""
-                    ));
-                }
-
-                messagesWithDates.add(messages.get(i));
-            }
-        }
-
-        return messagesWithDates;
+    private void setMessage(String message) {
+      if (messageTextView != null) messageTextView.setText(message);
     }
 
-    private ChatMessage getLast() {
-        if (mChatMessageList.size() == 0) {
-            return null;
-        } else {
-            return mChatMessageList.get(mChatMessageList.size() - 1);
-        }
+    private void setTime(String time) {
+      if (timeTextView != null) timeTextView.setText(time);
     }
 
-    private ChatMessage getFirst() {
-        if (mChatMessageList.size() == 0) {
-            return null;
-        } else {
-            return mChatMessageList.get(0);
-        }
+    private void setSender(String sender) {
+      if (senderTextView != null) {
+        senderTextView.setText(sender);
+        senderTextView.setVisibility(View.VISIBLE);
+      }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView messageTextView;
-        private TextView timeTextView;
-        private TextView senderTextView;
-        private ChatMessage.Direction direction;
-
-        private ViewHolder(View view, ChatMessage.Direction direction) {
-            super(view);
-            this.direction = direction;
-            messageTextView = (TextView) view.findViewById(R.id.message_message_text_view);
-            timeTextView = (TextView) view.findViewById(R.id.message_time_text_view);
-            senderTextView = (TextView) view.findViewById(R.id.message_sender_text_view);
-        }
-
-        private void setMessage(String message) {
-            if (messageTextView != null) messageTextView.setText(message);
-        }
-
-        private void setTime(String time) {
-            if (timeTextView != null) timeTextView.setText(time);
-        }
-
-        private void setSender(String sender){
-            if (senderTextView != null) senderTextView.setText(sender);
-        }
-
-        private void setMessageTextViewOnClickListener(View.OnClickListener listener) {
-            messageTextView.setOnClickListener(listener);
-        }
-
-        private void hideSenderTextView(){
-            senderTextView.setVisibility(View.GONE);
-        }
-
-        private ChatMessage.Direction getDirection() {
-            return direction;
-        }
+    private void setMessageTextViewOnClickListener(View.OnClickListener listener) {
+      messageTextView.setOnClickListener(listener);
     }
+
+    private void hideSenderTextView() {
+      senderTextView.setVisibility(View.GONE);
+    }
+
+    private ChatMessage.Direction getDirection() {
+      return direction;
+    }
+  }
 
 }

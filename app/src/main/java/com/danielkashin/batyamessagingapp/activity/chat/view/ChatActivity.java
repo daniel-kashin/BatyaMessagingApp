@@ -22,6 +22,7 @@ import com.danielkashin.batyamessagingapp.activity.chat.presenter.ChatPresenter;
 import com.danielkashin.batyamessagingapp.activity.chat.presenter.ChatService;
 import com.danielkashin.batyamessagingapp.activity.dialog_settings.view.DialogSettingsActivity;
 import com.danielkashin.batyamessagingapp.activity.main.view.MainActivity;
+import com.danielkashin.batyamessagingapp.model.PreferencesService;
 
 public class ChatActivity extends AppCompatActivity implements ChatView {
 
@@ -33,7 +34,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
   private Toolbar mToolbar;
   private TextView mToolbarLabel;
   private TextView mToolbarSmallLabel;
-  private ImageView mToolbarSettingsIcon;
   private View mToolbarLayout;
   private View mToolbarHiddenLayout;
 
@@ -53,8 +53,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     mDialogId = getIntent().getStringExtra("dialog_id");
     mDialogName = getIntent().getStringExtra("dialog_name");
+    mIsGroup = mDialogId.charAt(0) == '+';
+    mIsChatWithMyself = mDialogId.equals(PreferencesService.getIdFromPreferences());
 
     initializeViews();
+    initializeToolbar();
+    setListeners();
 
     mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
   }
@@ -68,11 +72,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
   @Override
   protected void onResume() {
     super.onResume();
-
-    mPresenter.onInitializeProperties();
-    initializeToolbar();
-    setListeners();
-
     mPresenter.onLoad();
   }
 
@@ -81,6 +80,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     if (item.getItemId() == android.R.id.home) {
       finish();
     }
+
     return super.onOptionsItemSelected(item);
   }
 
@@ -90,11 +90,14 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
   }
 
   @Override
-  public void setProperties(boolean isGroup, boolean isGroupOriginator, boolean isChatWithMyself, int groupCount) {
-    mIsGroup = isGroup;
+  public void setProperties(boolean isGroupOriginator, int groupCount) {
     mIsGroupOriginator = isGroupOriginator;
-    mIsChatWithMyself = isChatWithMyself;
     mGroupCount = groupCount;
+  }
+
+  @Override
+  public boolean isGroup() {
+    return mIsGroup;
   }
 
   @Override
@@ -121,7 +124,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
   @Override
   public void setLoadingToolbarLabelText() {
     if (!mToolbarLabel.getText().toString().equals(getString(R.string.loading)))
-    mToolbarLabel.setText(getString(R.string.loading));
+      mToolbarLabel.setText(getString(R.string.loading));
   }
 
   @Override
@@ -143,7 +146,14 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     return mSendMessageEditText.getText().toString();
   }
 
-
+  @Override
+  public void setToolbarSmallLabelText(){
+    if (mToolbarSmallLabel != null) {
+      mToolbarSmallLabel.setVisibility(View.VISIBLE);
+      mToolbarSmallLabel.setText(mIsChatWithMyself ? "chat with yourself"
+          : mGroupCount + ((mGroupCount % 10 == 1) ? "member" : " members"));
+    }
+  }
 
   private void initializeViews() {
     //recycler view
@@ -157,28 +167,17 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     mSendMessageIcon = (ImageView) findViewById(R.id.chat_send_message_icon);
   }
 
-  private void initializeToolbar(){
+  private void initializeToolbar() {
     mToolbar = (Toolbar) findViewById(R.id.chat_toolbar);
 
     if (mIsChatWithMyself || mIsGroup) {
-      mToolbarSettingsIcon = (ImageView) findViewById(R.id.chat_toolbar_settings_icon);
-      if (mIsGroup){
-        mToolbarSettingsIcon.setVisibility(View.VISIBLE);
-      } else {
-        mToolbarSettingsIcon.setVisibility(View.INVISIBLE);
-      }
-
       mToolbarLayout = findViewById(R.id.chat_toolbar_layout_double);
       mToolbarHiddenLayout = findViewById(R.id.chat_toolbar_layout_single);
-
       mToolbarLabel = (TextView) findViewById(R.id.chat_toolbar_double_label);
       mToolbarSmallLabel = (TextView) findViewById(R.id.chat_toolbar_double_small_label);
-      mToolbarSmallLabel.setText(mIsChatWithMyself ? "chat with yourself"
-          : mGroupCount + ((mGroupCount % 10 == 1) ? "member" : " members"));
     } else {
-      mToolbarHiddenLayout  = findViewById(R.id.chat_toolbar_layout_double);
+      mToolbarHiddenLayout = findViewById(R.id.chat_toolbar_layout_double);
       mToolbarLayout = findViewById(R.id.chat_toolbar_layout_single);
-
       mToolbarLabel = (TextView) findViewById(R.id.chat_toolbar_single_label);
     }
 
@@ -229,19 +228,24 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     mToolbarLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        scrollRecyclerViewToFirst();
+        if (mIsGroup) {
+          Intent intent = new Intent(ChatActivity.this, DialogSettingsActivity.class);
+          intent.putExtra("dialog_id", mDialogId);
+          intent.putExtra("dialog_name", mDialogName);
+          intent.putExtra("is_admin", mIsGroupOriginator);
+          startActivity(intent);
+        } else {
+
+        }
       }
     });
 
-    if (mIsGroupOriginator){
-      mToolbarSettingsIcon.setOnClickListener(new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-          Intent intent = new Intent(ChatActivity.this, DialogSettingsActivity.class);
-          startActivity(intent);
-        }
-      });
-    }
+    mToolbarLayout.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        scrollRecyclerViewToFirst();
+        return true;
+      }
+    });
   }
-
 }

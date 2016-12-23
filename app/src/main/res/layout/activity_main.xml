@@ -46,6 +46,7 @@
                             android:textColor="@color/white" />
 
                         <EditText
+                            android:inputType="textNoSuggestions|textVisiblePassword"
                             android:id="@+id/dialogs_toolbar_edit_text"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -82,7 +83,7 @@
                 android:layout_marginStart="10dp"
                 android:background="@color/white"
                 android:backgroundTint="@color/white"
-                android:paddingEnd="10dp" />
+                android:layout_marginEnd="10dp" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView

@@ -92,11 +92,15 @@ public class NetworkService {
     }
   }
 
-  public static Call<GroupId> getGetNewConferenceIdCall() {
-    return sApiService.getNewConferenceId(getTokenFromPreferences());
+  public static Call<GroupId> getGetNewGroupIdCall() {
+    return sApiService.getNewGroupId(getTokenFromPreferences());
   }
 
-  public static Call<GroupUsers> getGetGroupUsersCall(String conferenceId){
-    return sApiService.getGroupUsers(getTokenFromPreferences(), conferenceId);
+  public static Call<GroupUsers> getGetGroupUsersCall(String groupId){
+    return sApiService.getGroupUsers(getTokenFromPreferences(), groupId);
+  }
+
+  public static Call<ResponseBody> getLeaveGroupCall(String groupId){
+    return sApiService.leaveGroup(getTokenFromPreferences(), groupId);
   }
 }

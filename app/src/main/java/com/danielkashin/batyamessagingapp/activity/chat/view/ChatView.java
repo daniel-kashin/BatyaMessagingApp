@@ -6,8 +6,7 @@ package com.danielkashin.batyamessagingapp.activity.chat.view;
  */
 
 public interface ChatView {
-  void setProperties(boolean isGroup, boolean isGroupOriginator,
-                     boolean isChatWithMyself, int groupCount);
+  void setProperties(boolean isGroupOriginator, int groupCount);
 
   String getInputMessage();
 
@@ -24,4 +23,8 @@ public interface ChatView {
   void setNoInternetToolbarLabelText();
 
   void openDialogsActivity();
+
+  void setToolbarSmallLabelText();
+
+  boolean isGroup();
 }

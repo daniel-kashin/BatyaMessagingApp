@@ -72,8 +72,11 @@ public interface APIService {
                                     @Body NewUsername newUsername);
 
   @POST("/{token}/conferences/create")
-  Call<GroupId> getNewConferenceId(@Path("token") String token);
+  Call<GroupId> getNewGroupId(@Path("token") String token);
 
-  @POST("/{token}/conferences/{conference_id}/user_list")
-  Call<GroupUsers> getGroupUsers(@Path("token") String token, @Path("conference_id") String conferenceId);
+  @POST("/{token}/conferences/{group_id}/user_list")
+  Call<GroupUsers> getGroupUsers(@Path("token") String token, @Path("group_id") String groupId);
+
+  @POST("/{token}/conferences/{group_id}/leave")
+  Call<ResponseBody> leaveGroup(@Path("token") String token, @Path("group_id") String groupId);
 }

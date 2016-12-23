@@ -83,6 +83,7 @@ public class ChatService implements ChatPresenter {
   public void onSendMessageButtonClick() {
     if (mView.getInputMessage() != null && !mView.getInputMessage().isEmpty()) {
       currentMessage = mView.getInputMessage();
+      mView.clearMessageEditText();
 
       BasicAsyncTask.AsyncTaskCompleteListener
           <Pair<Timestamp, BasicAsyncTask.ErrorType>> callback =
@@ -119,7 +120,9 @@ public class ChatService implements ChatPresenter {
   @Override
   public void onLoad() {
     if (!mInitialized) {
-      mView.setLoadingToolbarLabelText();
+      if (onInitializeProperties(mView.isGroup())) {
+        mView.setLoadingToolbarLabelText();
+      }
 
       BasicAsyncTask.AsyncTaskCompleteListener
           <Pair<MessageArray, BasicAsyncTask.ErrorType>> callback =
@@ -165,10 +168,10 @@ public class ChatService implements ChatPresenter {
   }
 
   @Override
-  public void onInitializeProperties() {
-    boolean isGroup = mDialogId.charAt(0) == '+';
+  public boolean onInitializeProperties(boolean isGroup) {
+    boolean success;
+
     boolean isGroupOriginator = false;
-    boolean isChatWithMyself = false;
     int groupCount = -1;
 
     if (isGroup){
@@ -182,27 +185,35 @@ public class ChatService implements ChatPresenter {
             ).execute().get();
 
         if (result.second == BasicAsyncTask.ErrorType.NoError){
-          if (result.first.getOriginatorId()
-              .equals(PreferencesService.getIdFromPreferences())){
+          if (result.first.getOriginatorId() != null &&
+              result.first.getOriginatorId().equals(PreferencesService.getIdFromPreferences())){
             isGroupOriginator = true;
           }
-          groupCount = result.first.getUsers().size() + 1;
+          if (result.first.getUsers() != null) {
+            groupCount = result.first.getUsers().size() + 1;
+          } else {
+            groupCount = 1;
+          }
+          mView.setProperties(isGroupOriginator, groupCount);
+          mView.setToolbarSmallLabelText();
+          success = true;
         } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection){
           mView.setNoInternetToolbarLabelText();
-          onInitializeProperties();
+          success = false;
         } else {
           mView.openDialogsActivity();
+          success = false;
         }
       } catch (ExecutionException | InterruptedException e){
         mView.openDialogsActivity();
+        success = false;
       }
+    } else {
+      mView.setProperties(isGroupOriginator, groupCount);
+      success = true;
     }
 
-    if (!isGroup){
-      isChatWithMyself = mDialogId.equals(PreferencesService.getIdFromPreferences());
-    }
-
-    mView.setProperties(isGroup, isGroupOriginator, isChatWithMyself, groupCount);
+    return success;
   }
 
 

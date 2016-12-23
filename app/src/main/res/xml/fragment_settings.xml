@@ -8,6 +8,7 @@
             android:summary="Id (cannot be changed)"
             android:key="id"/>
         <android.support.v7.preference.Preference
+            android:title="..."
             android:summary="Username"
             android:key="change_username"/>
         <android.support.v7.preference.Preference

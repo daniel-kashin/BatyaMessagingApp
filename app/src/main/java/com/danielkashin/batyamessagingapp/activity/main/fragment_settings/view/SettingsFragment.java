@@ -10,8 +10,10 @@ import android.text.InputType;
 import android.util.Pair;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.danielkashin.batyamessagingapp.R;
+import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.adapter.Dialog;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_settings.presenter.SettingsPresenter;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_settings.presenter.SettingsService;
 import com.danielkashin.batyamessagingapp.activity.main.view.MainView;
@@ -49,6 +51,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
     mPresenter = new SettingsService(this, getActivity());
 
     initializeViews();
+    setChangeUsernameButtonData();
+    setOnClickListeners();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    if (activityInitialized()) {
+      mActivity.hideSearch();
+      mActivity.clearOnToolbarTextListener();
+    }
+
+    mPresenter.onResume();
   }
 
   @Override
@@ -67,26 +83,23 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    setOnClickListeners();
-    setChangeUsernameButtonData();
-    if (activityInitialized()) {
-      mActivity.hideSearch();
-      mActivity.clearOnToolbarTextListener();
-    }
-    mPresenter.onResume();
-  }
-
-  @Override
   public void showAlert(String message, String title) {
     if (activityInitialized()) mActivity.showAlert(message, title);
   }
 
   @Override
+  public void showToast(String message) {
+    if (activityInitialized()){
+      Toast.makeText((Context)mActivity, message, Toast.LENGTH_LONG)
+          .show();
+    }
+  }
+
+  @Override
   public void setCommonToolbarLabelText() {
-    if (activityInitialized())
+    if (activityInitialized()) {
       mActivity.setToolbarLabelText(getString(R.string.fragment_settings_title));
+    }
   }
 
   private boolean activityInitialized() {
@@ -104,26 +117,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
   }
 
   private void setChangeUsernameButtonData() {
-    try {
-        Pair<DialogName, BasicAsyncTask.ErrorType> result =
-          new BasicAsyncTask<DialogName>(
-              NetworkService.getGetDialogNameCall(PreferencesService.getIdFromPreferences()),
-              null, false, null)
-              .execute()
-              .get();
-
-        if (result.second == BasicAsyncTask.ErrorType.NoAccess){
-          mActivity.openAuthenticationActivity();
-        } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection){
-          if (activityInitialized()) {
-            mChangeUsernameButton.setTitle(((Context)mActivity).getString(R.string.no_internet_connection));
+    BasicAsyncTask.AsyncTaskCompleteListener
+        <Pair<DialogName, BasicAsyncTask.ErrorType>> callback =
+        new BasicAsyncTask.AsyncTaskCompleteListener<Pair<DialogName, BasicAsyncTask.ErrorType>>() {
+          @Override
+          public void onTaskComplete(Pair<DialogName, BasicAsyncTask.ErrorType> result) {
+            if (result.second == BasicAsyncTask.ErrorType.NoAccess) {
+              mActivity.openAuthenticationActivity();
+            } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
+              if (activityInitialized()) {
+                mChangeUsernameButton.setTitle(((Context) mActivity).getString(R.string.no_internet_connection));
+              }
+            } else {
+              mChangeUsernameButton.setTitle(result.first.getDialogName());
+            }
           }
-        } else {
-          mChangeUsernameButton.setTitle(result.first.getDialogName());
-        }
-    } catch (ExecutionException | InterruptedException e) {
-      openAuthenticationActivity();
-    }
+        };
+
+
+    new BasicAsyncTask<DialogName>(
+        NetworkService.getGetDialogNameCall(PreferencesService.getIdFromPreferences()),
+        null, false, callback)
+        .execute();
   }
 
   private void setOnClickListeners() {
@@ -202,7 +217,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                         } else if (result.second == BasicAsyncTask.ErrorType.NoAccess) {
                           showAlert("Wrong password", "Error");
                         } else {
-                          showAlert("Your password was successfully changed", "Success");
+                          showToast("Your password was successfully changed");
                           setChangeUsernameButtonData();
                         }
                       }
@@ -276,7 +291,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                         } else if (result.second == BasicAsyncTask.ErrorType.NoAccess) {
                           showAlert("Please, try again later or choose different username", "Error");
                         } else {
-                          showAlert("Your username was successfully changed", "Success");
+                          showToast("Your username was successfully changed");
                           setChangeUsernameButtonData();
                         }
                       }

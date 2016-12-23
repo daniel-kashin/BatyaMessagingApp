@@ -13,6 +13,6 @@ public interface ChatPresenter {
 
   boolean initialized();
 
-  void onInitializeProperties();
+  boolean onInitializeProperties(boolean isGroup);
 }
 

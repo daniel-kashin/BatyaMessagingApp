@@ -22,8 +22,6 @@ import java.util.List;
  * Created by Кашин on 25.11.2016.
  */
 
-//TODO: add separator
-
 public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder>
     implements DialogsDataModel {
 

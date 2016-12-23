@@ -25,113 +25,115 @@ import com.danielkashin.batyamessagingapp.lib.SimpleDividerItemDecoration;
 
 public class DialogsFragment extends Fragment implements DialogsView {
 
-    private RecyclerView mRecyclerView;
-    private TextView mNoDialogsTextView;
-    private ProgressBar mProgressBar;
-    private View mRootView;
+  private RecyclerView mRecyclerView;
+  private TextView mNoDialogsTextView;
+  private ProgressBar mProgressBar;
+  private View mRootView;
 
-    private DialogsPresenter mPresenter;
-    private MainView mActivity;
+  private DialogsPresenter mPresenter;
+  private MainView mActivity;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
+    mActivity = (MainView) getActivity();
+    mRootView = inflater.inflate(R.layout.fragment_view_dialogs, null);
+
+    initializeViews(mRootView);
+    initializeRecyclerView(mRootView);
+
+    mPresenter = new DialogsService(this, (Context) mActivity, (DialogsDataModel) mRecyclerView.getAdapter());
+
+    return mRootView;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    if (activityInitialized()) {
+      mActivity.hideSearch();
+      mActivity.clearOnToolbarTextListener();
+      setCommonToolbarLabelText();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mActivity = (MainView)getActivity();
-        mRootView = inflater.inflate(R.layout.fragment_view_dialogs, null);
+    mPresenter.onLoad();
+  }
 
-        initializeViews(mRootView);
-        initializeRecyclerView(mRootView);
+  @Override
+  public void onPause() {
+    super.onPause();
+    mPresenter.onPause();
+  }
 
-        mPresenter = new DialogsService(this, (Context)mActivity, (DialogsDataModel)mRecyclerView.getAdapter());
+  @Override
+  public void openAuthenticationActivity() {
+    if (activityInitialized()) mActivity.openAuthenticationActivity();
+  }
 
-        return mRootView;
-    }
+  @Override
+  public void openChatActivity(String dialogId, String dialogName) {
+    if (activityInitialized()) mActivity.openChatActivity(dialogId, dialogName);
+  }
 
-    @Override
-    public void openAuthenticationActivity() {
-        if (activityInitialized()) mActivity.openAuthenticationActivity();
-    }
+  @Override
+  public void setNoInternetToolbarLabelText() {
+    if (activityInitialized())
+      mActivity.setToolbarLabelText(getString(R.string.waiting_for_connection));
+  }
 
-    @Override
-    public void openChatActivity(String dialogId, String dialogName) {
-        if (activityInitialized()) mActivity.openChatActivity(dialogId, dialogName);
-    }
+  @Override
+  public void setCommonToolbarLabelText() {
+    if (activityInitialized())
+      mActivity.setToolbarLabelText(getString(R.string.fragment_messages_title));
+  }
 
-    @Override
-    public void setNoInternetToolbarLabelText() {
-        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.waiting_for_connection));
-    }
+  @Override
+  public void showProgressBar() {
+    mProgressBar.setVisibility(View.VISIBLE);
+  }
 
-    @Override
-    public void setCommonToolbarLabelText(){
-        if (activityInitialized()) mActivity.setToolbarLabelText(getString(R.string.fragment_messages_title));
-    }
+  @Override
+  public void hideProgressBar() {
+    mProgressBar.setVisibility(View.INVISIBLE);
+  }
 
-    @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
+  private void initializeViews(View rootView) {
+    mNoDialogsTextView = (TextView) rootView.findViewById(R.id.dialogs_no_dialogs_text_view);
+    mProgressBar = (ProgressBar) rootView.findViewById(R.id.dialogs_progress_bar);
+  }
 
-    @Override
-    public void hideProgressBar() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-    }
+  @Override
+  public void hideNoDialogsTextView() {
+    mNoDialogsTextView.setVisibility(View.INVISIBLE);
+  }
 
-    private void initializeViews(View rootView){
-        mNoDialogsTextView = (TextView)rootView.findViewById(R.id.dialogs_no_dialogs_text_view);
-        mProgressBar = (ProgressBar)rootView.findViewById(R.id.dialogs_progress_bar);
-    }
+  @Override
+  public void showNoDialogsTextView() {
+    mNoDialogsTextView.setVisibility(View.VISIBLE);
+  }
 
-    @Override
-    public void onResume(){
-        super.onResume();
+  private boolean activityInitialized() {
+    return isAdded() && getActivity() != null;
+  }
 
-        if (activityInitialized()) {
-            mActivity.hideSearch();
-            mActivity.clearOnToolbarTextListener();
-            setCommonToolbarLabelText();
-        }
+  private void initializeRecyclerView(View rootView) {
+    mRecyclerView = (RecyclerView) rootView.findViewById(R.id.dialog_recycler_view);
 
-        mPresenter.onLoad();
-    }
+    LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
+        LinearLayoutManager.VERTICAL, false);
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        mPresenter.onPause();
-    }
+    mRecyclerView.setLayoutManager(manager);
 
-    @Override
-    public void hideNoDialogsTextView() {
-        mNoDialogsTextView.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void showNoDialogsTextView() {
-        mNoDialogsTextView.setVisibility(View.VISIBLE);
-    }
-
-    private boolean activityInitialized(){
-        return isAdded() && getActivity()!= null;
-    }
-
-    private void initializeRecyclerView(View rootView){
-        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.dialog_recycler_view);
-
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL,false);
-
-        mRecyclerView.setLayoutManager(manager);
-
-        DialogAdapter adapter = new DialogAdapter(getActivity());
-        mRecyclerView.setAdapter(adapter);
+    DialogAdapter adapter = new DialogAdapter(getActivity());
+    mRecyclerView.setAdapter(adapter);
 
 
-        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-    }
+    mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+  }
 }

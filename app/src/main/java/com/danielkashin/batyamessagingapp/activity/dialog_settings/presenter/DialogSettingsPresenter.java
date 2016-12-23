@@ -5,4 +5,11 @@ package com.danielkashin.batyamessagingapp.activity.dialog_settings.presenter;
  */
 
 public interface DialogSettingsPresenter {
+  void onConfirmIconClick(String newDialogName);
+
+  void onLeaveButtonClick();
+
+  void onAddButtonClick();
+
+  void onLoad();
 }

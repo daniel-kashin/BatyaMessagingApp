@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp">
+
+    <ImageView
+        android:id="@+id/user_image_view"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginEnd="15dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <TextView
+                android:layout_weight="1"
+                android:scrollHorizontally="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+                android:textSize="@dimen/dialog_username_text_size"
+                android:fontFamily="sans-serif"
+                android:id="@+id/user_username_text_view"
+                android:textColor="@color/primary_text"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="@dimen/dialog_message_text_size"
+                android:id="@+id/user_id_text_view"
+                android:textColor="@color/hint_text"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingEnd="10dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginStart="10dp"
+            android:gravity="end|center_vertical"
+            android:textSize="@dimen/dialog_time_text_size"
+            android:scrollHorizontally="true"
+            android:id="@+id/user_date_text_view"
+            android:layout_width="60dp"
+            android:textColor="@color/hint_text"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

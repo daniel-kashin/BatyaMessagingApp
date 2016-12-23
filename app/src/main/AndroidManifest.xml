@@ -30,6 +30,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:theme="@style/AppTheme.Inversed"
+            android:windowSoftInputMode="adjustNothing"
             android:name="com.danielkashin.batyamessagingapp.activity.dialog_settings.view.DialogSettingsActivity">
         </activity>
     </application>

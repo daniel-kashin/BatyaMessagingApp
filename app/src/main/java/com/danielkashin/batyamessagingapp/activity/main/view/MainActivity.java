@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -375,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
               };
 
           new BasicAsyncTask<GroupId>(
-              NetworkService.getGetNewConferenceIdCall(),
+              NetworkService.getGetNewGroupIdCall(),
               MainActivity.this,
               false,
               createGroupCallback
@@ -423,19 +424,40 @@ public class MainActivity extends AppCompatActivity implements MainView {
       holder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+          Handler handler = new Handler();
           if (holder.getAdapterPosition() == 0) {         // new conference
-            handleCreateNewConference();
+            mDrawerLayout.closeDrawers();
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                handleCreateNewConference();
+              }
+            }, 200);
           } else if (holder.getAdapterPosition() == 1) {  // new chat
             mDrawerLayout.closeDrawers();
-            applyFragment(new SearchFragment());
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                applyFragment(new SearchFragment());
+              }
+            }, 100);
           } else if (holder.getAdapterPosition() == 2) {  // messages
             mDrawerLayout.closeDrawers();
-            applyFragment(new DialogsFragment());
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                applyFragment(new DialogsFragment());
+              }
+            }, 300);
           } else {                                        // settings
             mDrawerLayout.closeDrawers();
-            applyFragment(new SettingsFragment());
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                applyFragment(new SettingsFragment());
+              }
+            }, 350);
           }
-          mDrawerLayout.closeDrawers();
         }
       });
     }

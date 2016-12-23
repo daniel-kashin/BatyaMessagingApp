@@ -122,7 +122,8 @@ public class DialogsService implements DialogsPresenter {
       if (result.second == BasicAsyncTask.ErrorType.NoError) {
         mView.setCommonToolbarLabelText();
 
-        addDialogArrayToAdapter(result.first.getDialogs());
+        addDialogArrayToAdapter(result.first.getDialogs(),
+            result.first.getDialogs().size() < 25);
 
         if (mDataModel.getSize() != 0) {
           mView.hideNoDialogsTextView();
@@ -153,7 +154,7 @@ public class DialogsService implements DialogsPresenter {
     }
   }
 
-  private void addDialogArrayToAdapter(ArrayList<PairLastMessageDialogId> dialogs)
+  private void addDialogArrayToAdapter(ArrayList<PairLastMessageDialogId> dialogs, boolean refresh)
       throws InterruptedException, ExecutionException, IOException {
     if (dialogs.size() != 0 && !mDataModel.noChanges(dialogs)) {
       for (int i = dialogs.size() - 1; i >= 0; --i) {
@@ -204,7 +205,7 @@ public class DialogsService implements DialogsPresenter {
         }
       }//for
 
-      mDataModel.refresh();
+      if (refresh) mDataModel.refresh();
     }
   }
 }

@@ -1,13 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_dialog_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    android:background="@color/shadow_end"
     tools:context="com.danielkashin.batyamessagingapp.activity.dialog_settings.view.DialogSettingsActivity">
 
-</RelativeLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/dialog_settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/indigo_400"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white">
+
+        <RelativeLayout
+            android:id="@+id/dialog_settings_toolbar_relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/dialog_settings_toolbar_label"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_toStartOf="@+id/dialogs_toolbar_clear_icon"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:background="@color/white"
+        android:paddingBottom="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/dialog_settings_username_layout"
+                    style="@style/AuthInputLayout.Inversed"
+                    android:layout_toStartOf="@+id/dialog_settings_confirm_icon"
+                    android:layout_width="match_parent"
+                    android:paddingTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true"
+                    app:errorEnabled="false"
+                    app:errorTextAppearance="@style/AppTheme.TextErrorAppearance">
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/dialog_settings_username_edit_text"
+                        style="@style/AuthInputInversed"
+                        android:layout_height="41dp"
+                        android:hint="Group name"
+                        android:inputType="textNoSuggestions|textVisiblePassword"
+                        android:layout_width="match_parent" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+
+            <ImageView
+                android:paddingTop="10dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/dialog_settings_confirm_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:background="@mipmap/assert_confirm"
+                android:padding="5dp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/dialog_settings_main_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="20dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/dialog_settings_add_button"
+        android:background="@color/white"
+        android:text="add users"
+        android:textColor="@color/primary_text"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:background="@color/white"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/dialog_settings_users_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
+    <Button
+        android:id="@+id/dialog_settings_leave_button"
+        android:background="@color/white"
+        android:textColor="@color/error"
+        android:text="leave the group"
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_height="50dp" />
+</LinearLayout>

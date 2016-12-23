@@ -38,6 +38,7 @@
                 android:typeface="monospace" />
 
             <android.support.design.widget.TextInputLayout
+                style="@style/AuthInputLayout"
                 android:id="@+id/authentication_username_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,6 +55,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                style="@style/AuthInputLayout"
                 android:id="@+id/authentication_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

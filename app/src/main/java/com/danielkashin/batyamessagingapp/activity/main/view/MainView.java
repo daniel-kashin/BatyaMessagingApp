@@ -8,18 +8,31 @@ import android.text.TextWatcher;
  */
 
 public interface MainView {
-    boolean isInputEmpty();
-    void openAuthenticationActivity();
-    void openChatActivity(String dialogId, String dialogName);
-    void setToolbarLabelText(String newLabel);
-    void showAlert(String message, String title);
-    void startProgressDialog();
-    void stopProgressDialog();
-    ProgressDialog getProgressDialog();
-    void hideSearch();
-    void showClearIcon();
-    void hideClearIcon();
-    void setOnToolbarTextListener(TextWatcher textWatcher);
-    void clearOnToolbarTextListener();
-    void showSearchInterface();
+  boolean isInputEmpty();
+
+  void openAuthenticationActivity();
+
+  void openChatActivity(String dialogId, String dialogName);
+
+  void setToolbarLabelText(String newLabel);
+
+  void showAlert(String message, String title);
+
+  void startProgressDialog();
+
+  void stopProgressDialog();
+
+  ProgressDialog getProgressDialog();
+
+  void hideSearch();
+
+  void showClearIcon();
+
+  void hideClearIcon();
+
+  void setOnToolbarTextListener(TextWatcher textWatcher);
+
+  void clearOnToolbarTextListener();
+
+  void showSearchInterface();
 }
