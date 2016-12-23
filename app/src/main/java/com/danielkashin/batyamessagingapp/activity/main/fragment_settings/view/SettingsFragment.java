@@ -105,13 +105,22 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
   private void setChangeUsernameButtonData() {
     try {
-      mChangeUsernameButton.setTitle(
+        Pair<DialogName, BasicAsyncTask.ErrorType> result =
           new BasicAsyncTask<DialogName>(
               NetworkService.getGetDialogNameCall(PreferencesService.getIdFromPreferences()),
               null, false, null)
               .execute()
-              .get().first
-              .getDialogName());
+              .get();
+
+        if (result.second == BasicAsyncTask.ErrorType.NoAccess){
+          mActivity.openAuthenticationActivity();
+        } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection){
+          if (activityInitialized()) {
+            mChangeUsernameButton.setTitle(((Context)mActivity).getString(R.string.no_internet_connection));
+          }
+        } else {
+          mChangeUsernameButton.setTitle(result.first.getDialogName());
+        }
     } catch (ExecutionException | InterruptedException e) {
       openAuthenticationActivity();
     }

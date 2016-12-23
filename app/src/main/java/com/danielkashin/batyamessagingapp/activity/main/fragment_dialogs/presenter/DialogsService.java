@@ -146,6 +146,7 @@ public class DialogsService implements DialogsPresenter {
         mView.openAuthenticationActivity();
       }
     } catch (InterruptedException | ExecutionException | IOException e) {
+      stopGetDialogsWithInterval();
       mView.openAuthenticationActivity();
     } finally {
       if (initCall) mView.hideProgressBar();
