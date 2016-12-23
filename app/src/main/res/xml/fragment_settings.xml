@@ -29,9 +29,11 @@
         android:title="Support">
         <android.support.v7.preference.Preference
             android:title="Official website"
+            android:summary="Will be added soon"
             android:key="website"/>
         <android.support.v7.preference.Preference
             android:title="Privacy policy"
+            android:summary="Will be added soon"
             android:key="privacy"/>
     </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

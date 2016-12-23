@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.batyamessagingapp.activity.authentication.view.AuthenticationActivity"
+    tools:context="com.danielkashin.batyamessagingapp.activity.authentication.view.AuthenticationActivity"
     android:id="@+id/activity_authentication"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
