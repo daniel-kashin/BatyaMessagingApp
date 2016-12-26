@@ -5,5 +5,5 @@ package com.danielkashin.batyamessagingapp.activity.authentication.presenter;
  */
 
 public interface AuthenticationPresenter {
-    void onButtonClick(int id);
+  void onButtonClick(int id);
 }

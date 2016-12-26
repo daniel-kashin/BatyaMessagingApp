@@ -10,15 +10,15 @@ import java.util.ArrayList;
  */
 
 public class UserIds {
-    @SerializedName("user_ids")
-    @Expose
-    private ArrayList<String> userIds;
+  @SerializedName("user_ids")
+  @Expose
+  private ArrayList<String> userIds;
 
-    public ArrayList<String> toList(){
-        ArrayList<String> output = new ArrayList<>();
-        for (String id : userIds){
-            output.add(id);
-        }
-        return output;
+  public ArrayList<String> toList() {
+    ArrayList<String> output = new ArrayList<>();
+    for (String id : userIds) {
+      output.add(id);
     }
+    return output;
+  }
 }

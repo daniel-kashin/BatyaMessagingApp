@@ -7,5 +7,5 @@ import android.support.v7.widget.RecyclerView;
  */
 
 public interface OnDialogClickListener {
-    void onItemClick(RecyclerView.Adapter adapter, int position);
+  void onItemClick(RecyclerView.Adapter adapter, int position);
 }

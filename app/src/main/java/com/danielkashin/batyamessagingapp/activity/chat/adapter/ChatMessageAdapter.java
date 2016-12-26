@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 public class ChatMessageAdapter
-    extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements MessagesDataModel {
+    extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements ChatMessageDataModel {
 
   private ArrayList<ChatMessage> mChatMessageList;
   private Context mContext;

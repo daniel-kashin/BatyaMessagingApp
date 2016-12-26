@@ -11,15 +11,15 @@ import java.util.ArrayList;
 
 public class MessageArray {
 
-    @SerializedName("messages")
-    @Expose
-    public ArrayList<Message> messages;
+  @SerializedName("messages")
+  @Expose
+  public ArrayList<Message> messages;
 
-    public MessageArray(ArrayList<Message> messages){
-        this.messages = messages;
-    }
+  public MessageArray(ArrayList<Message> messages) {
+    this.messages = messages;
+  }
 
-    public ArrayList<Message> getMessages(){
-        return messages;
-    }
+  public ArrayList<Message> getMessages() {
+    return messages;
+  }
 }

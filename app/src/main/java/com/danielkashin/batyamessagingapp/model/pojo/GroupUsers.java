@@ -19,11 +19,11 @@ public class GroupUsers {
   @Expose
   private ArrayList<GroupUser> users;
 
-  public String getOriginatorId(){
+  public String getOriginatorId() {
     return originatorId;
   }
 
-  public ArrayList<GroupUser> getUsers(){
+  public ArrayList<GroupUser> getUsers() {
     return users;
   }
 

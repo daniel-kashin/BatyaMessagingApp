@@ -9,15 +9,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class GroupId {
 
-    @SerializedName("conference_id")
-    @Expose
-    private final String congerenceId;
+  @SerializedName("conference_id")
+  @Expose
+  private final String congerenceId;
 
-    public GroupId(String congerenceId){
-        this.congerenceId = congerenceId;
-    }
+  public GroupId(String congerenceId) {
+    this.congerenceId = congerenceId;
+  }
 
-    public String toString(){
-        return congerenceId;
-    }
+  public String toString() {
+    return congerenceId;
+  }
 }

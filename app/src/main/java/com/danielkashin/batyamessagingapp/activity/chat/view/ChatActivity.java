@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import com.danielkashin.batyamessagingapp.R;
 import com.danielkashin.batyamessagingapp.activity.chat.adapter.ChatMessageAdapter;
-import com.danielkashin.batyamessagingapp.activity.chat.adapter.MessagesDataModel;
+import com.danielkashin.batyamessagingapp.activity.chat.adapter.ChatMessageDataModel;
 import com.danielkashin.batyamessagingapp.activity.chat.presenter.ChatPresenter;
 import com.danielkashin.batyamessagingapp.activity.chat.presenter.ChatService;
 import com.danielkashin.batyamessagingapp.activity.dialog_settings.view.DialogSettingsActivity;
-import com.danielkashin.batyamessagingapp.activity.main.view.MainActivity;
+import com.danielkashin.batyamessagingapp.activity.user_profile.view.UserProfileActivity;
 import com.danielkashin.batyamessagingapp.model.PreferencesService;
 
 public class ChatActivity extends AppCompatActivity implements ChatView {
@@ -60,7 +60,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     initializeToolbar();
     setListeners();
 
-    mPresenter = new ChatService(this, mDialogId, mDialogName, (MessagesDataModel) mRecyclerView.getAdapter());
+    mPresenter = new ChatService(this, mDialogId, mDialogName, (ChatMessageDataModel) mRecyclerView.getAdapter());
   }
 
   @Override
@@ -90,9 +90,13 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
   }
 
   @Override
-  public void setProperties(boolean isGroupOriginator, int groupCount) {
+  public void setProperties(boolean isGroupOriginator, int groupCount, String dialogName) {
     mIsGroupOriginator = isGroupOriginator;
     mGroupCount = groupCount;
+
+    if (dialogName != null) {
+      mDialogName = dialogName;
+    }
   }
 
   @Override
@@ -136,8 +140,6 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
   @Override
   public void openDialogsActivity() {
-    Intent intent = new Intent(this, MainActivity.class);
-    startActivity(intent);
     finish();
   }
 
@@ -235,7 +237,10 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
           intent.putExtra("is_admin", mIsGroupOriginator);
           startActivity(intent);
         } else {
-
+          Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
+          intent.putExtra("dialog_id", mDialogId);
+          intent.putExtra("dialog_name", mDialogName);
+          startActivity(intent);
         }
       }
     });

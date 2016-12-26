@@ -5,10 +5,15 @@ package com.danielkashin.batyamessagingapp.activity.main.fragment_settings.view;
  */
 
 public interface SettingsView {
-    void openAuthenticationActivity();
-    void startProgressDialog();
-    void stopProgressDialog();
-    void showAlert(String message, String title);
-    void showToast(String message);
-    void setCommonToolbarLabelText();
+  void openAuthenticationActivity();
+
+  void startProgressDialog();
+
+  void stopProgressDialog();
+
+  void showAlert(String message, String title);
+
+  void showToast(String message);
+
+  void setCommonToolbarLabelText();
 }

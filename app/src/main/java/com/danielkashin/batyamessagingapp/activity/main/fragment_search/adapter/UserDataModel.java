@@ -7,9 +7,13 @@ import java.util.ArrayList;
  */
 
 public interface UserDataModel {
-    String getUserIdByPosition(int position);
-    String getUsernameByPosition(int position);
-    void clearUsers();
-    void setUsers(ArrayList<User> users);
-    void setOnUserClickListener(OnUserClickListener onUserClickListener);
+  String getUserIdByPosition(int position);
+
+  String getUsernameByPosition(int position);
+
+  void clearUsers();
+
+  void setUsers(ArrayList<User> users);
+
+  void setOnUserClickListener(OnUserClickListener onUserClickListener);
 }

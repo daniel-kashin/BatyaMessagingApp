@@ -18,16 +18,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danielkashin.batyamessagingapp.R;
+import com.danielkashin.batyamessagingapp.activity.dialog_add_users.view.DialogAddUsersActivity;
 import com.danielkashin.batyamessagingapp.activity.dialog_settings.adapter.UserAdapter;
-import com.danielkashin.batyamessagingapp.activity.dialog_settings.adapter.UsersDataModel;
+import com.danielkashin.batyamessagingapp.activity.dialog_settings.adapter.UserDataModel;
 import com.danielkashin.batyamessagingapp.activity.dialog_settings.presenter.DialogSettingsPresenter;
 import com.danielkashin.batyamessagingapp.activity.dialog_settings.presenter.DialogSettingsService;
 import com.danielkashin.batyamessagingapp.activity.main.view.MainActivity;
+import com.danielkashin.batyamessagingapp.activity.user_profile.view.UserProfileActivity;
 import com.danielkashin.batyamessagingapp.lib.CircleBitmapFactory;
 
 import java.util.regex.Pattern;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class DialogSettingsActivity extends AppCompatActivity implements DialogSettingsView {
 
@@ -58,7 +61,7 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
     initializeViews();
     setListeners();
 
-    mPresenter = new DialogSettingsService(this, mDialogId, (UsersDataModel)mRecyclerView.getAdapter());
+    mPresenter = new DialogSettingsService(this, mDialogId, (UserDataModel)mRecyclerView.getAdapter());
   }
 
   @Override
@@ -77,8 +80,12 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
 
 
   @Override
-  public void setDialogUsername(String newDialogUsername) {
-    mDialogName = newDialogUsername;
+  public void setDialogName(String newDialogName) {
+    mDialogName = newDialogName;
+
+    String firstLetter = CircleBitmapFactory.getFirstLetter(mDialogName);
+    int color = CircleBitmapFactory.getMaterialColor(mDialogId.hashCode());
+    mMainIcon.setImageBitmap(CircleBitmapFactory.generateCircleBitmap(this, color, 80, firstLetter));
   }
 
   @Override
@@ -112,6 +119,14 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
   }
 
   @Override
+  public void openUserProfileActivity(String id, String username) {
+    Intent intent = new Intent(this, UserProfileActivity.class);
+    intent.putExtra("dialog_id", id);
+    intent.putExtra("dialog_name", username);
+    startActivity(intent);
+  }
+
+  @Override
   public boolean isAdmin() {
     return mIsAdmin;
   }
@@ -123,7 +138,7 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
 
   @Override
   public void setCommonToolbarLabel() {
-    mToolbarLabel.setText("Group");
+    mToolbarLabel.setText("Group settings");
   }
 
   @Override
@@ -169,18 +184,13 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
       getSupportActionBar().setHomeButtonEnabled(true);
     }
     mToolbarLabel = (TextView) findViewById(R.id.dialog_settings_toolbar_label);
-    mToolbarLabel.setText("Group");
+    mToolbarLabel.setText("Group settings");
 
     mConfirmIcon = (ImageView) findViewById(R.id.dialog_settings_confirm_icon);
     mConfirmIcon.setVisibility(GONE);
 
     mDialogNameEditText = (EditText) findViewById(R.id.dialog_settings_username_edit_text);
     mDialogNameEditText.setText(mDialogName);
-    if (mIsAdmin) {
-      mDialogNameEditText.setEnabled(true);
-    } else {
-      mDialogNameEditText.setEnabled(false);
-    }
 
     mMainIcon = (ImageView) findViewById(R.id.dialog_settings_main_icon);
     String firstLetter = CircleBitmapFactory.getFirstLetter(mDialogName);
@@ -190,21 +200,20 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
     mAddButton = (Button) findViewById(R.id.dialog_settings_add_button);
     mLeaveButton = (Button) findViewById(R.id.dialog_settings_leave_button);
 
+
     if (mIsAdmin){
+      mAddButton.setVisibility(VISIBLE);
       mLeaveButton.setVisibility(GONE);
+      mDialogNameEditText.setEnabled(true);
+    } else {
+      mAddButton.setVisibility(View.GONE);
+      mLeaveButton.setVisibility(VISIBLE);
+      mDialogNameEditText.setEnabled(false);
     }
   }
 
   private void setListeners() {
-    mLeaveButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        mPresenter.onLeaveButtonClick();
-      }
-    });
-
     if (mIsAdmin) {
-
       mDialogNameEditText.addTextChangedListener(new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -217,7 +226,7 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
         @Override
         public void afterTextChanged(Editable s) {
           if (!s.toString().equals(mDialogName)) {
-            mConfirmIcon.setVisibility(View.VISIBLE);
+            mConfirmIcon.setVisibility(VISIBLE);
           } else {
             mConfirmIcon.setVisibility(GONE);
           }
@@ -236,14 +245,19 @@ public class DialogSettingsActivity extends AppCompatActivity implements DialogS
       mAddButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          mPresenter.onAddButtonClick();
+          Intent intent = new Intent(DialogSettingsActivity.this, DialogAddUsersActivity.class);
+          intent.putExtra("dialog_id", mDialogId);
+          startActivity(intent);
         }
       });
-
-    } else { // isAdmin == false
-      mAddButton.setVisibility(GONE);
+    } else {
+      mLeaveButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          mPresenter.onLeaveButtonClick();
+        }
+      });
     }
   }
-
 
 }

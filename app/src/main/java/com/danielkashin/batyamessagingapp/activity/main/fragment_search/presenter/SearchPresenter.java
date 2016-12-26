@@ -5,5 +5,5 @@ package com.danielkashin.batyamessagingapp.activity.main.fragment_search.present
  */
 
 public interface SearchPresenter {
-    void onResume();
+  void onResume();
 }

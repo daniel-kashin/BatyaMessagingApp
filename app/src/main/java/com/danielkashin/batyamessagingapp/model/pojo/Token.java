@@ -9,11 +9,11 @@ import com.google.gson.annotations.Expose;
 
 public class Token {
 
-    @SerializedName("token")
-    @Expose
-    private String token;
+  @SerializedName("token")
+  @Expose
+  private String token;
 
-    public String getValue() {
-        return token;
-    }
+  public String getValue() {
+    return token;
+  }
 }

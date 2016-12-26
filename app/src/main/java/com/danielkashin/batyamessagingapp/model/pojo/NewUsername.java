@@ -9,12 +9,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class NewUsername {
 
-    @SerializedName("new_name")
-    @Expose
-    private String newUsername;
+  @SerializedName("new_name")
+  @Expose
+  private String newUsername;
 
-    public NewUsername(String newUsername){
-        this.newUsername = newUsername;
-    }
+  public NewUsername(String newUsername) {
+    this.newUsername = newUsername;
+  }
 
 }

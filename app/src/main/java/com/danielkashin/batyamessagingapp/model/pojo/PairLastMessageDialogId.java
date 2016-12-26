@@ -8,24 +8,24 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class PairLastMessageDialogId {
-    @SerializedName("dialog_id")
-    @Expose
-    private String dialogId;
+  @SerializedName("dialog_id")
+  @Expose
+  private String dialogId;
 
-    @SerializedName("last_message")
-    @Expose
-    private Message lastMessage;
+  @SerializedName("last_message")
+  @Expose
+  private Message lastMessage;
 
-    public PairLastMessageDialogId(String dialogId, Message message){
-        this.dialogId = dialogId;
-        this.lastMessage = message;
-    }
+  public PairLastMessageDialogId(String dialogId, Message message) {
+    this.dialogId = dialogId;
+    this.lastMessage = message;
+  }
 
-    public Message getMessage(){
-        return lastMessage;
-    }
+  public Message getMessage() {
+    return lastMessage;
+  }
 
-    public String getDialogId(){
-        return dialogId;
-    }
+  public String getDialogId() {
+    return dialogId;
+  }
 }

@@ -26,145 +26,145 @@ import com.danielkashin.batyamessagingapp.activity.main.view.MainView;
 
 public class SearchFragment extends Fragment implements SearchView {
 
-    private RecyclerView mRecyclerView;
-    private TextView mTextView;
-    private ProgressBar mProgressBar;
-    private View mRootView;
+  private RecyclerView mRecyclerView;
+  private TextView mTextView;
+  private ProgressBar mProgressBar;
+  private View mRootView;
 
-    private SearchPresenter mPresenter;
-    private MainView mActivity;
+  private SearchPresenter mPresenter;
+  private MainView mActivity;
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                           Bundle savedInstanceState) {
+    mRootView = inflater.inflate(R.layout.fragment_search, null);
+    mActivity = (MainActivity) getActivity();
+
+    mTextView = (TextView) mRootView.findViewById(R.id.search_username_text_view);
+    mProgressBar = (ProgressBar) mRootView.findViewById(R.id.search_progress_bar);
+    initializeRecyclerView(mRootView);
+
+    mPresenter = new SearchService(this, (Context) mActivity, (UserDataModel) mRecyclerView.getAdapter());
+
+    return mRootView;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    if (activityInitialized()) {
+      mActivity.showSearchInterface();
+      mProgressBar.setVisibility(View.INVISIBLE);
+      showNoUsersTextView();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_search, null);
-        mActivity = (MainActivity)getActivity();
+    mPresenter.onResume();
+  }
 
-        mTextView = (TextView) mRootView.findViewById(R.id.search_username_text_view);
-        mProgressBar = (ProgressBar) mRootView.findViewById(R.id.search_progress_bar);
-        initializeRecyclerView(mRootView);
+  @Override
+  public void onPause() {
+    super.onPause();
+  }
 
-        mPresenter = new SearchService(this, (Context)mActivity, (UserDataModel)mRecyclerView.getAdapter());
-
-        return mRootView;
+  @Override
+  public void showProgressBar() {
+    if (activityInitialized()) {
+      mProgressBar.setVisibility(View.VISIBLE);
+      hideTextView();
     }
+  }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (activityInitialized()) {
-            mActivity.showSearchInterface();
-            mProgressBar.setVisibility(View.INVISIBLE);
-            showNoUsersTextView();
-        }
-
-        mPresenter.onResume();
+  @Override
+  public void showClearIcon() {
+    if (activityInitialized()) {
+      mActivity.showClearIcon();
     }
+  }
 
-    @Override
-    public void onPause(){
-        super.onPause();
+  @Override
+  public void hideClearIcon() {
+    if (activityInitialized()) {
+      mActivity.hideClearIcon();
     }
+  }
 
-    @Override
-    public void showProgressBar() {
-        if (activityInitialized()) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            hideTextView();
-        }
+  @Override
+  public boolean isInputEmpty() {
+    if (activityInitialized()) {
+      return mActivity.isInputEmpty();
+    } else {
+      return true;
     }
+  }
 
-    @Override
-    public void showClearIcon() {
-        if (activityInitialized()){
-            mActivity.showClearIcon();
-        }
+  @Override
+  public void hideProgressBar() {
+    if (activityInitialized()) {
+      mProgressBar.setVisibility(View.INVISIBLE);
     }
+  }
 
-    @Override
-    public void hideClearIcon() {
-        if (activityInitialized()){
-            mActivity.hideClearIcon();
-        }
+  @Override
+  public void showNoUsersTextView() {
+    if (activityInitialized()) {
+      mTextView.setText(getString(R.string.no_users));
+      mTextView.setVisibility(View.VISIBLE);
+      hideProgressBar();
     }
+  }
 
-    @Override
-    public boolean isInputEmpty() {
-        if (activityInitialized()){
-            return mActivity.isInputEmpty();
-        } else {
-            return true;
-        }
+  @Override
+  public void showNoInternetConnectionTextView() {
+    if (activityInitialized()) {
+      mTextView.setText(getString(R.string.no_internet_connection));
+      mTextView.setVisibility(View.VISIBLE);
+      hideProgressBar();
     }
+  }
 
-    @Override
-    public void hideProgressBar() {
-        if (activityInitialized()){
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
+  @Override
+  public void hideTextView() {
+    if (activityInitialized()) {
+      mTextView.setVisibility(View.INVISIBLE);
     }
+  }
 
-    @Override
-    public void showNoUsersTextView() {
-        if (activityInitialized()) {
-            mTextView.setText(getString(R.string.no_users));
-            mTextView.setVisibility(View.VISIBLE);
-            hideProgressBar();
-        }
-    }
+  @Override
+  public void openAuthenticationActivity() {
+    if (activityInitialized()) mActivity.openAuthenticationActivity();
+  }
 
-    @Override
-    public void showNoInternetConnectionTextView() {
-        if (activityInitialized()) {
-            mTextView.setText(getString(R.string.no_internet_connection));
-            mTextView.setVisibility(View.VISIBLE);
-            hideProgressBar();
-        }
-    }
+  @Override
+  public void setOnToolbarTextListener(TextWatcher textWatcher) {
+    if (activityInitialized()) mActivity.setOnToolbarTextListener(textWatcher);
+  }
 
-    @Override
-    public void hideTextView() {
-        if (activityInitialized()) {
-            mTextView.setVisibility(View.INVISIBLE);
-        }
-    }
+  @Override
+  public void openChatActivity(String dialogId, String username) {
+    if (activityInitialized()) mActivity.openChatActivity(dialogId, username);
+  }
 
-    @Override
-    public void openAuthenticationActivity() {
-        if (activityInitialized()) mActivity.openAuthenticationActivity();
-    }
+  private boolean activityInitialized() {
+    return isAdded() && getActivity() != null;
+  }
 
-    @Override
-    public void setOnToolbarTextListener(TextWatcher textWatcher) {
-        if (activityInitialized()) mActivity.setOnToolbarTextListener(textWatcher);
-    }
+  private void initializeRecyclerView(View rootView) {
+    mRecyclerView = (RecyclerView) rootView.findViewById(R.id.search_recycler_view);
 
-    @Override
-    public void openChatActivity(String dialogId, String username) {
-        if (activityInitialized()) mActivity.openChatActivity(dialogId, username);
-    }
+    LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
+        LinearLayoutManager.VERTICAL, false);
+    mRecyclerView.setLayoutManager(manager);
 
-    private boolean activityInitialized(){
-        return isAdded() && getActivity()!= null;
-    }
-
-    private void initializeRecyclerView(View rootView){
-        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.search_recycler_view);
-
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL,false);
-        mRecyclerView.setLayoutManager(manager);
-
-        UserAdapter adapter = new UserAdapter(getActivity());
-        mRecyclerView.setAdapter(adapter);
-    }
+    UserAdapter adapter = new UserAdapter(getActivity());
+    mRecyclerView.setAdapter(adapter);
+  }
 }
 
 

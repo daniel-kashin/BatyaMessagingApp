@@ -12,7 +12,5 @@ public interface ChatPresenter {
   void onPause();
 
   boolean initialized();
-
-  boolean onInitializeProperties(boolean isGroup);
 }
 

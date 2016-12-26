@@ -7,15 +7,25 @@ import android.text.TextWatcher;
  */
 
 public interface SearchView {
-    boolean isInputEmpty();
-    void showProgressBar();
-    void hideProgressBar();
-    void openAuthenticationActivity();
-    void openChatActivity(String dialogId, String username);
-    void setOnToolbarTextListener(TextWatcher textWatcher);
-    void showNoUsersTextView();
-    void showNoInternetConnectionTextView();
-    void hideTextView();
-    void showClearIcon();
-    void hideClearIcon();
+  boolean isInputEmpty();
+
+  void showProgressBar();
+
+  void hideProgressBar();
+
+  void openAuthenticationActivity();
+
+  void openChatActivity(String dialogId, String username);
+
+  void setOnToolbarTextListener(TextWatcher textWatcher);
+
+  void showNoUsersTextView();
+
+  void showNoInternetConnectionTextView();
+
+  void hideTextView();
+
+  void showClearIcon();
+
+  void hideClearIcon();
 }

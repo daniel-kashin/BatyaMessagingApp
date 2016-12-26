@@ -5,7 +5,9 @@ package com.danielkashin.batyamessagingapp.activity.main.fragment_settings.prese
  */
 
 public interface SettingsPresenter {
-    void onLogoutButtonClick();
-    void onFullLogoutButtonClick();
-    void onResume();
+  void onLogoutButtonClick();
+
+  void onFullLogoutButtonClick();
+
+  void onResume();
 }

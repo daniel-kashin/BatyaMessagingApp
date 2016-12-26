@@ -9,11 +9,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserId {
 
-    @SerializedName("user_id")
-    @Expose
-    private String userId;
+  @SerializedName("user_id")
+  @Expose
+  private String userId;
 
-    public String toString(){
-        return userId;
-    }
+  public String toString() {
+    return userId;
+  }
 }

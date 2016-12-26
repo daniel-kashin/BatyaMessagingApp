@@ -11,17 +11,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class APIGenerator {
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .readTimeout(10,TimeUnit.SECONDS)
-            .connectTimeout(10,TimeUnit.SECONDS);
+  private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+      .readTimeout(10, TimeUnit.SECONDS)
+      .connectTimeout(10, TimeUnit.SECONDS);
 
-    public static <S> S createService(Class<S> serviceClass, String baseUrl) {
-        Retrofit.Builder builder =
-                new Retrofit.Builder()
-                        .baseUrl(baseUrl)
-                        .addConverterFactory(GsonConverterFactory.create());
+  public static <S> S createService(Class<S> serviceClass, String baseUrl) {
+    Retrofit.Builder builder =
+        new Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create());
 
-        Retrofit retrofit = builder.client(httpClient.build()).build();
-        return retrofit.create(serviceClass);
-    }
+    Retrofit retrofit = builder.client(httpClient.build()).build();
+    return retrofit.create(serviceClass);
+  }
 }

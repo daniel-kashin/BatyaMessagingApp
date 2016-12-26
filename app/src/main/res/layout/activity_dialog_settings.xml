@@ -100,6 +100,7 @@
     </LinearLayout>
 
     <Button
+        android:visibility="gone"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:id="@+id/dialog_settings_add_button"
@@ -121,6 +122,7 @@
 
 
     <Button
+        android:visibility="gone"
         android:id="@+id/dialog_settings_leave_button"
         android:background="@color/white"
         android:textColor="@color/error"

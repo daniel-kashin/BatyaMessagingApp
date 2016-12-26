@@ -1,82 +1,124 @@
 package com.danielkashin.batyamessagingapp.model;
 
+import com.danielkashin.batyamessagingapp.model.pojo.APIAnswer;
+import com.danielkashin.batyamessagingapp.model.pojo.WordsData;
 import com.danielkashin.batyamessagingapp.model.pojo.GroupId;
 import com.danielkashin.batyamessagingapp.model.pojo.DialogArray;
 import com.danielkashin.batyamessagingapp.model.pojo.DialogName;
 import com.danielkashin.batyamessagingapp.model.pojo.GroupUsers;
-import com.danielkashin.batyamessagingapp.model.pojo.Message;
-import com.danielkashin.batyamessagingapp.model.pojo.APIAnswer;
 import com.danielkashin.batyamessagingapp.model.pojo.LoginData;
+import com.danielkashin.batyamessagingapp.model.pojo.Message;
 import com.danielkashin.batyamessagingapp.model.pojo.MessageArray;
 import com.danielkashin.batyamessagingapp.model.pojo.NewUsername;
-import com.danielkashin.batyamessagingapp.model.pojo.OldNewPassword;
+import com.danielkashin.batyamessagingapp.model.pojo.OldNewPasswordPair;
 import com.danielkashin.batyamessagingapp.model.pojo.Timestamp;
 import com.danielkashin.batyamessagingapp.model.pojo.Token;
 import com.danielkashin.batyamessagingapp.model.pojo.UserIds;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+
+import static com.danielkashin.batyamessagingapp.model.PreferencesService.getTokenFromPreferences;
 
 /**
- * Created by Кашин on 29.10.2016.
+ * Created by Кашин on 15.11.2016.
  */
 
-public interface APIService {
+public class APIService {
 
-  @POST("/login")
-  Call<Token> login(@Body LoginData body);
+  private static final String API_BASE_URL = "http://146.185.160.146:8080";
+  private static APIProvider sApiProvider;
 
-  @POST("/register")
-  Call<Token> register(@Body LoginData body);
 
-  @POST("/{token}/logout")
-  Call<APIAnswer> logout(@Path("token") String token);
+  static {
+    Build();
+  }
 
-  @POST("/{token}/logoutall")
-  Call<APIAnswer> fullLogout(@Path("token") String token);
 
-  @POST("/{token}/messages/send/{dialog_id}")
-  Call<Timestamp> sendMessage(@Path("token") String token,
-                              @Path("dialog_id") String dialogId,
-                              @Body Message message);
+  static void Build() {
+    sApiProvider = APIGenerator.createService(APIProvider.class, API_BASE_URL);
+  }
 
-  @GET("/{token}/messages/{dialog_id}/limit/{limit}/skip/{offset}")
-  Call<MessageArray> getMessages(@Path("token") String token,
-                                 @Path("dialog_id") String dialogId,
-                                 @Path("limit") int limit,
-                                 @Path("offset") int offset);
+  public static Call<Token> getAuthCall(final String username, final String password) {
+    LoginData loginData = new LoginData(username, password);
+    Call<Token> call = sApiProvider.login(loginData);
+    return call;
+  }
 
-  @GET("/{token}/contacts/offset/{offset}")
-  Call<DialogArray> getDialogs(@Path("token") String token, @Path("offset") int offset);
+  public static Call<MessageArray> getGetMessagesCall(String dialogId, int limit, int offset) {
+    return sApiProvider.getMessages(getTokenFromPreferences(), dialogId, limit, offset);
+  }
 
-  @GET("/{token}/name/{dialog_id}")
-  Call<DialogName> getDialogName(@Path("token") String token, @Path("dialog_id") String dialogId);
+  public static Call<Token> getRegisterCall(final String username, final String password) {
+    LoginData loginData = new LoginData(username, password);
+    Call<Token> call = sApiProvider.register(loginData);
+    return call;
+  }
 
-  @GET("/{token}/search_users/{search_request}")
-  Call<UserIds> getSearchedUsers(@Path("token") String token, @Path("search_request") String searchRequest);
+  public static Call<DialogArray> getGetDialogsCall(int offset) {
+    return sApiProvider.getDialogs(getTokenFromPreferences(), offset);
+  }
 
-  @POST("/{token}")
-  Call<ResponseBody> changePassword(@Path("token") String token, @Body OldNewPassword oldNewPassword);
+  public static Call<APIAnswer> getLogoutCall() {
+    return sApiProvider.logout(getTokenFromPreferences());
+  }
 
-  @POST("/{token}/name/{dialog_id}")
-  Call<ResponseBody> changeUsername(@Path("token") String token,
-                                    @Path("dialog_id") String dialogId,
-                                    @Body NewUsername newUsername);
+  public static Call<APIAnswer> getFullLogoutCall() {
+    return sApiProvider.fullLogout(getTokenFromPreferences());
+  }
 
-  @POST("/{token}/name")
-  Call<ResponseBody> changeUsername(@Path("token") String token,
-                                    @Body NewUsername newUsername);
+  public static Call<Timestamp> getSendMessageCall(
+      String dialogId, String messageType, String messageData) {
+    Message message = new Message(messageType, messageData);
+    return sApiProvider.sendMessage(getTokenFromPreferences(), dialogId, message);
+  }
 
-  @POST("/{token}/conferences/create")
-  Call<GroupId> getNewGroupId(@Path("token") String token);
+  public static Call<DialogName> getGetDialogNameCall(String dialogId) {
+    return sApiProvider.getDialogName(getTokenFromPreferences(), dialogId);
+  }
 
-  @POST("/{token}/conferences/{group_id}/user_list")
-  Call<GroupUsers> getGroupUsers(@Path("token") String token, @Path("group_id") String groupId);
+  public static Call<UserIds> getGetSearchedUsersCall(String dialogId) {
+    return sApiProvider.getSearchedUsers(getTokenFromPreferences(), dialogId);
+  }
 
-  @POST("/{token}/conferences/{group_id}/leave")
-  Call<ResponseBody> leaveGroup(@Path("token") String token, @Path("group_id") String groupId);
+  public static Call<ResponseBody> getChangePasswordCall(String password, String newPassword) {
+    return sApiProvider.changePassword(getTokenFromPreferences(), new OldNewPasswordPair(password, newPassword));
+  }
+
+  public static Call<ResponseBody> getChangeUsernameCall(String newUsername, String dialogId) {
+    if (dialogId == null) {
+      return sApiProvider.changeUsername(getTokenFromPreferences(), new NewUsername(newUsername));
+    } else {
+      return sApiProvider.changeUsername(getTokenFromPreferences(), dialogId, new NewUsername(newUsername));
+    }
+  }
+
+  public static Call<GroupId> getGetNewGroupIdCall() {
+    return sApiProvider.getNewGroupId(getTokenFromPreferences());
+  }
+
+  public static Call<GroupUsers> getGetGroupUsersCall(String groupId) {
+    return sApiProvider.getGroupUsers(getTokenFromPreferences(), groupId);
+  }
+
+  public static Call<ResponseBody> getLeaveGroupCall(String groupId) {
+    return sApiProvider.leaveGroup(getTokenFromPreferences(), groupId);
+  }
+
+  public static Call<ResponseBody> getKickUserFromGroupCall(String groupId, String userId) {
+    return sApiProvider.kickUserFromGroup(getTokenFromPreferences(), groupId, userId);
+  }
+
+  public static Call<ResponseBody> getInviteUserToGroupCall(String groupId, String userId) {
+    return sApiProvider.inviteUserToGroup(getTokenFromPreferences(), groupId, userId);
+  }
+
+  public static Call<WordsData> getGetWordsDataCall(String userId, String year,
+                                                    String month) {
+    if (year == null || month == null) {
+      return sApiProvider.getWordsData(getTokenFromPreferences(), userId);
+    } else {
+      return sApiProvider.getWordsData(getTokenFromPreferences(), userId, year, month);
+    }
+  }
 }

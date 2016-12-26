@@ -11,15 +11,15 @@ import java.util.ArrayList;
 
 public class DialogArray {
 
-    @SerializedName("dialogs")
-    @Expose
-    public ArrayList<PairLastMessageDialogId> dialogs;
+  @SerializedName("dialogs")
+  @Expose
+  public ArrayList<PairLastMessageDialogId> dialogs;
 
-    public DialogArray(ArrayList<PairLastMessageDialogId> dialogs){
-        this.dialogs = dialogs;
-    }
+  public DialogArray(ArrayList<PairLastMessageDialogId> dialogs) {
+    this.dialogs = dialogs;
+  }
 
-    public ArrayList<PairLastMessageDialogId> getDialogs(){
-        return dialogs;
-    }
+  public ArrayList<PairLastMessageDialogId> getDialogs() {
+    return dialogs;
+  }
 }

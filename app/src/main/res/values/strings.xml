@@ -15,5 +15,7 @@
     <string name="waiting_for_connection">Waiting for connection&#8230;</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="no_users">No users were found</string>
+    <string name="no_friends">No friends were found</string>
+    <string name="add_username">Username to add</string>
     <string name="search_username">Username to search</string>
 </resources>

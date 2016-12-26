@@ -5,13 +5,15 @@ package com.danielkashin.batyamessagingapp.activity.dialog_settings.view;
  */
 
 public interface DialogSettingsView {
-  void setDialogUsername(String newDialogUsername);
+  void setDialogName(String newDialogUsername);
 
   void showToast(String message);
 
   void showAlert(String message, String title);
 
   void openChatActivity();
+
+  void openUserProfileActivity(String id, String username);
 
   boolean checkInputs();
 

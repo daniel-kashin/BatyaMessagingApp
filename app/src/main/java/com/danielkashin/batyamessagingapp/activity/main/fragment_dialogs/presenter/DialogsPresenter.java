@@ -5,6 +5,7 @@ package com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.presen
  */
 
 public interface DialogsPresenter {
-    void onLoad();
-    void onPause();
+  void onLoad();
+
+  void onPause();
 }

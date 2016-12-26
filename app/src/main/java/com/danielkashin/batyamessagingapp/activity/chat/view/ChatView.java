@@ -6,7 +6,7 @@ package com.danielkashin.batyamessagingapp.activity.chat.view;
  */
 
 public interface ChatView {
-  void setProperties(boolean isGroupOriginator, int groupCount);
+  void setProperties(boolean isGroupOriginator, int groupCount, String dialogName);
 
   String getInputMessage();
 

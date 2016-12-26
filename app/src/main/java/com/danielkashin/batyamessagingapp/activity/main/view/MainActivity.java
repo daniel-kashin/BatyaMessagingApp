@@ -37,10 +37,8 @@ import com.danielkashin.batyamessagingapp.activity.chat.view.ChatActivity;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_search.view.SearchFragment;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_settings.view.SettingsFragment;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsFragment;
-import com.danielkashin.batyamessagingapp.activity.main.presenter.MainPresenter;
-import com.danielkashin.batyamessagingapp.activity.main.presenter.MainService;
 import com.danielkashin.batyamessagingapp.model.BasicAsyncTask;
-import com.danielkashin.batyamessagingapp.model.NetworkService;
+import com.danielkashin.batyamessagingapp.model.APIService;
 import com.danielkashin.batyamessagingapp.model.pojo.GroupId;
 
 import java.util.regex.Pattern;
@@ -59,9 +57,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
   private View mToolbarRelativeLayout;
   private TextWatcher mCurrentTextWatcher;
 
-  private MainPresenter mPresenter;
-
-
   //---------------------------------AppCompatActivity methods------------------------------------
 
   @Override
@@ -72,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     initializeViews();
     setListeners();
 
-    mPresenter = new MainService(this);
     applyFragment(new DialogsFragment());
   }
 
@@ -126,14 +120,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
   @Override
   public void showAlert(String message, String title) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle(title)
+    new AlertDialog.Builder(this)
+        .setTitle(title)
         .setMessage(message)
-        .setCancelable(true);
-
-    AlertDialog alert = builder.create();
-
-    alert.show();
+        .setCancelable(true)
+        .create()
+        .show();
   }
 
   @Override
@@ -150,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     Intent intent = new Intent(this, ChatActivity.class);
     intent.putExtra("dialog_id", dialogId);
     intent.putExtra("dialog_name", dialogName);
+    applyFragment(new DialogsFragment());
     startActivity(intent);
   }
 
@@ -363,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         };
 
                     new BasicAsyncTask<ResponseBody>(
-                        NetworkService.getChangeUsernameCall(newUsername, result.first.toString()),
+                        APIService.getChangeUsernameCall(newUsername, result.first.toString()),
                         MainActivity.this,
                         false,
                         changeNameCallback).execute();
@@ -376,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
               };
 
           new BasicAsyncTask<GroupId>(
-              NetworkService.getGetNewGroupIdCall(),
+              APIService.getGetNewGroupIdCall(),
               MainActivity.this,
               false,
               createGroupCallback

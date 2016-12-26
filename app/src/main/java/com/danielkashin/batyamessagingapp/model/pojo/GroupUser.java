@@ -17,11 +17,11 @@ public class GroupUser {
   @Expose
   private long joinTime;
 
-  public String getUserId(){
+  public String getUserId() {
     return userId;
   }
 
-  public long getJoinTime(){
+  public long getJoinTime() {
     return joinTime;
   }
 

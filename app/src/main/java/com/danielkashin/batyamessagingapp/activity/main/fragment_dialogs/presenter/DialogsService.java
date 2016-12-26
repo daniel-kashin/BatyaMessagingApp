@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.adapter.Dialog;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.adapter.DialogsDataModel;
@@ -12,7 +13,7 @@ import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.adapter
 import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.view.DialogsView;
 import com.danielkashin.batyamessagingapp.lib.CircleBitmapFactory;
 import com.danielkashin.batyamessagingapp.model.BasicAsyncTask;
-import com.danielkashin.batyamessagingapp.model.NetworkService;
+import com.danielkashin.batyamessagingapp.model.APIService;
 import com.danielkashin.batyamessagingapp.model.PreferencesService;
 import com.danielkashin.batyamessagingapp.model.pojo.DialogArray;
 import com.danielkashin.batyamessagingapp.model.pojo.DialogName;
@@ -62,7 +63,7 @@ public class DialogsService implements DialogsPresenter {
     mGetDialogsWithInterval = new Runnable() {
       @Override
       public void run() {
-        startGetDialogsAsyncTask(0,false);
+        startGetDialogsAsyncTask(0, false);
         mHandler.postDelayed(mGetDialogsWithInterval, GET_DIALOGS_INTERVAL);
       }
     };
@@ -109,7 +110,7 @@ public class DialogsService implements DialogsPresenter {
         };
 
     new BasicAsyncTask<DialogArray>(
-        NetworkService.getGetDialogsCall(currentOffset),
+        APIService.getGetDialogsCall(currentOffset),
         null,
         false,
         callback
@@ -143,10 +144,11 @@ public class DialogsService implements DialogsPresenter {
         mView.setNoInternetToolbarLabelText();
         if (initCall) onLoad();
       } else {
-        stopGetDialogsWithInterval();
-        mView.openAuthenticationActivity();
+        throw new IOException();
       }
     } catch (InterruptedException | ExecutionException | IOException e) {
+      Toast.makeText(mContext, "You logged out from another device", Toast.LENGTH_LONG)
+          .show();
       stopGetDialogsWithInterval();
       mView.openAuthenticationActivity();
     } finally {
@@ -173,7 +175,7 @@ public class DialogsService implements DialogsPresenter {
 
         if (dialogPosition == -1) { // couldn`t find the dialog, add it
           Pair<DialogName, BasicAsyncTask.ErrorType> result = new BasicAsyncTask<DialogName>(
-              NetworkService.getGetDialogNameCall(dialogId),
+              APIService.getGetDialogNameCall(dialogId),
               null, false, null).execute().get();
 
           if (result.second == BasicAsyncTask.ErrorType.NoError) {
@@ -190,18 +192,20 @@ public class DialogsService implements DialogsPresenter {
                 (isMe ? "you: " : "") + message.getContent(),
                 message.getTimestamp());
             mDataModel.addDialog(dialog);
-          } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection){
+          } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
             mView.setNoInternetToolbarLabelText();
           } else {
+            Toast.makeText(mContext, "You logged out from another device", Toast.LENGTH_LONG)
+                .show();
             stopGetDialogsWithInterval();
             mView.openAuthenticationActivity();
           }
         } else { // dialog exists
           // refresh the data
-            mDataModel.setDialogMessageAndTimestamp(
-                dialogPosition,
-                (isMe ? "you: " : "") + message.getContent(),
-                message.getTimestamp());
+          mDataModel.setDialogMessageAndTimestamp(
+              dialogPosition,
+              (isMe ? "you: " : "") + message.getContent(),
+              message.getTimestamp());
         }
       }//for
 

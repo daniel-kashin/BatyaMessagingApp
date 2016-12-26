@@ -7,14 +7,21 @@ import android.app.ProgressDialog;
  */
 
 public interface AuthenticationView {
-    String getUsername();
-    String getPassword();
 
-    void startProgressDialog();
-    void stopProgressDialog();
-    ProgressDialog getProgressDialog();
+  String getUsername();
 
-    void showAlert(String message, String title);
-    boolean checkInputs();
-    void openDialogsActivity();
+  String getPassword();
+
+  void startProgressDialog();
+
+  void stopProgressDialog();
+
+  ProgressDialog getProgressDialog();
+
+  void showAlert(String message, String title);
+
+  boolean checkInputs();
+
+  void openDialogsActivity();
+
 }

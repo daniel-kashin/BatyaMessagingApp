@@ -28,7 +28,7 @@
     <dimen name="message_system_content_text_size">13sp</dimen>
     <dimen name="message_date_text_size">11sp</dimen>
     <dimen name="message_sender_text_size">15sp</dimen>
-    <dimen name="message_max_width">300dp</dimen>
+    <dimen name="message_max_width">280dp</dimen>
 
     <dimen name="search_item_text_size">22sp</dimen>
 </resources>

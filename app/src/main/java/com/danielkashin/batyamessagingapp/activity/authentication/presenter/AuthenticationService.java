@@ -6,7 +6,7 @@ import android.util.Pair;
 import com.danielkashin.batyamessagingapp.R;
 import com.danielkashin.batyamessagingapp.activity.authentication.view.AuthenticationView;
 import com.danielkashin.batyamessagingapp.model.BasicAsyncTask;
-import com.danielkashin.batyamessagingapp.model.NetworkService;
+import com.danielkashin.batyamessagingapp.model.APIService;
 import com.danielkashin.batyamessagingapp.model.PreferencesService;
 import com.danielkashin.batyamessagingapp.model.pojo.Token;
 
@@ -40,10 +40,10 @@ public class AuthenticationService implements AuthenticationPresenter {
     if (mView.checkInputs()) {
       if (id == R.id.authentication_auth_button) {
         errorMessage = "Invalid username or password";
-        call = NetworkService.getAuthCall(username, password);
+        call = APIService.getAuthCall(username, password);
       } else {
         errorMessage = "Chosen username is already exists";
-        call = NetworkService.getRegisterCall(username, password);
+        call = APIService.getRegisterCall(username, password);
       }
 
       callback = new BasicAsyncTask.AsyncTaskCompleteListener<Pair<Token, BasicAsyncTask.ErrorType>>() {
@@ -54,14 +54,18 @@ public class AuthenticationService implements AuthenticationPresenter {
             mView.openDialogsActivity();
           } else if (result.second == BasicAsyncTask.ErrorType.NoInternetConnection) {
             mView.showAlert(mContext.getString(R.string.no_internet_connection), "Error");
-          } else { //error occured
+          } else {
             mView.showAlert(errorMessage, "Error");
           }
         }
       };
 
-      new BasicAsyncTask<Token>(call, mContext, true, callback).execute();
+      new BasicAsyncTask<Token>(
+          call,
+          mContext,
+          true,
+          callback).execute();
     }
-  } // on button click
+  }
 }
 

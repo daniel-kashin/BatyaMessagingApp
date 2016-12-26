@@ -9,11 +9,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class Timestamp {
 
-    @SerializedName("timestamp")
-    @Expose
-    private long timestamp;
+  @SerializedName("timestamp")
+  @Expose
+  private long timestamp;
 
-    public long getTimestamp(){
-        return timestamp;
-    }
+  public long getTimestamp() {
+    return timestamp;
+  }
 }

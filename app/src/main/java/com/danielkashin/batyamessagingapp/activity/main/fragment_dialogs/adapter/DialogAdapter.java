@@ -63,7 +63,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     } else {
       long maxTimestamp = -1;
 
-      for  (PairLastMessageDialogId pair: dialogs){
+      for (PairLastMessageDialogId pair : dialogs) {
         if (pair.getMessage().getTimestamp() > maxTimestamp) {
           maxTimestamp = pair.getMessage().getTimestamp();
         }

@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.danielkashin.batyamessagingapp">
+          package="com.danielkashin.batyamessagingapp">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name="com.danielkashin.batyamessagingapp.Batya"
+        android:name=".Batya"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.danielkashin.batyamessagingapp.activity.splash.SplashActivity"
+            android:name=".activity.splash.SplashActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name="com.danielkashin.batyamessagingapp.activity.main.view.MainActivity"
-            android:theme="@style/AppTheme" />
+            android:name=".activity.main.view.MainActivity"
+            android:theme="@style/AppTheme"/>
         <activity
-            android:name="com.danielkashin.batyamessagingapp.activity.authentication.view.AuthenticationActivity"
-            android:theme="@style/AppTheme" />
+            android:name=".activity.authentication.view.AuthenticationActivity"
+            android:theme="@style/AppTheme"/>
         <activity
-            android:name="com.danielkashin.batyamessagingapp.activity.chat.view.ChatActivity"
+            android:name=".activity.chat.view.ChatActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"/>
         <activity
+            android:name=".activity.dialog_settings.view.DialogSettingsActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.Inversed"
-            android:windowSoftInputMode="adjustNothing"
-            android:name="com.danielkashin.batyamessagingapp.activity.dialog_settings.view.DialogSettingsActivity">
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
+        <activity
+            android:name=".activity.dialog_add_users.view.DialogAddUsersActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity android:name=".activity.user_profile.view.UserProfileActivity">
         </activity>
     </application>
 

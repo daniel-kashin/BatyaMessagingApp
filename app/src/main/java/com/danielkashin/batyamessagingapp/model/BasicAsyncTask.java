@@ -43,7 +43,7 @@ public class BasicAsyncTask<T> extends AsyncTask<Void, Void, Pair<T, BasicAsyncT
       progressDialog.setCancelable(isCancellable);
       progressDialog.setIndeterminate(true);
       progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-      if (isCancellable){
+      if (isCancellable) {
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
           @Override
           public void onCancel(DialogInterface dialog) {
@@ -62,7 +62,7 @@ public class BasicAsyncTask<T> extends AsyncTask<Void, Void, Pair<T, BasicAsyncT
 
       T responseBody = response.body();
 
-      if (response.code() == 200 &&  responseBody != null) {
+      if (response.code() == 200 && responseBody != null) {
         return new Pair<>(responseBody, ErrorType.NoError);
       } else {
         return new Pair<>(null, ErrorType.NoAccess);

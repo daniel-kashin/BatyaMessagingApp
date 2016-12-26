@@ -17,15 +17,21 @@ import java.util.ArrayList;
  * Created by Кашин on 23.12.2016.
  */
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements UsersDataModel{
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements UserDataModel {
 
   private ArrayList<User> mUserList;
   private final Context mContext;
+  private OnUserLongClickListener mOnUserLongClickListener;
   private OnUserClickListener mOnUserClickListener;
 
   public UserAdapter(Context context) {
     mContext = context;
     mUserList = new ArrayList<>();
+  }
+
+  @Override
+  public void setOnUserLongClickListener(OnUserLongClickListener onUserLongClickListener) {
+    mOnUserLongClickListener = onUserLongClickListener;
   }
 
   @Override
@@ -39,6 +45,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
       throw new IndexOutOfBoundsException();
     } else {
       return mUserList.get(position).getId();
+    }
+  }
+
+  @Override
+  public String getUsernameByPosition(int position) {
+    if (position > mUserList.size() - 1 || position < 0) {
+      throw new IndexOutOfBoundsException();
+    } else {
+      return mUserList.get(position).getName();
     }
   }
 
@@ -72,7 +87,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
     viewHolder.setId("id: " + user.getId());
     viewHolder.setDate(user.getDateAdded());
 
-    if (mOnUserClickListener != null) {
+    if (mOnUserLongClickListener != null) {
+      viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          mOnUserLongClickListener.onItemLongClick(
+              UserAdapter.this,
+              viewHolder.getAdapterPosition()
+          );
+          return true;
+        }
+      });
+    }
+
+    if (mOnUserClickListener != null){
       viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -83,6 +111,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
         }
       });
     }
+
   }
 
   @Override

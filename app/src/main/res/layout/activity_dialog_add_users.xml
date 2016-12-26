@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/dialog_add_users_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/indigo_400"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white">
+
+        <RelativeLayout
+            android:id="@+id/dialogs_toolbar_relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:inputType="textNoSuggestions|textVisiblePassword"
+                android:id="@+id/dialog_add_users_toolbar_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="0dp"
+                android:layout_toStartOf="@+id/dialogs_toolbar_clear_icon"
+                android:background="@android:color/transparent"
+                android:hint="@string/add_username"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textColorHint="@color/indigo_100"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/dialog_add_users_toolbar_clear_icon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:background="@mipmap/asset_clear"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/dialog_add_users_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_add_users_toolbar"
+        android:layout_alignParentBottom="true">
+    </android.support.v7.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/dialog_add_users_progress_bar"
+        android:visibility="visible"
+        android:layout_centerInParent="true"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/Widget.AppCompat.TextView.SpinnerItem"
+        android:id="@+id/dialog_add_users_username_text_view"
+        android:textColor="@color/hint_text"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

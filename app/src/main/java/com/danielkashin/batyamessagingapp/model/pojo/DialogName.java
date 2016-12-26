@@ -8,11 +8,11 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class DialogName {
-    @SerializedName("dialog_name")
-    @Expose
-    private String dialog_name;
+  @SerializedName("dialog_name")
+  @Expose
+  private String dialog_name;
 
-    public String getDialogName() {
-        return dialog_name;
-    }
+  public String getDialogName() {
+    return dialog_name;
+  }
 }

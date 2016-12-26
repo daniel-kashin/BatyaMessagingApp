@@ -9,7 +9,5 @@ public interface DialogSettingsPresenter {
 
   void onLeaveButtonClick();
 
-  void onAddButtonClick();
-
   void onLoad();
 }

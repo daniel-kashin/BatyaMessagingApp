@@ -13,16 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.danielkashin.batyamessagingapp.R;
-import com.danielkashin.batyamessagingapp.activity.main.fragment_dialogs.adapter.Dialog;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_settings.presenter.SettingsPresenter;
 import com.danielkashin.batyamessagingapp.activity.main.fragment_settings.presenter.SettingsService;
 import com.danielkashin.batyamessagingapp.activity.main.view.MainView;
 import com.danielkashin.batyamessagingapp.model.BasicAsyncTask;
-import com.danielkashin.batyamessagingapp.model.NetworkService;
+import com.danielkashin.batyamessagingapp.model.APIService;
 import com.danielkashin.batyamessagingapp.model.PreferencesService;
 import com.danielkashin.batyamessagingapp.model.pojo.DialogName;
 
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
@@ -89,8 +87,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
   @Override
   public void showToast(String message) {
-    if (activityInitialized()){
-      Toast.makeText((Context)mActivity, message, Toast.LENGTH_LONG)
+    if (activityInitialized()) {
+      Toast.makeText((Context) mActivity, message, Toast.LENGTH_LONG)
           .show();
     }
   }
@@ -136,7 +134,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
 
 
     new BasicAsyncTask<DialogName>(
-        NetworkService.getGetDialogNameCall(PreferencesService.getIdFromPreferences()),
+        APIService.getGetDialogNameCall(PreferencesService.getIdFromPreferences()),
         null, false, callback)
         .execute();
   }
@@ -224,7 +222,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                     };
 
                 new BasicAsyncTask<>(
-                    NetworkService.getChangePasswordCall(oldPassword, newPassword),
+                    APIService.getChangePasswordCall(oldPassword, newPassword),
                     (Context) mActivity,
                     false,
                     callback
@@ -298,7 +296,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
                     };
 
                 new BasicAsyncTask<ResponseBody>(
-                    NetworkService.getChangeUsernameCall(newUsername, null),
+                    APIService.getChangeUsernameCall(newUsername, null),
                     (Context) mActivity,
                     false,
                     callback).execute();
