@@ -16,4 +16,4 @@ Application is based on the Model-View-Presender architectural pattern, Retrofit
 
 Samples
 -------
-//TODO
+https://play.google.com/store/apps/details?id=com.danielkashin.batyamessagingapp
